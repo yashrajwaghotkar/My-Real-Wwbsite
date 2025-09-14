@@ -570,6 +570,38 @@ input, textarea {
 #seekForwardIndicator { right: 5%; }
 #seekBackwardIndicator { left: 5%; }
 
+/* --- Playback Suggestion Overlay --- */
+.playback-suggestion-overlay {
+    position: absolute;
+    bottom: 80px; /* Position above controls */
+    left: 50%;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: 500;
+    z-index: 6;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out, visibility 0s linear 0.4s;
+    transform: translate(-50%, 15px); /* Start slightly lower */
+}
+
+.playback-suggestion-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0); /* Move up to final position */
+    transition: opacity 0.4s ease-out, transform 0.4s ease-out, visibility 0s linear 0s;
+}
+
+/* Adjust position in fullscreen */
+.video-container:fullscreen .playback-suggestion-overlay {
+    bottom: 90px;
+    font-size: 16px;
+}
+
 
 .custom-video-controls {
     position: absolute;
@@ -1118,7 +1150,7 @@ input, textarea {
 }
 
 .section-title-wrapper {
-    padding: 25px 35px 0 35px;
+    padding: 10px 35px 0 35px;
     background-color: var(--primary-color);
     flex-shrink: 0;
 }
@@ -1214,7 +1246,7 @@ input, textarea {
 
 
 #allCategoriesViewElements {
-    padding: 20px 0;
+    padding: 10px 0 20px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1482,6 +1514,15 @@ input, textarea {
     height: 70%;
     background-color: var(--accent-color);
     border-radius: 5px;
+}
+
+@keyframes highlight-row-glow {
+    from { background-color: rgba(var(--accent-color-rgb), 0); }
+    to { background-color: rgba(var(--accent-color-rgb), 0.15); }
+}
+.section-row.highlighted-row {
+    animation: highlight-row-glow 0.5s ease-in-out 4 alternate;
+    border-radius: 8px;
 }
 
 #clearHistoryBtn {
@@ -2675,7 +2716,7 @@ body.user-logged-in #commentsSection {
     .bottom-nav { display: none; } 
     .scrollable-content-area { padding-bottom: 30px; }
 
-    #allCategoriesViewElements { padding: 20px 0; }
+    #allCategoriesViewElements { padding: 10px 0 20px 0; }
     #continueWatchingSection, .content-list, .up-next-container { padding: 0 40px; }
     .folder-grid { gap: 20px; }
     .splash-media-container, #bannerAdContainer, .trending-panel, #commentsSection { margin-left: 40px; margin-right: 40px; }
@@ -2693,7 +2734,7 @@ body.user-logged-in #commentsSection {
     .drawer-menu ul li a { padding: 18px 30px; font-size: 17px; }
     .drawer-menu ul li a img { width: 26px; height: 26px; }
 
-    .section-title-wrapper { padding: 30px 40px 0 40px; }
+    .section-title-wrapper { padding: 15px 40px 0 40px; }
     .section-title { font-size: 30px; }
     .section-title-icon { width: 32px; height: 32px; }
 
@@ -2717,7 +2758,7 @@ body.user-logged-in #commentsSection {
         --list-item-banner-card-width: 150px;
         --list-item-banner-card-height: 205px;
     }
-    #allCategoriesViewElements { padding: 20px 0; }
+    #allCategoriesViewElements { padding: 10px 0 20px 0; }
     #continueWatchingSection, .content-list, .up-next-container { padding: 0 20px; }
     .splash-media-container, #bannerAdContainer, .trending-panel, #commentsSection { margin-left: 20px; margin-right: 20px; }
     .folder-grid { gap: 12px; }
@@ -2728,7 +2769,7 @@ body.user-logged-in #commentsSection {
 
     .app-title { font-size: 20px; }
     .app-title-logo { width: 28px; height: 28px; margin-right: 10px;}
-    .section-title-wrapper { padding: 20px 20px 0 20px; }
+    .section-title-wrapper { padding: 10px 20px 0 20px; }
     .section-title { font-size: 22px; }
     .section-title-icon { width: 24px; height: 24px; margin-right: 10px; }
     
@@ -2771,7 +2812,7 @@ body.user-logged-in #commentsSection {
         max-width: none;
         width: auto;
     }
-    #allCategoriesViewElements { padding: 20px 0; gap: 20px;}
+    #allCategoriesViewElements { padding: 10px 0 20px 0; gap: 20px;}
     #continueWatchingSection, .content-list, .up-next-container { padding: 0 15px; }
     .splash-media-container, #bannerAdContainer, .trending-panel, #commentsSection { margin-left: 15px; margin-right: 15px;}
     .folder-grid {
@@ -2804,7 +2845,7 @@ body.user-logged-in #commentsSection {
     .app-title-logo { width: 26px; height: 26px; margin-right: 8px; }
     .app-title { font-size: 18px; }
 
-    .section-title-wrapper { padding: 15px 15px 0 15px; }
+    .section-title-wrapper { padding: 10px 15px 0 15px; }
     .section-title-container { margin-bottom: 15px; }
     .section-title { font-size: 20px; }
 
@@ -2838,4 +2879,11 @@ body.user-logged-in #commentsSection {
     .custom-video-controls .vote-btn .count { font-size: 14px; }
     #playPauseBtn svg { width: 22px; height: 22px; }
     .time-display { font-size: 13px; margin: 0 10px; min-width: 80px; }
+    .playback-suggestion-overlay {
+        font-size: 13px;
+        padding: 8px 15px;
+        bottom: 70px;
+        width: 90%;
+        text-align: center;
+    }
 }

@@ -1,1 +1,2774 @@
-const _0x4f3a04=_0x5669;(function(_0x29e418,_0x8c3244){const _0x3f028c=_0x5669,_0x17ca3a=_0x29e418();while(!![]){try{const _0x854cfb=parseInt(_0x3f028c(0x237))/0x1*(-parseInt(_0x3f028c(0x22d))/0x2)+-parseInt(_0x3f028c(0x290))/0x3*(parseInt(_0x3f028c(0x32a))/0x4)+-parseInt(_0x3f028c(0x2ce))/0x5*(parseInt(_0x3f028c(0x162))/0x6)+parseInt(_0x3f028c(0x166))/0x7*(parseInt(_0x3f028c(0x292))/0x8)+-parseInt(_0x3f028c(0x223))/0x9*(parseInt(_0x3f028c(0x19a))/0xa)+-parseInt(_0x3f028c(0x244))/0xb*(-parseInt(_0x3f028c(0x258))/0xc)+parseInt(_0x3f028c(0x1df))/0xd;if(_0x854cfb===_0x8c3244)break;else _0x17ca3a['push'](_0x17ca3a['shift']());}catch(_0x46b82e){_0x17ca3a['push'](_0x17ca3a['shift']());}}}(_0x149d,0x20530));import{initializeApp}from'https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js';import{getFirestore,collection,doc,addDoc,onSnapshot,query,orderBy,serverTimestamp,limit,runTransaction,getDoc,setDoc,where,getDocs,deleteDoc}from'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';const CONFIG_FILE_URL='https://raw.githubusercontent.com/yashrajwaghotkar/Live-TV-For-Android-TV/5dcf11b8a3bdf495e73e721b4df8a9a9221bee5a/config.json',DEFAULT_SVG_ICON_DATA_URI=_0x4f3a04(0x2e7),DEFAULT_FOLDER_ICON_URL=_0x4f3a04(0x211),DEFAULT_PROFILE_PIC_URL=_0x4f3a04(0x1b8),OFFLINE_IMAGE_URL='https://i.ibb.co/Df22ZJyh/soon.gif',CACHE_EXPIRY_DURATION=0x6*0x3c*0x3c*0x3e8,APP_CACHE_KEY=_0x4f3a04(0x2ac),WATCH_HISTORY_KEY='entertainmentAppWatchHistory',USER_NAME_KEY=_0x4f3a04(0x35c),USER_ID_KEY=_0x4f3a04(0x32e),VOTE_STORAGE_KEY=_0x4f3a04(0x2c0),VIEW_STORAGE_KEY=_0x4f3a04(0x297),AUTOPLAY_KEY='entertainmentAppAutoplay',COL={'TITLE':0x0,'STREAM_URL':0x1,'LOGO_URL':0x2,'IS_MOVIE':0x3,'IS_SERIES':0x4,'IS_ANIME':0x5,'IS_ANIMATION':0x6,'QUALITY_LOW_URL':0x7,'QUALITY_MEDIUM_URL':0x8,'QUALITY_HIGH_URL':0x9,'RATING':0xa,'BADGE_TEXT':0xb,'FOLDER_TITLE':0xc,'SUB_FOLDER_TITLE':0xd,'REQUIRES_VPN':0xe,'IS_MAINTENANCE':0xf,'IS_TRENDING':0x10,'LOADER_ANIMATION_URL':0x11,'WATERMARK_LOGO_URL':0x12,'HEADER_IMG_URL':0x13,'SPLASH_MEDIA_URL':0x14,'WEBSITE_LINK':0x15,'WEBSITE_NAME':0x16,'DOWNLOAD_URL_480P':0x17,'DOWNLOAD_URL_720P':0x18,'DOWNLOAD_URL_1080P':0x19,'LIVE_TV_NAME':0x1a,'LIVE_TV_LOGO_URL':0x1b,'LIVE_TV_STREAM_URL':0x1c,'LIVE_TV_WATERMARK_URL':0x1d,'LIVE_TV_LOADER_URL':0x1e,'LIVE_TV_MAINTENANCE':0x1f,'LIVE_TV_FOLDER_TITLE':0x20};let appConfig={},triggerElement=null,allCategoriesInfoText='',websiteLinks=[],currentPlayingCardId=null,watchHistory={},userVotes={},userViews={},uniqueFolderTitles=[],currentSearchTerm=null,headerImageUrl=null,splashMediaItems=[],hasShownSplashPopup=![],allContentData=[],currentSection=_0x4f3a04(0x27b),currentlyPlayingStreamUrl=null,isCurrentPlayerLiveTV=![],isFetchingConfig=![],isFetchingSheet=![],currentPopupItem=null,downloadCountdownIntervalId=null,unavailableCloseBtnIntervalId=null,activeSuggestionIndex=-0x1,currentScreenFitMode='contain',inactivityTimeout,customToastTimeoutId=null,isBottomAdInjected=![],isAutoplayEnabled=![],nextPlayTimeoutId=null,nextPlayNotificationShown=![],isTransitioning=![];const ANIMATION_DURATION=0x12c;let currentView='category',navigationPath=[],backPressExitIntent=![],backPressTimeoutId=null,currentUser={'id':null,'name':_0x4f3a04(0x35d),'profilePictureUrl':DEFAULT_PROFILE_PIC_URL},userProfilesCache={},firebaseApp,db,hlsInstance=null;const loginOverlayEl=document[_0x4f3a04(0x303)](_0x4f3a04(0xbf)),loginButtonEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x15c)),userNameInputEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x333)),loginErrorMsgEl=document[_0x4f3a04(0x303)]('loginErrorMsg'),loginScreenLogoEl=document['getElementById']('loginScreenLogo'),appContainerEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x139)),appHeaderEl=document[_0x4f3a04(0x303)]('appHeader'),appTitleLogoEl=document[_0x4f3a04(0x303)]('appTitleLogo'),appTitleTextImageEl=document['getElementById'](_0x4f3a04(0x208)),menuBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0x229)),drawerMenuEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x225)),drawerNavListEl=document[_0x4f3a04(0x303)]('drawerNavList'),drawerOverlayEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x2c6)),sectionTitleEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x307)),sectionTitleIconEl=document['getElementById'](_0x4f3a04(0x103)),backBtn=document[_0x4f3a04(0x303)]('backBtn'),refreshSectionBtn=document['getElementById'](_0x4f3a04(0x288)),allCategoriesViewElementsContainer=document[_0x4f3a04(0x303)](_0x4f3a04(0x248)),contentListContainer=document[_0x4f3a04(0x303)](_0x4f3a04(0x173));let navLinks=[];const loader=document[_0x4f3a04(0x303)](_0x4f3a04(0xd6)),errorMessageEl=document['getElementById'](_0x4f3a04(0xd3)),emptyStateAnimationEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x2fa)),mainContentWrapperEl=document['getElementById'](_0x4f3a04(0x18b)),inlinePlayerWrapper=document[_0x4f3a04(0x303)](_0x4f3a04(0x1f4)),inlinePlayerTitleText=document[_0x4f3a04(0x303)](_0x4f3a04(0x33e)),customPlayerCloseBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0x2c4)),scrollableContentAreaEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x304)),sectionTitleWrapperEl=document[_0x4f3a04(0x303)](_0x4f3a04(0xf7)),videoContainer=document[_0x4f3a04(0x303)](_0x4f3a04(0x2a9)),nativeVideoPlayer=document[_0x4f3a04(0x303)](_0x4f3a04(0x31a)),nativePlayerWatermarkEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x218)),customVideoControls=document[_0x4f3a04(0x303)](_0x4f3a04(0x196)),playerLoader=document[_0x4f3a04(0x303)](_0x4f3a04(0x351)),playPauseBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0x111)),playIcon=document['getElementById'](_0x4f3a04(0x189)),pauseIcon=document['getElementById']('pauseIcon'),progressBar=document[_0x4f3a04(0x303)](_0x4f3a04(0xce)),timeDisplay=document[_0x4f3a04(0x303)](_0x4f3a04(0x34f)),muteBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0xb2)),volumeHighIcon=document['getElementById'](_0x4f3a04(0x216)),volumeMuteIcon=document[_0x4f3a04(0x303)](_0x4f3a04(0xb6)),volumeSlider=document[_0x4f3a04(0x303)]('volumeSlider'),fitFillBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0x180)),fitIcon=document[_0x4f3a04(0x303)](_0x4f3a04(0x104)),fillIcon=document['getElementById']('fillIcon'),fullscreenBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0x2be)),fullscreenOpenIcon=document['getElementById'](_0x4f3a04(0x1c2)),fullscreenCloseIcon=document[_0x4f3a04(0x303)](_0x4f3a04(0x259)),pipBtn=document['getElementById'](_0x4f3a04(0x226)),playbackSpeedBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0xe8)),seekBackwardIndicator=document[_0x4f3a04(0x303)]('seekBackwardIndicator'),seekForwardIndicator=document['getElementById'](_0x4f3a04(0x19d)),liveIndicatorEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x122));let lastTap=0x0,singleTapTimeout=null;const searchInputEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x145)),suggestionsDropdownEl=document['getElementById'](_0x4f3a04(0x2e0)),infoPopupOverlay=document['getElementById']('infoPopupOverlay'),infoPopupCloseBtn=document['getElementById'](_0x4f3a04(0x1c5)),infoPopupBannerImg=document[_0x4f3a04(0x303)](_0x4f3a04(0x278)),infoPopupTitleEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x1b9)),infoPopupLikesEl=document[_0x4f3a04(0x303)](_0x4f3a04(0xae)),infoPopupLikeCountEl=document[_0x4f3a04(0x303)]('infoPopupLikeCount'),infoPopupViewsEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x1ca)),infoPopupViewCountEl=document[_0x4f3a04(0x303)](_0x4f3a04(0xef)),infoPopupSectionEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x18f)),infoPopupStatusMessageEl=document['getElementById'](_0x4f3a04(0x28b)),infoPopupRatingEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x305)),infoPopupRatingTextEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x1af)),infoPopupRatingStarsEl=document[_0x4f3a04(0x303)]('infoPopupRatingStars'),infoPopupDownloadBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0x174)),infoPopupBadgeEl=document['getElementById'](_0x4f3a04(0x2a2)),infoPopupBadgeTextEl=document[_0x4f3a04(0x303)]('infoPopupBadgeText'),infoPopupVoteContainer=document[_0x4f3a04(0x303)](_0x4f3a04(0x1dc)),infoPopupLikeBtn=document['getElementById']('infoPopupLikeBtn'),infoPopupDislikeBtn=document[_0x4f3a04(0x303)]('infoPopupDislikeBtn'),qualityPopupOverlay=document[_0x4f3a04(0x303)]('qualityPopupOverlay'),qualityPopupCloseBtn=document[_0x4f3a04(0x303)]('qualityPopupCloseBtn'),qualityOptionsContainer=document[_0x4f3a04(0x303)](_0x4f3a04(0x32b)),qualityPopupTitleEl=document['getElementById'](_0x4f3a04(0x22b)),downloadQualityPopupOverlay=document[_0x4f3a04(0x303)]('downloadQualityPopupOverlay'),downloadQualityPopupCloseBtn=document[_0x4f3a04(0x303)]('downloadQualityPopupCloseBtn'),downloadQualityOptionsContainer=document[_0x4f3a04(0x303)](_0x4f3a04(0x16a)),bottomNavEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x2db));let bottomNavLinks=[];const welcomeToastEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x342)),welcomeToastMessageEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x121)),welcomeToastCloseBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0x2ff)),profilePopupOverlay=document['getElementById']('profilePopupOverlay'),profilePopupCloseBtn=document[_0x4f3a04(0x303)]('profilePopupCloseBtn'),profileEditForm=document[_0x4f3a04(0x303)](_0x4f3a04(0x1d7)),profileNameDisplay=document[_0x4f3a04(0x303)](_0x4f3a04(0x2f8)),profilePicUrlInput=document[_0x4f3a04(0x303)](_0x4f3a04(0x140)),profileErrorMsg=document['getElementById'](_0x4f3a04(0x31c)),saveProfileBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0x2e6)),downloadGeneratingPopupOverlay=document[_0x4f3a04(0x303)](_0x4f3a04(0x2df)),downloadGeneratingTimerEl=document[_0x4f3a04(0x303)](_0x4f3a04(0xcf)),downloadUnavailablePopupOverlay=document['getElementById']('downloadUnavailablePopupOverlay'),downloadUnavailableCloseBtn=document[_0x4f3a04(0x303)](_0x4f3a04(0x30e)),playerMessageOverlayEl=document['getElementById']('playerMessageOverlay'),playerMessageTextEl=document['getElementById']('playerMessageText'),playerMessageIconEl=document[_0x4f3a04(0x2ec)]('.player-message-icon'),playerAdjacentContentEl=document[_0x4f3a04(0x303)]('playerAdjacentContent'),nowPlayingInfoWrapperEl=document[_0x4f3a04(0x303)]('nowPlayingInfoWrapper'),nowPlayingTitleEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x105)),nowPlayingBadgeEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x27a)),nowPlayingBadgeTextEl=document['getElementById'](_0x4f3a04(0xbd)),nowPlayingLikesEl=document['getElementById'](_0x4f3a04(0x1ab)),nowPlayingViewsEl=document[_0x4f3a04(0x303)]('nowPlayingViews'),nowPlayingViewCountEl=document[_0x4f3a04(0x303)]('nowPlayingViewCount'),nowPlayingRatingEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x2cd)),nowPlayingRatingTextEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x1f3)),nowPlayingRatingStarsEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x16c)),nowPlayingSectionEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x1f6)),nowPlayingFolderEl=document['getElementById'](_0x4f3a04(0x21e)),nowPlayingFolderTextEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x1ee)),nowPlayingQualityEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x257)),nowPlayingQualityTextEl=document[_0x4f3a04(0x303)]('nowPlayingQualityText'),nowPlayingVoteContainerEl=document[_0x4f3a04(0x303)](_0x4f3a04(0xd1)),nowPlayingLikeBtnEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x2f2)),nowPlayingDislikeBtnEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x17e)),nowPlayingDownloadBtnEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x316)),nowPlayingWarningEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x28a)),nowPlayingWarningTextEl=document['getElementById'](_0x4f3a04(0x2e8)),bottomBannerAdContainerEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x210)),upNextContainerEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x1e0)),upNextItemsEl=document['getElementById'](_0x4f3a04(0x26e)),autoplayToggleEl=document[_0x4f3a04(0x303)]('autoplayToggle'),nextPlayingOverlayEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x14e)),nextPlayingTitleEl=document[_0x4f3a04(0x303)](_0x4f3a04(0x178)),cancelNextPlayBtn=document['getElementById']('cancelNextPlayBtn'),generatingAdContainer=document[_0x4f3a04(0x303)](_0x4f3a04(0x1a7)),unavailableAdContainer=document[_0x4f3a04(0x303)]('unavailableAdContainer'),unavailableCloseBtnText=document['querySelector'](_0x4f3a04(0x286)),unavailableCloseBtnTimer=document[_0x4f3a04(0x2ec)](_0x4f3a04(0x1d8));function injectBannerAd(_0x41c8e6){const _0x5003b2=_0x4f3a04;if(!_0x41c8e6)return;_0x41c8e6[_0x5003b2(0xf6)]='';const _0x2f5184=document[_0x5003b2(0x12e)]('script');_0x2f5184[_0x5003b2(0x334)]=_0x5003b2(0xd8),_0x2f5184[_0x5003b2(0xf6)]='\x0a\x20\x20\x20\x20\x20\x20\x20\x20atOptions\x20=\x20{\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x27key\x27\x20:\x20\x278b5339b257d8fca6e4a1789a656216bf\x27,\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x27format\x27\x20:\x20\x27iframe\x27,\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x27height\x27\x20:\x2050,\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x27width\x27\x20:\x20320,\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x27params\x27\x20:\x20{}\x0a\x20\x20\x20\x20\x20\x20\x20\x20};\x0a\x20\x20\x20\x20';const _0x21ea5f=document['createElement']('script');_0x21ea5f[_0x5003b2(0x334)]=_0x5003b2(0xd8),_0x21ea5f[_0x5003b2(0x2c5)]=_0x5003b2(0x1d4),_0x41c8e6[_0x5003b2(0x2dc)](_0x2f5184),_0x41c8e6[_0x5003b2(0x2dc)](_0x21ea5f);}function _0x5669(_0x3bedd5,_0x3b389e){const _0x149dcf=_0x149d();return _0x5669=function(_0x566960,_0x3bef54){_0x566960=_0x566960-0xa7;let _0x4a0bd2=_0x149dcf[_0x566960];return _0x4a0bd2;},_0x5669(_0x3bedd5,_0x3b389e);}function showBottomBannerAd(){const _0x5351d6=_0x4f3a04;if(!bottomBannerAdContainerEl)return;!isBottomAdInjected&&(injectBannerAd(bottomBannerAdContainerEl),isBottomAdInjected=!![]),bottomBannerAdContainerEl['style'][_0x5351d6(0x10b)]=_0x5351d6(0xc3);}function hideBottomBannerAd(){const _0x46d44e=_0x4f3a04;if(!bottomBannerAdContainerEl)return;bottomBannerAdContainerEl[_0x46d44e(0x306)][_0x46d44e(0x10b)]=_0x46d44e(0x246);}function showWelcomeToast(){const _0x31204c=_0x4f3a04;if(!welcomeToastEl||!welcomeToastMessageEl)return;const _0x2dc1e7=_0x31204c(0x202)+escapeHTML(currentUser[_0x31204c(0x12c)])+_0x31204c(0x32c);showCustomToast(_0x2dc1e7,_0x31204c(0x1ff),0x1388);}function hideCustomToast(){const _0x4b6d49=_0x4f3a04;if(!welcomeToastEl)return;welcomeToastEl[_0x4b6d49(0x250)][_0x4b6d49(0x239)](_0x4b6d49(0x1b7));if(customToastTimeoutId)clearTimeout(customToastTimeoutId);}function showCustomToast(_0x2b8a2d,_0xd1efc8='info',_0xce8ebc=0x1388){const _0x51bce7=_0x4f3a04;if(!welcomeToastEl||!welcomeToastMessageEl)return;const _0x39bc35=welcomeToastEl[_0x51bce7(0x2ec)](_0x51bce7(0x233)),_0x3a54a8=welcomeToastEl['querySelector'](_0x51bce7(0x30f));if(customToastTimeoutId)clearTimeout(customToastTimeoutId);switch(_0xd1efc8){case _0x51bce7(0xc2):_0x39bc35[_0x51bce7(0xf6)]='&#9989;',_0x3a54a8[_0x51bce7(0xe4)]='Success!',welcomeToastEl[_0x51bce7(0x306)][_0x51bce7(0x1d2)]=_0x51bce7(0x1ad);break;case _0x51bce7(0x35b):_0x39bc35[_0x51bce7(0xf6)]=_0x51bce7(0x165),_0x3a54a8[_0x51bce7(0xe4)]=_0x51bce7(0x187),welcomeToastEl[_0x51bce7(0x306)][_0x51bce7(0x1d2)]='var(--highlight-color)';break;default:_0x39bc35[_0x51bce7(0xf6)]=_0x51bce7(0x109),_0x3a54a8[_0x51bce7(0xe4)]=_0x51bce7(0x170),welcomeToastEl[_0x51bce7(0x306)][_0x51bce7(0x1d2)]=_0x51bce7(0x25a);break;}welcomeToastMessageEl['innerHTML']=_0x2b8a2d,welcomeToastEl['classList'][_0x51bce7(0x113)](_0x51bce7(0x1b7)),customToastTimeoutId=setTimeout(hideCustomToast,_0xce8ebc);}welcomeToastCloseBtn&&welcomeToastCloseBtn['addEventListener'](_0x4f3a04(0x331),hideCustomToast);function renderUserProfileInDrawer(){const _0x3b232b=_0x4f3a04,_0x96a625=document[_0x3b232b(0x303)](_0x3b232b(0x328));if(_0x96a625)_0x96a625[_0x3b232b(0x239)]();const _0x21b372=_0x3b232b(0x12b)+escapeHTML(currentUser[_0x3b232b(0x2c1)])+'\x22\x20alt=\x22User\x20Profile\x20Picture\x22\x20onerror=\x22this.onerror=null;\x20this.src=\x27'+DEFAULT_PROFILE_PIC_URL+'\x27;\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22drawer-user-info\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<strong\x20id=\x22drawerUserName\x22>'+escapeHTML(currentUser['name'])+_0x3b232b(0x117),_0x9c295f=document[_0x3b232b(0x2ec)](_0x3b232b(0xaa));_0x9c295f&&(_0x9c295f[_0x3b232b(0x32d)](_0x3b232b(0x12f),_0x21b372),document['getElementById']('drawerUserProfile')[_0x3b232b(0x2aa)](_0x3b232b(0x331),openProfilePopup));const _0xa7b86d=document[_0x3b232b(0x303)](_0x3b232b(0x295));_0xa7b86d&&_0xa7b86d['style'][_0x3b232b(0x264)](_0x3b232b(0x14a),_0x3b232b(0x1ea)+escapeHTML(currentUser[_0x3b232b(0x2c1)])+'\x27)');}async function openProfilePopup(){const _0x23739d=_0x4f3a04;triggerElement=document[_0x23739d(0x269)];if(profileNameDisplay)profileNameDisplay[_0x23739d(0xe4)]=currentUser['name'];profilePicUrlInput[_0x23739d(0x2d9)]=currentUser[_0x23739d(0x2c1)]===DEFAULT_PROFILE_PIC_URL?'':currentUser[_0x23739d(0x2c1)],profileErrorMsg[_0x23739d(0x306)][_0x23739d(0x10b)]=_0x23739d(0x246),saveProfileBtn[_0x23739d(0x29c)]=![],profilePopupOverlay[_0x23739d(0x250)][_0x23739d(0x113)](_0x23739d(0x1b7)),profilePicUrlInput[_0x23739d(0xb5)]();}function closeProfilePopup(_0x1b01f=![]){const _0x512ae2=_0x4f3a04;profilePopupOverlay[_0x512ae2(0x250)]['remove']('visible'),!_0x1b01f&&triggerElement&&(triggerElement['focus'](),triggerElement=null);}function getUsernameKey(_0xff1f73){const _0x56c8f4=_0x4f3a04;if(typeof _0xff1f73!==_0x56c8f4(0x25d))return'';const _0x1158fc=_0xff1f73[_0x56c8f4(0x13b)](),_0x36fb8e=new RegExp(_0x56c8f4(0x1cc),'u'),_0x4dc322=_0x1158fc[_0x56c8f4(0x120)](_0x36fb8e),_0x4c0816=_0x4dc322?_0x4dc322[0x1][_0x56c8f4(0x13b)]():_0x1158fc;return _0x4c0816['toLowerCase']();}async function handleProfileSave(_0x108a57){const _0x190e4f=_0x4f3a04;_0x108a57[_0x190e4f(0x198)]();if(!db||!currentUser['id'])return;saveProfileBtn[_0x190e4f(0x29c)]=!![],saveProfileBtn['textContent']=_0x190e4f(0x31d),profileErrorMsg[_0x190e4f(0x306)][_0x190e4f(0x10b)]=_0x190e4f(0x246);let _0x1706ef=profilePicUrlInput['value'][_0x190e4f(0x13b)]()||DEFAULT_PROFILE_PIC_URL;const _0x2c657e=currentUser[_0x190e4f(0x2c1)];if(_0x1706ef===_0x2c657e){closeProfilePopup(),saveProfileBtn[_0x190e4f(0x29c)]=![],saveProfileBtn[_0x190e4f(0xe4)]=_0x190e4f(0x11c);return;}const _0x4c243f=doc(db,_0x190e4f(0xfa),currentUser['id']);try{await setDoc(_0x4c243f,{'profilePictureUrl':_0x1706ef,'userId':currentUser['id']},{'merge':!![]}),currentUser[_0x190e4f(0x2c1)]=_0x1706ef,userProfilesCache[currentUser['id']]&&(userProfilesCache[currentUser['id']][_0x190e4f(0x2c1)]=_0x1706ef),renderUserProfileInDrawer(),closeProfilePopup(),showCustomToast(_0x190e4f(0x34e),_0x190e4f(0xc2));}catch(_0x1f6926){console[_0x190e4f(0x35b)](_0x190e4f(0x114),_0x1f6926),profileErrorMsg[_0x190e4f(0xe4)]=_0x190e4f(0x16d),profileErrorMsg['style']['display']='block';}finally{saveProfileBtn[_0x190e4f(0x29c)]=![],saveProfileBtn['textContent']=_0x190e4f(0x11c);}}function loadUserViews(){const _0x476ea1=_0x4f3a04;try{const _0xe561d8=localStorage['getItem'](VIEW_STORAGE_KEY);userViews=_0xe561d8?JSON[_0x476ea1(0x326)](_0xe561d8):{};}catch(_0x5e5929){console[_0x476ea1(0x35b)](_0x476ea1(0x13f),_0x5e5929),userViews={};}}function saveUserViews(){const _0x32a55=_0x4f3a04;localStorage[_0x32a55(0xff)](VIEW_STORAGE_KEY,JSON[_0x32a55(0x129)](userViews));}async function incrementViewCount(_0x28a4f9){const _0x54c673=_0x4f3a04;if(!db||!_0x28a4f9||userViews[_0x28a4f9]||!currentUser['id'])return;userViews[_0x28a4f9]=!![],saveUserViews();try{const _0x2dfbe7=doc(db,_0x54c673(0x13c),_0x28a4f9);await runTransaction(db,async _0x533133=>{const _0x4013ce=_0x54c673,_0x10c49c=await _0x533133[_0x4013ce(0x1e8)](_0x2dfbe7);if(_0x10c49c[_0x4013ce(0x2b7)]()){const _0x325f16=_0x10c49c['data']()[_0x4013ce(0x13e)]||0x0;_0x533133[_0x4013ce(0x267)](_0x2dfbe7,{'viewCount':_0x325f16+0x1});}else _0x533133[_0x4013ce(0xea)](_0x2dfbe7,{'viewCount':0x1});});}catch(_0x10cae6){console['error'](_0x54c673(0x2eb),_0x10cae6),delete userViews[_0x28a4f9],saveUserViews();}}async function loadViewCount(_0x2929d0){const _0xdd48ed=_0x4f3a04;if(!db)return;const _0x5015ec=doc(db,'views',_0x2929d0);try{onSnapshot(_0x5015ec,_0x9bb16b=>{const _0x10d650=_0x5669,_0x250532=_0x9bb16b['exists']()?_0x9bb16b[_0x10d650(0x148)]()['viewCount']||0x0:0x0,_0x4a04e3=new Intl['NumberFormat'](_0x10d650(0xe1),{'notation':_0x10d650(0x310),'maximumFractionDigits':0x1})[_0x10d650(0x2b1)](_0x250532);document[_0x10d650(0x10d)]('.item-views-badge[data-item-id=\x22'+_0x2929d0+'\x22]')[_0x10d650(0x2f3)](_0x45c815=>{const _0xe30635=_0x10d650;_0x45c815[_0xe30635(0x2ec)](_0xe30635(0x1ac))['textContent']=_0x4a04e3;});if(nowPlayingInfoWrapperEl[_0x10d650(0x306)]['display']!=='none'&&currentPlayingCardId===_0x2929d0){if(nowPlayingViewCountEl)nowPlayingViewCountEl[_0x10d650(0xe4)]=_0x250532[_0x10d650(0x163)](_0x10d650(0xe1));}infoPopupViewCountEl&&currentPopupItem?.['id']===_0x2929d0&&(infoPopupViewCountEl[_0x10d650(0xe4)]=_0x250532[_0x10d650(0x163)](_0x10d650(0xe1)));});}catch(_0x19c7e4){console[_0xdd48ed(0x35b)](_0xdd48ed(0x20d),_0x19c7e4);}}function loadUserVotes(){const _0x1e6e3b=_0x4f3a04;try{const _0x63e2fb=localStorage[_0x1e6e3b(0xc4)](VOTE_STORAGE_KEY);userVotes=_0x63e2fb?JSON[_0x1e6e3b(0x326)](_0x63e2fb):{};}catch(_0x3edf87){console[_0x1e6e3b(0x35b)](_0x1e6e3b(0x25f),_0x3edf87),userVotes={};}}function saveUserVotes(){localStorage['setItem'](VOTE_STORAGE_KEY,JSON['stringify'](userVotes));}function updateVoteUI(_0x2b91d1){const _0x21f9c1=_0x4f3a04,_0x41f12b=userVotes[_0x2b91d1],_0x22ff45=document[_0x21f9c1(0x10d)](_0x21f9c1(0x1a0)+_0x2b91d1+'\x22]'),_0x5797e8=document[_0x21f9c1(0x10d)](_0x21f9c1(0x1fc)+_0x2b91d1+'\x22]');_0x22ff45[_0x21f9c1(0x2f3)](_0x319fba=>{const _0x55eb79=_0x21f9c1;_0x319fba[_0x55eb79(0x250)][_0x55eb79(0x119)](_0x55eb79(0x1db),_0x41f12b==='like');const _0x1e070b=_0x319fba[_0x55eb79(0x2ec)]('.like-icon-outline'),_0x4ffd48=_0x319fba[_0x55eb79(0x2ec)](_0x55eb79(0x118));_0x1e070b&&_0x4ffd48&&(_0x1e070b[_0x55eb79(0x306)]['display']=_0x41f12b===_0x55eb79(0x1f7)?_0x55eb79(0x246):_0x55eb79(0x19e),_0x4ffd48[_0x55eb79(0x306)][_0x55eb79(0x10b)]=_0x41f12b===_0x55eb79(0x1f7)?_0x55eb79(0x19e):_0x55eb79(0x246));}),_0x5797e8[_0x21f9c1(0x2f3)](_0x40ad42=>_0x40ad42[_0x21f9c1(0x250)][_0x21f9c1(0x119)](_0x21f9c1(0x1a8),_0x41f12b===_0x21f9c1(0x152)));}async function loadLikeDislikeCounts(_0x470c1b){const _0x4b4a81=_0x4f3a04;if(!db)return;const _0x48b124=doc(db,_0x4b4a81(0x263),_0x470c1b);try{onSnapshot(_0x48b124,_0x32934b=>{const _0x5e8a2f=_0x4b4a81,_0x6455dd=_0x32934b[_0x5e8a2f(0x2b7)]()?_0x32934b[_0x5e8a2f(0x148)]():{'likeCount':0x0,'dislikeCount':0x0};document[_0x5e8a2f(0x10d)]('[data-item-id=\x22'+_0x470c1b+_0x5e8a2f(0x2d5))[_0x5e8a2f(0x2f3)](_0x5b54fe=>_0x5b54fe[_0x5e8a2f(0xe4)]=_0x6455dd[_0x5e8a2f(0x164)]||0x0),document[_0x5e8a2f(0x10d)](_0x5e8a2f(0x266)+_0x470c1b+_0x5e8a2f(0x324))[_0x5e8a2f(0x2f3)](_0x27e2ee=>_0x27e2ee[_0x5e8a2f(0xe4)]=_0x6455dd[_0x5e8a2f(0x159)]||0x0);});}catch(_0x335b0e){console[_0x4b4a81(0x35b)](_0x4b4a81(0x1d5),_0x335b0e);}updateVoteUI(_0x470c1b);}async function handleVote(_0x2dffe7,_0x4122e6){const _0x34a7b8=_0x4f3a04;if(!db||!currentUser['id'])return;const _0x4072bb=userVotes[_0x2dffe7];_0x4122e6===_0x34a7b8(0x1f7)&&_0x4072bb!==_0x34a7b8(0x1f7)&&document[_0x34a7b8(0x10d)](_0x34a7b8(0x1a0)+_0x2dffe7+'\x22]')[_0x34a7b8(0x2f3)](_0x46c39a=>{const _0x6c044e=_0x34a7b8;_0x46c39a['classList']['add'](_0x6c044e(0x339)),setTimeout(()=>_0x46c39a[_0x6c044e(0x250)][_0x6c044e(0x239)]('animate-like'),0x12c);});_0x4072bb===_0x4122e6?delete userVotes[_0x2dffe7]:userVotes[_0x2dffe7]=_0x4122e6;saveUserVotes(),updateVoteUI(_0x2dffe7);try{const _0x48fc23=doc(db,'likes',_0x2dffe7);await runTransaction(db,async _0x1a6706=>{const _0x4d39a8=_0x34a7b8,_0x492ec5=await _0x1a6706['get'](_0x48fc23);let _0x4dd8ab=0x0,_0x5c8c20=0x0;_0x492ec5['exists']()&&(_0x4dd8ab=_0x492ec5[_0x4d39a8(0x148)]()[_0x4d39a8(0x164)]||0x0,_0x5c8c20=_0x492ec5['data']()['dislikeCount']||0x0);if(_0x4072bb===_0x4122e6){if(_0x4122e6===_0x4d39a8(0x1f7))_0x4dd8ab--;else _0x5c8c20--;}else{if(_0x4072bb===_0x4d39a8(0x1f7))_0x4dd8ab--;if(_0x4072bb===_0x4d39a8(0x152))_0x5c8c20--;if(_0x4122e6===_0x4d39a8(0x1f7))_0x4dd8ab++;else _0x5c8c20++;}const _0x222a74={'likeCount':Math['max'](0x0,_0x4dd8ab),'dislikeCount':Math['max'](0x0,_0x5c8c20)};_0x492ec5['exists']()?_0x1a6706['update'](_0x48fc23,_0x222a74):_0x1a6706[_0x4d39a8(0xea)](_0x48fc23,_0x222a74);});}catch(_0x5a9b72){console[_0x34a7b8(0x35b)](_0x34a7b8(0xa7),_0x5a9b72),_0x4072bb?userVotes[_0x2dffe7]=_0x4072bb:delete userVotes[_0x2dffe7],saveUserVotes(),updateVoteUI(_0x2dffe7),showCustomToast(_0x34a7b8(0x1a4),_0x34a7b8(0x35b));}}function escapeHTML(_0x20ad57){const _0x213873=_0x4f3a04;if(typeof _0x20ad57!==_0x213873(0x25d))return'';return _0x20ad57['replace'](/&/g,_0x213873(0xe5))[_0x213873(0xf8)](/</g,'&lt;')[_0x213873(0xf8)](/>/g,_0x213873(0x335))[_0x213873(0xf8)](/"/g,'&quot;')[_0x213873(0xf8)](/'/g,_0x213873(0x25c));}async function loadAndDisplayComments(_0x2895d5,_0x2e8110=null){const _0x7d9777=_0x4f3a04;if(!db)return;let _0x4e58a6;_0x2e8110?_0x4e58a6=query(collection(db,_0x7d9777(0x33a)),orderBy(_0x7d9777(0xc6),'desc'),limit(_0x2e8110)):_0x4e58a6=query(collection(db,'comments'),orderBy(_0x7d9777(0xc6),'desc'));const _0x23eb00=document[_0x7d9777(0x303)]('viewAllCommentsBtn');onSnapshot(_0x4e58a6,async _0x4d02e8=>{const _0x21429e=_0x7d9777;if(_0x4d02e8[_0x21429e(0x356)]){_0x2895d5[_0x21429e(0xf6)]=_0x21429e(0x21c);if(_0x23eb00)_0x23eb00[_0x21429e(0x306)][_0x21429e(0x10b)]=_0x21429e(0x246);return;}if(_0x23eb00){const _0x57aa72=query(collection(db,_0x21429e(0x33a))),_0x149d86=await getDocs(_0x57aa72);_0x23eb00[_0x21429e(0x306)][_0x21429e(0x10b)]=_0x149d86[_0x21429e(0x1a9)]>0x5?_0x21429e(0x35e):_0x21429e(0x246);}const _0x5b2d0e=_0x4d02e8[_0x21429e(0x2b6)][_0x21429e(0x1a5)](_0x34df93=>({'id':_0x34df93['id'],..._0x34df93[_0x21429e(0x148)]()})),_0x4f6149=[...new Set(_0x5b2d0e['map'](_0x2879cb=>_0x2879cb['userId'])['filter'](_0xe0e3ef=>_0xe0e3ef&&!userProfilesCache[_0xe0e3ef]))];if(_0x4f6149[_0x21429e(0x19b)]>0x0){const _0x337169=_0x4f6149['map'](_0x5c6483=>getDoc(doc(db,_0x21429e(0xfa),_0x5c6483))),_0x52ec1f=await Promise[_0x21429e(0x27b)](_0x337169);_0x52ec1f[_0x21429e(0x2f3)](_0x7cf4b7=>{const _0x6e8f9f=_0x21429e;_0x7cf4b7[_0x6e8f9f(0x2b7)]()&&(userProfilesCache[_0x7cf4b7['id']]=_0x7cf4b7['data']());});}_0x2895d5[_0x21429e(0xf6)]='',_0x5b2d0e[_0x21429e(0x2f3)](_0x4e3a44=>{const _0x2acd75=_0x21429e;let _0x4b5be4=_0x2acd75(0x134),_0x123243=DEFAULT_PROFILE_PIC_URL;const _0x2c8184=userProfilesCache[_0x4e3a44[_0x2acd75(0x20c)]];if(_0x2c8184)_0x4b5be4=_0x2c8184['name'],_0x123243=_0x2c8184[_0x2acd75(0x2c1)];else _0x4e3a44[_0x2acd75(0x12c)]&&(_0x4b5be4=_0x4e3a44['name']);const _0x35f5e9=_0x4e3a44[_0x2acd75(0xc6)]?_0x4e3a44[_0x2acd75(0xc6)][_0x2acd75(0x204)]()[_0x2acd75(0x163)]():_0x2acd75(0x294),_0x1c3642=document['createElement']('div');_0x1c3642['className']=_0x2acd75(0x17c),_0x1c3642[_0x2acd75(0xf6)]='\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<img\x20class=\x22comment-avatar\x22\x20src=\x22'+escapeHTML(_0x123243)+_0x2acd75(0x1c1)+escapeHTML(_0x4b5be4)+'\x27s\x20profile\x20picture\x22\x20onerror=\x22this.onerror=null;\x20this.src=\x27'+DEFAULT_PROFILE_PIC_URL+_0x2acd75(0x18a)+escapeHTML(_0x4b5be4)+_0x2acd75(0x1c7)+_0x35f5e9+_0x2acd75(0x15f)+escapeHTML(_0x4e3a44[_0x2acd75(0x2d4)])+_0x2acd75(0x29a),_0x2895d5[_0x2acd75(0x2dc)](_0x1c3642);});});}function _0x149d(){const _0x340974=['sheetNames','href','00:00','appTitleTextImage','height','getTime','Trending\x20Now','userId','Error\x20getting\x20view\x20count:\x20','clicked-to-play','muted','bottomBannerAdContainer','data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZDRoPSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJjdXJyZW50Q29sb3IiPjxwYXRoIGQ9Ik0xMCA0SDRjLTEuMTEgMC0yIC44OS0yIDJ2MTJhMiAyIDAgMCAwIDIgMmgxNmEyIDIgMCAwIDAgMi0yVjhjMC0xLjExLS45LTItMi0yaC04bC0yLTJ6Ij48L3BhdGg+PC9zdmc+','playerLikeBtn','splashMediaItems','warn','Press\x20back\x20again\x20to\x20exit\x20Movies\x20Hub','volumeHighIcon','randomize','nativePlayerWatermark','isMaintenance','stop','&times;','<p\x20style=\x22text-align:center;\x20color:\x20var(--text-color-muted);\x22>No\x20comments\x20yet.\x20Be\x20the\x20first\x20to\x20comment!</p>','Error\x20fetching\x20user\x20profile\x20on\x20load:','nowPlayingFolder','push','autoplay','substring','Standard','9nTXXQO','\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','drawerMenu','pipBtn','QUALITY_LOW_URL','isLiveTV','menuBtn','FOLDER_TITLE','qualityPopupTitle','websiteLinks','730wqGqKm','section-row','alt','TRUE','isSupported','endsWith','.welcome-toast-icon','Failed\x20to\x20post\x20comment.\x20Please\x20try\x20again.','parentElement','createTextNode','445miBKzl','subfolder','remove','is-playing','currentTime','pictureInPictureElement','documentElement','vpn-required','fullscreenElement','IS_ANIME','Checking...','exitFullscreen','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22see-more-content\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M12\x204l-1.41\x201.41L16.17\x2011H4v2h12.17l-5.58\x205.59L12\x2020l8-8z\x22></path></svg>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span>See\x20More</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>','1151513URwKLj','.history-progress-bar','none','isArray','allCategoriesViewElements','target','section-row-title','usernames','.list-item-card','Events','Low','480p','classList','playsinline','aria-label','Medium','highlighted-item','max','trending-panel-items-track','nowPlayingQuality','12LjrpfQ','fullscreenCloseIcon','var(--accent-color)','\x20is-default-folder-icon','&#039;','string','fullscreenchange','Could\x20not\x20parse\x20user\x20votes\x20from\x20storage:','.\x20Please\x20check\x20stream\x20or\x20try\x20again.','Details','rejected','likes','setProperty','IS_ANIMATION','[data-item-id=\x22','update','\x22\x20loading=\x22lazy\x22\x20onerror=\x22','activeElement','playing','innerHeight','MANIFEST_PARSED','<strong>Note:</strong>\x20This\x20content\x20is\x20currently\x20under\x20maintenance\x20and\x20cannot\x20be\x20played.','upNextItems','unshift','title','Name\x20part\x20must\x20be\x203-20\x20characters\x20long.','submit','role','exitPictureInPicture','</span></div>','live-tv-mode','content','infoPopupBannerImg','then','nowPlayingBadge','all','1080p','folder','onclick','BADGE_TEXT','</span>','contain','\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>','commentsPopupOverlay','true','Mute','#downloadUnavailableCloseBtn\x20.close-icon-text','noopener\x20noreferrer','refreshSectionBtn','loadLikeDislikeCounts','nowPlayingWarning','infoPopupStatusMessage','scrollTop','SUB_FOLDER_TITLE','getPropertyValue','API\x20Error\x20(','619257pfsBRw','commentsSection','33384xKnKDR','maintenance','Just\x20now','commentForm','LIVE_TV_LOGO_URL','entertainmentAppViews','section','tabIndex','</p>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','background','disabled','play','video-mode-contain','Switch\x20to\x20Fit\x20Mode','canPlayType','lottie-player','infoPopupBadge','url','Player:\x20Autoplay\x20prevented\x20or\x20play\x20interrupted:','thumbnail','firebaseConfig','linear-gradient(to\x20right,\x20var(--accent-color)\x20','Username\x20was\x20just\x20taken.\x20Please\x20try\x20a\x20different\x20name.','videoContainer','addEventListener','closeCommentsPopup','entertainmentAppCache_v17_live_tv_folders','\x27;\x20this.alt=\x27Image\x20load\x20error\x27;\x20this.classList.add(\x27is-svg-icon\x27);','\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22thumbnail-wrapper\x22>\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','isSeries','getBoundingClientRect','format','is-live-tv','has','filter','message','docs','exists','paused','Unknown\x20playback\x20error','Firebase\x20config\x20not\x20found\x20in\x20the\x20fetched\x20JSON.','QUALITY_HIGH_URL','substr','json','fullscreenBtn','\x20for\x20config\x20file.','entertainmentAppVotes','profilePictureUrl','history\x20is\x20clear\x20successful','padStart','customPlayerCloseBtn','src','drawerOverlay','googleSheetApiKey','LIVE_TV_FOLDER_TITLE','\x22>\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','Loading\x20data\x20from\x20cache.','active-suggestion','transitionend','nowPlayingRating','71715XNvUzv','<svg\x20class=\x22folder-icon\x22\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M10\x204H4c-1.11\x200-2\x20.89-2\x202v12a2\x202\x200\x200\x200\x202\x202h16a2\x202\x200\x200\x200\x202-2V8c0-1.11-.9-2-2-2h-8l-2-2z\x22></path></svg>','clientX','livetv-','.nav-link[data-section=\x22all\x22]','landscape','commentText','\x22]\x20.like-count','split','website-link-item','log','value','now-playing-additional-badges-container','bottomNav','appendChild','test','No\x20content\x20or\x20website\x20links\x20found\x20in\x20any\x20of\x20the\x20specified\x20sheets.','downloadGeneratingPopupOverlay','suggestionsDropdown','</div>','active','streamUrlFallback','login-btn','unlock','saveProfileBtn','data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZDRoPSIxOCIgcng9IjIiIHJ5PSIyIj48L2NpcmNsZT48Y2lyY2xlIGN4PSI4LjUiIHkyPSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48L3N2Zz4=','nowPlayingWarningText','exitApp','resize','View\x20count\x20transaction\x20failed:\x20','querySelector','No\x20quality\x20options\x20available.','this.onerror=null;\x20this.src=\x27','.list-item-card.clicked-to-play','DOWNLOAD_URL_1080P','no_folder_grid','nowPlayingLikeBtn','forEach','statusText','reason','Name\x20can\x20only\x20contain\x20letters\x20and\x20numbers.','slice','profileNameDisplay','playsInline','emptyStateAnimation','allSettled','hidden','loadedmetadata','logoUrl','welcomeToastCloseBtn','auto','\x20Icon','px)','getElementById','scrollableContentArea','infoPopupRating','style','sectionTitle','<div\x20class=\x22live-badge-card\x22>LIVE</div>','p.empty-message','HTTP\x20error!\x20status:\x20','attachMedia','lock','application/vnd.apple.mpegurl','downloadUnavailableCloseBtn','.welcome-toast-title','compact','\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M15\x203H6c-.83\x200-1.54.5-1.84\x201.22l-3.02\x207.05c-.09.23-.14.47-.14.73v2c0\x201.1.9\x202\x202\x202h6.31l-.95\x204.57-.03.32c0\x20.41-.17-.79-.44\x201.06L9.83\x2023l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4\x200v12h4V3h-4z\x22></path></svg>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22count\x20dislike-count\x22>0</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>','Name\x20must\x20contain\x20at\x20least\x20one\x20capital\x20letter.','<svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M10\x2020v-6h4v6h5v-8h3L12\x203\x202\x2012h3v8z\x22/></svg>','Clear\x20all\x20watch\x20history','user-','nowPlayingDownloadBtn','show','.nav-link[data-section=\x22','Autoplay:\x20No\x20next\x20video\x20found.','inlineVideoPlayer','subFolderTitle','profileErrorMsg','Saving...','LIVE_TV_STREAM_URL','empty-message','.comments-popup-overlay.visible','Could\x20not\x20lock\x20screen\x20to\x20landscape:','_blank','nav-text-wrapper','\x22]\x20.dislike-count','<svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M6\x2019c0\x201.1.9\x202\x202\x202h8c1.1\x200\x202-.9\x202-2V7H6v12zM19\x204h-3.5l-1-1h-5l-1\x201H5v2h14V4z\x22></path></svg>','parse','requestPictureInPicture','drawerUserProfile','</strong>','4FKtkZU','qualityOptionsContainer','</strong>!\x20Ready\x20for\x20some\x20entertainment?','insertAdjacentHTML','entertainmentAppUserId','closest','.mp4','click','requestFullscreen','userNameInput','type','&gt;','\x27:\x20','ArrowRight','content-fade-out','animate-like','comments','scrollHeight','removeItem','Video\x20Error:\x20','inlinePlayerTitleText','.mov','bottom-nav-item','\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<svg\x20class=\x22like-icon-outline\x22\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M1\x2021h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17\x201\x207.59\x207.59C7.22\x207.95\x207\x208.45\x207\x209v10c0\x201.1.9\x202\x202\x202h9c.83\x200\x201.54-.5\x201.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z\x22></path></svg>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<svg\x20class=\x22like-icon-filled\x22\x20style=\x22display:none;\x22\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M1\x2021h4V9H1v12zM23\x2010c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17\x201\x207.58\x207.59C7.22\x207.95\x207\x208.45\x207\x209v10c0\x201.1.9\x202\x202\x202h9c.83\x200\x201.54-.5\x201.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23\x2010z\x22></path></svg>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22count\x20like-count\x22>0</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20class=\x22vote-btn\x20dislike-btn\x22\x20aria-label=\x22Dislike\x22\x20data-item-id=\x22','welcomeToast','list-item-card','offsetHeight','Login\x20transaction\x20failed:\x20','\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22info\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22info-top\x22>','cover','.m3u8','spinning','DOMContentLoaded','inline-flex','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<img\x20src=\x22','TITLE','Profile\x20picture\x20updated\x20successfully!','timeDisplay','change','playerLoader','splash-media-element','Auto','https://i.ibb.co/B2BZ4B2S/file-00000000c38461f885244c3d7088bd8e.png','localeCompare','empty',')\x20for\x20sheet\x20\x27','folder-','Failed\x20to\x20fetch\x20or\x20process\x20sheet:','controls-hidden','error','entertainmentAppUserName','Guest','block','Vote\x20transaction\x20failed:\x20','This\x20name\x20is\x20already\x20taken.\x20Please\x20choose\x20another.','App\x20configuration\x20loaded/updated:','.drawer-nav-container','subfolder-','Error\x20adding\x20comment:\x20','min','infoPopupLikes','video-mode-cover','https://sheets.googleapis.com/v4/spreadsheets/','<div\x20class=\x22thumbnail-overlay\x22><div\x20class=\x22overlay-loader\x22></div></div>','muteBtn','svg','content-visible','focus','volumeMuteIcon','loading','infoText','\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20','Escape','clearHistoryBtn','fulfilled','nowPlayingBadgeText','A\x20critical\x20error\x20occurred\x20during\x20data\x20fetch:\x20','loginOverlay','quality-option-btn','Continue\x20Watching','success','flex','getItem','.app-title','timestamp','LIVE_TV_NAME','qualityOptions','Data\x20saved\x20to\x20cache.','includes','user-logged-in','keydown','<button\x20class=\x22remove-history-btn\x22\x20aria-label=\x22Remove\x20from\x20history\x22>&times;</button>','progressBar','downloadGeneratingTimer','Code:\x20','nowPlayingVoteContainer','Select\x20Your\x20Stream\x20for\x20watching\x20<br><span\x20class=\x22quality-item-name\x22>','errorMessage','toLowerCase','subFolderBannerUrl','loader','values','text/javascript','insertBefore','\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22like-dislike-container\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20class=\x22vote-btn\x20like-btn\x22\x20aria-label=\x22Like\x22\x20data-item-id=\x22','Name\x20cannot\x20be\x20empty.','\x20\x0a\x20\x20\x20\x20\x20\x20\x20\x20','.like-dislike-container','INPUT','width','\x20is-svg-icon','en-US','.list-item-card[data-item-id=\x22','aria-expanded','textContent','&amp;','setAttribute','Let\x27s\x20Go🎥','playbackSpeedBtn','touchend','set','.nav-link.active','poster','toString','children','infoPopupViewCount','suggestion-text','dataset','folder-grid','now','commentsPopupCloseBtn','beforeend','innerHTML','sectionTitleWrapper','replace','HLS\x20playback\x20is\x20not\x20supported\x20in\x20this\x20browser.','users','icon','Category\x20details\x20not\x20loaded.','smooth','IS_TRENDING','setItem','mediaUrl','category','#nextPlayingOverlay','sectionTitleIcon','fitIcon','nowPlayingTitle','orientation','toUpperCase','center','&#127916;','\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20id=\x22commentsSection\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<h3><svg\x20viewBox=\x220\x200\x2024\x2024\x22\x20fill=\x22currentColor\x22\x20width=\x2224\x22\x20height=\x2224\x22><path\x20d=\x22M21.99\x204c0-1.1-.89-2-1.99-2H4c-1.1\x200-2\x20.9-2\x202v12c0\x201.1.9\x202\x202\x202h14l4\x204-.01-18zM18\x2014H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z\x22></path></svg>Public\x20Comments</h3>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<form\x20id=\x22commentForm\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22form-content\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<textarea\x20id=\x22commentText\x22\x20placeholder=\x22Join\x20the\x20discussion...\x22\x20required\x20rows=\x221\x22></textarea>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20type=\x22submit\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22btn-text\x22>Post</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M2.01\x2021L23\x2012\x202.01\x203\x202\x2010l15\x202-15\x202z\x22></path></svg>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22btn-spinner\x22></span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</form>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20id=\x22commentList\x22></div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20id=\x22viewAllCommentsBtn\x22\x20style=\x22display:\x20none;\x22>View\x20All\x20Comments</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20','display','<div\x20class=\x22item-badge\x22>','querySelectorAll','LIVE_TV_WATERMARK_URL','random','<svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M21\x203H3c-1.1\x200-2\x20.9-2\x202v12c0\x201.1.9\x202\x202\x202h5v2h8v-2h5c1.1\x200\x201.99-.9\x201.99-2L23\x205c0-1.1-.9-2-2-2zm0\x2014H3V5h18v12z\x22/></svg>','playPauseBtn','input','add','Error\x20updating\x20profile\x20picture:','Unmute','pushState','</strong>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span>View\x20and\x20edit\x20profile</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20','.like-icon-filled','toggle','find','Drawer\x20or\x20category\x20details\x20not\x20available\x20for\x20populating\x20menu.','Save\x20Changes','isMovie','itemId','Cache\x20expired\x20or\x20invalid.','match','welcomeToastMessage','liveIndicator','\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22comments-popup-overlay\x20popup-overlay\x22\x20id=\x22commentsPopupOverlay\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22comments-popup-content\x20popup-content\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<button\x20class=\x22popup-close-btn\x22\x20id=\x22commentsPopupCloseBtn\x22\x20aria-label=\x22Close\x20Comments\x22>×</button>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<h3>All\x20Public\x20Comments</h3>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20id=\x22fullCommentList\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22loader\x22><div\x20class=\x22loader-spinner\x22></div></div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20','duration','getUTCSeconds','.folder-grid','<h3>Our\x20Website👨‍💻</h3>','indexOf','stringify','WEBSITE_NAME','\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22drawer-user-profile\x22\x20id=\x22drawerUserProfile\x22\x20role=\x22button\x22\x20tabindex=\x220\x22\x20aria-label=\x22Edit\x20your\x20profile\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<img\x20id=\x22drawerProfilePic\x22\x20src=\x22','name','nav-link','createElement','afterbegin','RATING','pictureInPictureEnabled','categoryDetails','LIVE_TV_MAINTENANCE','Anonymous','keys','removeAttribute','dataKey','entries','appContainer','<strong>#Tags</strong>','trim','views','\x0a\x20\x20\x20\x20\x20\x20\x20\x20','viewCount','Could\x20not\x20parse\x20user\x20views\x20from\x20storage:','profilePicUrlInput','item-','REQUIRES_VPN','div','Pause','searchInput','ArrowUp','pop','data','<svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M4\x206H2v14c0\x201.1.9\x202\x202\x202h14v-2H4V6zm16-4H8c-1.1\x200-2\x20.9-2\x202v12c0\x201.1.9\x202\x202\x202h12c1.1\x200\x202-.9\x202-2V4c0-1.1-.9-2-2-2zm-2\x2010h-4v4h-2v-4H8v-2h4V6h2v4h4v2z\x22/></svg>','--current-user-avatar','keypress','suggestion-item','function','nextPlayingOverlay','img','viewAllCommentsBtn','.list-item-card.clicked-to-play,\x20.live-tv-card.clicked-to-play','dislike','getUTCHours','#playerMessageOverlay','.default-spinner','ArrowDown','.remove-history-btn','open','dislikeCount','.\x20Displaying\x20cached\x20data\x20if\x20available.','ratingText','loginButton','featured-item','label','</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<p\x20class=\x22comment-text\x22>','tagName','IS_SERIES','30tUdRCD','toLocaleString','likeCount','&#10060;','399AxiFjk','a.nav-link','aria-hidden','.suggestion-item','downloadQualityOptionsContainer','folderBannerUrl','nowPlayingRatingStars','Failed\x20to\x20update\x20profile\x20picture.\x20Please\x20try\x20again.','&majorDimension=ROWS','\x20/\x20','Greetings!','liveTVFolderTitle','contains','contentListContainer','infoPopupDownloadBtn','.login-box','handleVote','</p>','nextPlayingTitle','LOGO_URL','body','Application\x20Error:','comment-item','<div\x20class=\x22item-views-badge\x22\x20data-item-id=\x22','nowPlayingDislikeBtn','/values/','fitFillBtn','.autoplay-switch','calc(100%\x20-\x20','website-links-container','\x0a\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22maintenance-icon-overlay\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M20.7,7.2C20.6,7.1,20.5,7,20.4,7h-2.1c-0.2-1.3-0.7-2.6-1.5-3.6c0,0-0.1,0-0.1-0.1c-0.6-0.8-1.4-1.4-2.3-1.9\x20c-0.5-0.2-1-0.4-1.5-0.5C12.8,1,12.7,1,12.6,1c-0.4,0-0.8,0.1-1.2,0.2C11,1.3,10.6,1.4,10.2,1.6c-0.9,0.4-1.7,1-2.3,1.8\x20c0,0,0,0-0.1,0.1C7,4.4,6.4,5.7,6.2,7H4.1C4,7,3.9,7.1,3.8,7.2c-0.1,0.1-0.2,0.3-0.1,0.5l1,3.5c0,0.1,0.1,0.2,0.2,0.3\x20c0.1,0.1,0.2,0.1,0.4,0.1h1.4c-0.2,1.2-0.1,2.5,0.4,3.7c0,0,0,0,0,0c0.1,0.3,0.2,0.6,0.4,0.9c0.4,0.8,1,1.5,1.8,2\x20c0.3,0.2,0.6,0.4,1,0.6c0.4,0.2,0.8,0.3,1.2,0.4c0.4,0.1,0.8,0.1,1.2,0c0,0,0-0.1,1.2-0.2c0.7-0.2,1.4-0.6,2-1.1\x20c1.2-1,2-2.4,2.2-4h1.4c0.1,0,0.3-0.1,0.4-0.1c0.1-0.1,0.2-0.2,0.2-0.3l1-3.5C20.9,7.5,20.8,7.3,20.7,7.2z\x20M12,14\x20c-1.1,0-2-0.9-2-2c0-1.1,0.9-2,2-2s2,0.9,2,2C14,13.1,13.1,14,12,14z\x22></path></svg>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span>Maintenance</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20</div>','lastWatched','floor','Error!','loadViewCount','playIcon','\x27;\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22comment-content\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<div\x20class=\x22comment-header\x22>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22comment-author\x22>','mainContentWrapper','Video\x20stream\x20URL\x20missing.','key','stopPropagation','infoPopupSection','No\x20playable\x20video\x20source\x20found\x20for\x20\x22','section-row-items','LOADER_ANIMATION_URL','.dislike-btn','playerDislikeBtn','IS_MOVIE','customVideoControls','volume','preventDefault','cssText','445690EeTbdA','length','DOWNLOAD_URL_720P','seekForwardIndicator','inline-block','ended','.vote-btn.like-btn[data-item-id=\x22','multi','reduce','Open\x20Menu','Could\x20not\x20save\x20your\x20vote.\x20Please\x20try\x20again.','map','status','generatingAdContainer','voted-dislike','size','--player-wrapper-active-height','nowPlayingLikes','.view-count','#4CAF50','checked','infoPopupRatingText','badgeTexts','<strong>Note:</strong>\x20This\x20content\x20requires\x20a\x20secure\x20connection.\x20Please\x20use\x20a\x20VPN.','Error\x20parsing\x20cache:','left','contextmenu','span','isValid','visible','https://i.ibb.co/nsrvqTV9/profile.gif','infoPopupTitle','className','.search-container','button','<h1\x20style=\x22color:\x20var(--highlight-color);\x22>Critical\x20Error\x20🌐</h1><p>','trending-panel-title','iconUrl','<div\x20class=\x22playing-indicator\x22><div\x20class=\x22bar\x22></div><div\x20class=\x22bar\x22></div><div\x20class=\x22bar\x22></div><div\x20class=\x22bar\x22></div></div>','\x22\x20alt=\x22','fullscreenOpenIcon','!A:AG','--header-height','infoPopupCloseBtn','loaderAnimationUrl','</span>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20<span\x20class=\x22comment-date\x22>','watermarkLogoUrl','Your\x20comment\x20has\x20been\x20posted\x20successfully.<br>Movies\x20Hub!','infoPopupViews','Refresh\x20and\x20Go\x20Home','^(.*?)([\x5cu{1F600}-\x5cu{1F64F}\x5cu{1F300}-\x5cu{1F5FF}\x5cu{1F680}-\x5cu{1F6FF}\x5cu{1F1E0}-\x5cu{1F1FF}\x5cu{2600}-\x5cu{26FF}\x5cu{2700}-\x5cu{27BF}]{0,2})$','Enter\x20Fullscreen','Content','destroy','some','Video\x20Title','borderLeftColor','lastError','//www.highperformanceformat.com/8b5339b257d8fca6e4a1789a656216bf/invoke.js','Error\x20getting\x20like/dislike\x20counts:\x20','Enter','profileEditForm','#downloadUnavailableCloseBtn\x20.close-icon-timer','playbackRate','LIVE_TV_LOADER_URL','voted-like','infoPopupVoteContainer','requiresVpn','High','3574792QCTmVd','upNextContainer','downloadOptions','--title-bar-height','splash-media-container','sort','folderTitle','?key=','is-folder','get','nowPlayingAdditionalBadgesContainer','url(\x27','load','PiP\x20Error:','<div\x20class=\x22item-rating-badge\x22>⭐\x20<span\x20class=\x22rating-text\x22>','nowPlayingFolderText','loop','Application\x20configuration\x20for\x20Google\x20Sheets\x20is\x20missing\x20or\x20invalid.','.custom-loader-img','Live\x20TV\x20Channels','nowPlayingRatingText','inlinePlayerWrapper','pause','nowPlayingSection','like','#customVideoControls','Could\x20not\x20load\x20configuration\x20file.\x20Error:\x20','WATERMARK_LOGO_URL','popstate','.vote-btn.dislike-btn[data-item-id=\x22','config','changedTouches','info','An\x20error\x20occurred.\x20Please\x20try\x20again.','\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20','Welcome\x20back,\x20<strong>','<div\x20class=\x22title\x22\x20title=\x22','toDate'];_0x149d=function(){return _0x340974;};return _0x149d();}function closeCommentsPopup(_0x2a8397=![]){const _0x909746=_0x4f3a04,_0x37acdd=document[_0x909746(0x303)](_0x909746(0x283));if(!_0x37acdd)return;_0x37acdd[_0x909746(0x250)][_0x909746(0x239)]('visible'),_0x37acdd[_0x909746(0x2aa)](_0x909746(0x2cc),()=>{const _0x1cb7d2=_0x909746;_0x37acdd[_0x1cb7d2(0x239)](),!_0x2a8397&&triggerElement&&(triggerElement['focus'](),triggerElement=null);},{'once':!![]});}function openCommentsPopup(){const _0x14a601=_0x4f3a04;triggerElement=document[_0x14a601(0x269)];const _0x5ac665=_0x14a601(0x123);document[_0x14a601(0x17a)][_0x14a601(0x32d)]('beforeend',_0x5ac665);const _0x2cb976=document[_0x14a601(0x303)](_0x14a601(0x283)),_0x5a52b2=document[_0x14a601(0x303)](_0x14a601(0xf4));loadAndDisplayComments(document['getElementById']('fullCommentList')),setTimeout(()=>{const _0x3c93dc=_0x14a601;_0x2cb976[_0x3c93dc(0x250)][_0x3c93dc(0x113)]('visible'),_0x5a52b2[_0x3c93dc(0xb5)]();},0xa),_0x5a52b2[_0x14a601(0x2aa)](_0x14a601(0x331),()=>closeCommentsPopup()),_0x2cb976[_0x14a601(0x2aa)]('click',_0x2e3aeb=>{const _0xf0fcab=_0x14a601;if(_0x2e3aeb[_0xf0fcab(0x249)]===_0x2cb976)closeCommentsPopup();});}function renderAndAttachCommentsSection(_0x5d2577){const _0x495212=_0x4f3a04;if(document[_0x495212(0x303)](_0x495212(0x291))){document[_0x495212(0x303)](_0x495212(0x291))[_0x495212(0x306)][_0x495212(0x10b)]='block';return;};const _0x51af4a=_0x495212(0x10a);_0x5d2577['insertAdjacentHTML'](_0x495212(0xf5),_0x51af4a);const _0x529d9c=document[_0x495212(0x303)](_0x495212(0x295));_0x529d9c&&_0x529d9c[_0x495212(0x306)][_0x495212(0x264)](_0x495212(0x14a),_0x495212(0x1ea)+escapeHTML(currentUser[_0x495212(0x2c1)])+'\x27)');const _0x111c96=document[_0x495212(0x303)](_0x495212(0x295)),_0xa4bf9e=document[_0x495212(0x303)](_0x495212(0x2d4)),_0x347dc7=_0x111c96[_0x495212(0x2ec)](_0x495212(0x1bc)),_0x3a7b57=document['getElementById'](_0x495212(0x150));_0xa4bf9e[_0x495212(0x2aa)](_0x495212(0x112),()=>{const _0x3fdd45=_0x495212;_0xa4bf9e[_0x3fdd45(0x306)][_0x3fdd45(0x209)]=_0x3fdd45(0x300),_0xa4bf9e[_0x3fdd45(0x306)][_0x3fdd45(0x209)]=_0xa4bf9e[_0x3fdd45(0x33b)]+'px';}),_0x111c96[_0x495212(0x2aa)]('submit',async _0x2abfb2=>{const _0x41676f=_0x495212;_0x2abfb2[_0x41676f(0x198)]();if(!db){showCustomToast('Comments\x20feature\x20not\x20ready.\x20Please\x20wait.',_0x41676f(0x35b));return;}const _0x39c9c7=currentUser['name'],_0x1dff64=currentUser['id'],_0x49bb61=_0xa4bf9e[_0x41676f(0x2d9)][_0x41676f(0x13b)]();if(_0x39c9c7&&_0x49bb61&&_0x1dff64){_0x347dc7['disabled']=!![],_0x347dc7[_0x41676f(0x250)]['add']('loading');try{await addDoc(collection(db,_0x41676f(0x33a)),{'name':_0x39c9c7,'commentText':_0x49bb61,'timestamp':serverTimestamp(),'userId':_0x1dff64}),_0xa4bf9e[_0x41676f(0x2d9)]='',_0xa4bf9e[_0x41676f(0x306)][_0x41676f(0x209)]=_0x41676f(0x300),showCustomToast(_0x41676f(0x1c9),_0x41676f(0xc2),0x1388);}catch(_0x22097e){console[_0x41676f(0x35b)](_0x41676f(0xac),_0x22097e),showCustomToast(_0x41676f(0x234),'error');}finally{_0x347dc7['disabled']=![],_0x347dc7['classList']['remove'](_0x41676f(0xb7));}}else showCustomToast('Please\x20write\x20a\x20comment.',_0x41676f(0x35b));}),_0x3a7b57[_0x495212(0x2aa)]('click',openCommentsPopup),loadAndDisplayComments(document['getElementById']('commentList'),0x5);}window[_0x4f3a04(0x176)]=handleVote,window[_0x4f3a04(0x289)]=loadLikeDislikeCounts,window[_0x4f3a04(0x188)]=loadViewCount,window['renderAndAttachCommentsSection']=renderAndAttachCommentsSection,window['openCommentsPopup']=openCommentsPopup,window[_0x4f3a04(0x2ab)]=closeCommentsPopup;function shuffleArray(_0x5a1a2e){const _0x299909=_0x4f3a04;let _0x51fd6e=_0x5a1a2e[_0x299909(0x19b)],_0x595bc4;while(_0x51fd6e!=0x0){_0x595bc4=Math[_0x299909(0x186)](Math[_0x299909(0x10f)]()*_0x51fd6e),_0x51fd6e--,[_0x5a1a2e[_0x51fd6e],_0x5a1a2e[_0x595bc4]]=[_0x5a1a2e[_0x595bc4],_0x5a1a2e[_0x51fd6e]];}return _0x5a1a2e;}function triggerHapticFeedback(_0x46e102=0x32){}function loadDataFromCache(){const _0xd6365e=_0x4f3a04,_0x2e10dc=localStorage['getItem'](APP_CACHE_KEY);if(_0x2e10dc)try{const _0x3976d1=JSON['parse'](_0x2e10dc);if(_0x3976d1&&_0x3976d1[_0xd6365e(0xc6)]&&Date[_0xd6365e(0xf3)]()-_0x3976d1[_0xd6365e(0xc6)]<CACHE_EXPIRY_DURATION)return console['log'](_0xd6365e(0x2ca)),appConfig=_0x3976d1[_0xd6365e(0x1fd)]||{},allContentData=_0x3976d1[_0xd6365e(0x148)]||[],allCategoriesInfoText=_0x3976d1[_0xd6365e(0xb8)]||'',websiteLinks=_0x3976d1[_0xd6365e(0x22c)]||[],headerImageUrl=_0x3976d1['headerImageUrl']||null,splashMediaItems=_0x3976d1[_0xd6365e(0x213)]||[],!![];else console['log'](_0xd6365e(0x11f)),localStorage[_0xd6365e(0x33c)](APP_CACHE_KEY);}catch(_0x2c7ecd){console[_0xd6365e(0x35b)](_0xd6365e(0x1b2),_0x2c7ecd),localStorage[_0xd6365e(0x33c)](APP_CACHE_KEY);}return![];}function saveDataToCache(){const _0x37fe56=_0x4f3a04,_0x37404c={'timestamp':Date['now'](),'config':appConfig,'data':allContentData,'infoText':allCategoriesInfoText,'websiteLinks':websiteLinks,'headerImageUrl':headerImageUrl,'splashMediaItems':splashMediaItems};try{localStorage[_0x37fe56(0xff)](APP_CACHE_KEY,JSON[_0x37fe56(0x129)](_0x37404c)),console[_0x37fe56(0x2d8)](_0x37fe56(0xc9));}catch(_0x4c0db7){console[_0x37fe56(0x35b)]('Error\x20saving\x20to\x20cache:',_0x4c0db7);}}function loadWatchHistory(){const _0xb079a6=_0x4f3a04,_0x577af2=localStorage[_0xb079a6(0xc4)](WATCH_HISTORY_KEY);_0x577af2&&(watchHistory=JSON[_0xb079a6(0x326)](_0x577af2));}function saveWatchHistory(){const _0xfd841f=_0x4f3a04;localStorage['setItem'](WATCH_HISTORY_KEY,JSON[_0xfd841f(0x129)](watchHistory));}function updateWatchHistory(_0x204780,_0xfa4894,_0x2bb50d){if(_0x204780&&_0x2bb50d>0x0&&_0xfa4894>0xa&&_0xfa4894/_0x2bb50d<0.95)watchHistory[_0x204780]={'currentTime':_0xfa4894,'duration':_0x2bb50d,'lastWatched':Date['now']()};else _0x204780&&watchHistory[_0x204780]&&delete watchHistory[_0x204780];saveWatchHistory();}async function fetchAppConfiguration(){const _0x182e12=_0x4f3a04;if(isFetchingConfig)return![];isFetchingConfig=!![];try{const _0x4aa8d0=await fetch(CONFIG_FILE_URL);if(!_0x4aa8d0['ok'])throw new Error(_0x182e12(0x30a)+_0x4aa8d0['status']+_0x182e12(0x2bf));const _0x33ff0e=await _0x4aa8d0['json']();appConfig={...appConfig,..._0x33ff0e},console['log'](_0x182e12(0xa9),appConfig);if(appConfig[_0x182e12(0x2a6)]&&!db)firebaseApp=initializeApp(appConfig[_0x182e12(0x2a6)]),db=getFirestore(firebaseApp);else!appConfig[_0x182e12(0x2a6)]&&console[_0x182e12(0x35b)](_0x182e12(0x2ba));return saveDataToCache(),!![];}catch(_0xc4516d){return console['error']('Failed\x20to\x20load\x20app\x20configuration:',_0xc4516d),!appConfig[_0x182e12(0x2c7)]&&showCriticalError(_0x182e12(0x1f9)+_0xc4516d[_0x182e12(0x2b5)]),![];}finally{isFetchingConfig=![];}}function showCriticalError(_0x1c7a51){const _0x4f7ffd=_0x4f3a04;if(loginOverlayEl&&!loginOverlayEl[_0x4f7ffd(0x250)][_0x4f7ffd(0x172)](_0x4f7ffd(0x2fc))){const _0xe91cb0=loginOverlayEl[_0x4f7ffd(0x2ec)](_0x4f7ffd(0x175));_0xe91cb0&&(_0xe91cb0['innerHTML']=_0x4f7ffd(0x1bd)+_0x1c7a51+_0x4f7ffd(0x177));}else showError(_0x1c7a51);if(loginButtonEl)loginButtonEl[_0x4f7ffd(0x29c)]=!![];}function validateUsername(_0x14ed07){const _0x610c45=_0x4f3a04,_0x5471b3=_0x14ed07[_0x610c45(0x13b)]();if(_0x5471b3==='')return{'isValid':![],'message':_0x610c45(0xdb)};const _0x40e18f=new RegExp('^(.*?)([\x5cu{1F600}-\x5cu{1F64F}\x5cu{1F300}-\x5cu{1F5FF}\x5cu{1F680}-\x5cu{1F6FF}\x5cu{1F1E0}-\x5cu{1F1FF}\x5cu{2600}-\x5cu{26FF}\x5cu{2700}-\x5cu{27BF}]{0,2})$','u'),_0x328779=_0x5471b3[_0x610c45(0x120)](_0x40e18f),_0x2106ac=_0x328779?_0x328779[0x1]['trim']():_0x5471b3;if(_0x2106ac[_0x610c45(0x19b)]<0x3||_0x2106ac[_0x610c45(0x19b)]>0x14)return{'isValid':![],'message':_0x610c45(0x271)};if(!/[A-Z]/[_0x610c45(0x2dd)](_0x2106ac))return{'isValid':![],'message':_0x610c45(0x312)};if(!/^[a-zA-Z0-9]+$/[_0x610c45(0x2dd)](_0x2106ac))return{'isValid':![],'message':_0x610c45(0x2f6)};return{'isValid':!![],'message':null};}async function handleLogin(){const _0x599aac=_0x4f3a04;if(!db){loginErrorMsgEl['textContent']='Database\x20connection\x20not\x20ready.\x20Please\x20wait.',loginErrorMsgEl[_0x599aac(0x306)]['display']=_0x599aac(0x35e);return;}loginButtonEl[_0x599aac(0x29c)]=!![],loginButtonEl[_0x599aac(0xe4)]=_0x599aac(0x241);const _0x3801b8=userNameInputEl[_0x599aac(0x2d9)],_0xc57242=validateUsername(_0x3801b8);if(!_0xc57242['isValid']){loginErrorMsgEl[_0x599aac(0xe4)]=_0xc57242['message'],loginErrorMsgEl[_0x599aac(0x306)][_0x599aac(0x10b)]='block',loginButtonEl[_0x599aac(0x29c)]=![],loginButtonEl['textContent']=_0x599aac(0xe7);return;}const _0x568fbe=_0x3801b8[_0x599aac(0x13b)](),_0x3650e2=getUsernameKey(_0x568fbe),_0x4bf001=doc(db,_0x599aac(0x24b),_0x3650e2);try{const _0x5604aa=await getDoc(_0x4bf001);if(_0x5604aa['exists']()){loginErrorMsgEl[_0x599aac(0xe4)]=_0x599aac(0xa8),loginErrorMsgEl[_0x599aac(0x306)][_0x599aac(0x10b)]='block',loginButtonEl[_0x599aac(0x29c)]=![],loginButtonEl['textContent']=_0x599aac(0xe7);return;}loginButtonEl[_0x599aac(0xe4)]='Setting\x20up...';const _0x31ecee=_0x599aac(0x315)+Date[_0x599aac(0xf3)]()+'-'+Math[_0x599aac(0x10f)]()['toString'](0x24)[_0x599aac(0x2bc)](0x2,0x9),_0xf88293=doc(db,_0x599aac(0xfa),_0x31ecee);await runTransaction(db,async _0x384d73=>{const _0x2d68b1=_0x599aac,_0x5dbada=await _0x384d73['get'](_0x4bf001);if(_0x5dbada[_0x2d68b1(0x2b7)]())throw new Error(_0x2d68b1(0x2a8));_0x384d73['set'](_0xf88293,{'userId':_0x31ecee,'name':_0x568fbe,'profilePictureUrl':DEFAULT_PROFILE_PIC_URL,'createdAt':serverTimestamp()}),_0x384d73['set'](_0x4bf001,{'userId':_0x31ecee});}),localStorage['setItem'](USER_NAME_KEY,_0x568fbe),localStorage[_0x599aac(0xff)](USER_ID_KEY,_0x31ecee),currentUser={'id':_0x31ecee,'name':_0x568fbe,'profilePictureUrl':DEFAULT_PROFILE_PIC_URL},userProfilesCache[_0x31ecee]={...currentUser},proceedToApp();}catch(_0x5b78e6){console[_0x599aac(0x35b)](_0x599aac(0x345),_0x5b78e6),loginErrorMsgEl[_0x599aac(0xe4)]=_0x5b78e6[_0x599aac(0x2b5)]||_0x599aac(0x200),loginErrorMsgEl['style'][_0x599aac(0x10b)]=_0x599aac(0x35e),loginButtonEl['disabled']=![],loginButtonEl[_0x599aac(0xe4)]=_0x599aac(0xe7);}}async function proceedToApp(){const _0x3a7eff=_0x4f3a04;document[_0x3a7eff(0x17a)][_0x3a7eff(0x250)][_0x3a7eff(0x113)](_0x3a7eff(0xcb)),loginOverlayEl['classList'][_0x3a7eff(0x113)](_0x3a7eff(0x2fc)),appContainerEl[_0x3a7eff(0x250)]['add']('visible');if(menuBtn)menuBtn[_0x3a7eff(0xb5)]();loginOverlayEl[_0x3a7eff(0x2aa)](_0x3a7eff(0x2cc),()=>{const _0x256b5e=_0x3a7eff;loginOverlayEl[_0x256b5e(0x306)][_0x256b5e(0x10b)]=_0x256b5e(0x246);},{'once':!![]}),showWelcomeToast(),initializeAppUI(),allContentData[_0x3a7eff(0x19b)]===0x0&&!isFetchingSheet?await fetchDataFromSheet():renderContent();}loginButtonEl&&loginButtonEl[_0x4f3a04(0x2aa)]('click',handleLogin);userNameInputEl&&(userNameInputEl[_0x4f3a04(0x2aa)](_0x4f3a04(0x14b),_0x4dca86=>{const _0x17c237=_0x4f3a04;_0x4dca86[_0x17c237(0x18d)]===_0x17c237(0x1d6)&&!loginButtonEl['disabled']&&handleLogin();}),userNameInputEl[_0x4f3a04(0x2aa)](_0x4f3a04(0x112),()=>{const _0x492746=_0x4f3a04,_0x462be5=validateUsername(userNameInputEl['value']);_0x462be5[_0x492746(0x1b6)]?(loginErrorMsgEl[_0x492746(0x306)]['display']=_0x492746(0x246),loginButtonEl[_0x492746(0x29c)]=![]):(loginErrorMsgEl['textContent']=_0x462be5[_0x492746(0x2b5)],loginErrorMsgEl[_0x492746(0x306)][_0x492746(0x10b)]=_0x492746(0x35e),loginButtonEl[_0x492746(0x29c)]=!![],loginErrorMsgEl[_0x492746(0xf1)][_0x492746(0x1d3)]=_0x462be5['message']);}));if(profilePopupCloseBtn)profilePopupCloseBtn['addEventListener'](_0x4f3a04(0x331),()=>closeProfilePopup());if(profilePopupOverlay)profilePopupOverlay[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),_0x468493=>{if(_0x468493['target']===profilePopupOverlay)closeProfilePopup();});if(profileEditForm)profileEditForm['addEventListener'](_0x4f3a04(0x272),handleProfileSave);menuBtn[_0x4f3a04(0x2aa)]('click',toggleDrawer),drawerOverlayEl[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),toggleDrawer),customPlayerCloseBtn[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),()=>closeInlineVideoPlayer(![])),document[_0x4f3a04(0x2aa)](_0x4f3a04(0xcc),_0x186fef=>{const _0x56139f=_0x4f3a04;if(inlinePlayerWrapper[_0x56139f(0x250)][_0x56139f(0x172)](_0x56139f(0x2e2))){if(_0x186fef[_0x56139f(0x18d)]==='\x20'||_0x186fef['key']==='k')_0x186fef[_0x56139f(0x198)](),togglePlayPause();else{if(_0x186fef[_0x56139f(0x18d)]==='f')_0x186fef['preventDefault'](),toggleFullscreen();else{if(_0x186fef[_0x56139f(0x18d)]==='m')_0x186fef[_0x56139f(0x198)](),toggleMute();else{if(_0x186fef[_0x56139f(0x18d)]==='p')_0x186fef[_0x56139f(0x198)](),togglePip();else{if(_0x186fef['key']===_0x56139f(0x337)&&!isCurrentPlayerLiveTV)nativeVideoPlayer['currentTime']+=0x5;else _0x186fef['key']==='ArrowLeft'&&!isCurrentPlayerLiveTV&&(nativeVideoPlayer['currentTime']-=0x5);}}}}}_0x186fef[_0x56139f(0x18d)]===_0x56139f(0xba)&&(_0x186fef[_0x56139f(0x198)](),handleBackPress());});function togglePlayPause(){const _0x738630=_0x4f3a04;nativeVideoPlayer['paused']||nativeVideoPlayer[_0x738630(0x19f)]?nativeVideoPlayer['play']():nativeVideoPlayer[_0x738630(0x1f5)]();}function handleDoubleTap(_0x31a901){const _0x2dcffa=_0x4f3a04;if(_0x31a901['target']['closest'](_0x2dcffa(0x1f8))||_0x31a901[_0x2dcffa(0x249)][_0x2dcffa(0x32f)](_0x2dcffa(0x154))||_0x31a901[_0x2dcffa(0x249)]['closest'](_0x2dcffa(0x102)))return;_0x31a901[_0x2dcffa(0x198)]();const _0x55c62a=new Date()[_0x2dcffa(0x20a)](),_0x49741a=_0x55c62a-lastTap;clearTimeout(singleTapTimeout);if(_0x49741a<0x12c&&_0x49741a>0x0){lastTap=0x0;if(isCurrentPlayerLiveTV)return;if(playerLoader[_0x2dcffa(0x250)][_0x2dcffa(0x172)]('visible'))return;const _0x5f1d83=videoContainer[_0x2dcffa(0x2b0)](),_0x2bec12=_0x31a901[_0x2dcffa(0x1fe)][0x0][_0x2dcffa(0x2d0)]-_0x5f1d83[_0x2dcffa(0x1b3)];let _0x33be4a;_0x2bec12>_0x5f1d83[_0x2dcffa(0xdf)]/0x2?(nativeVideoPlayer[_0x2dcffa(0x23b)]=Math[_0x2dcffa(0xad)](nativeVideoPlayer[_0x2dcffa(0x124)],nativeVideoPlayer[_0x2dcffa(0x23b)]+0xa),_0x33be4a=seekForwardIndicator):(nativeVideoPlayer['currentTime']=Math[_0x2dcffa(0x255)](0x0,nativeVideoPlayer['currentTime']-0xa),_0x33be4a=seekBackwardIndicator),_0x33be4a['classList'][_0x2dcffa(0x113)](_0x2dcffa(0x317)),setTimeout(()=>_0x33be4a[_0x2dcffa(0x250)][_0x2dcffa(0x239)](_0x2dcffa(0x317)),0x1f4);}else singleTapTimeout=setTimeout(()=>{const _0x6dadcf=_0x2dcffa;if(videoContainer['classList'][_0x6dadcf(0x172)](_0x6dadcf(0x35a)))handleControlsVisibility();else!nativeVideoPlayer[_0x6dadcf(0x2b8)]&&videoContainer[_0x6dadcf(0x250)][_0x6dadcf(0x113)](_0x6dadcf(0x35a));},0x12c);lastTap=_0x55c62a;}function updatePlayPauseIcon(){const _0x4bba10=_0x4f3a04;nativeVideoPlayer['paused']||nativeVideoPlayer[_0x4bba10(0x19f)]?(playIcon['style']['display']=_0x4bba10(0x35e),pauseIcon[_0x4bba10(0x306)]['display']=_0x4bba10(0x246),playPauseBtn['setAttribute'](_0x4bba10(0x252),'Play')):(playIcon['style'][_0x4bba10(0x10b)]='none',pauseIcon[_0x4bba10(0x306)][_0x4bba10(0x10b)]='block',playPauseBtn[_0x4bba10(0xe6)](_0x4bba10(0x252),_0x4bba10(0x144)));}function updateProgress(){const _0xfd2cf=_0x4f3a04;if(isCurrentPlayerLiveTV||isNaN(nativeVideoPlayer[_0xfd2cf(0x124)]))return;progressBar[_0xfd2cf(0x2d9)]=nativeVideoPlayer['currentTime'];const _0x928521=nativeVideoPlayer[_0xfd2cf(0x23b)]/nativeVideoPlayer[_0xfd2cf(0x124)]*0x64;progressBar[_0xfd2cf(0x306)][_0xfd2cf(0x29b)]=_0xfd2cf(0x2a7)+_0x928521+'%,\x20rgba(255,\x20255,\x20255,\x200.3)\x20'+_0x928521+'%)';const _0x3d725a=formatTime(nativeVideoPlayer[_0xfd2cf(0x23b)]),_0x240697=formatTime(nativeVideoPlayer[_0xfd2cf(0x124)]);timeDisplay[_0xfd2cf(0xe4)]=_0x3d725a+_0xfd2cf(0x16f)+_0x240697,updateWatchHistory(currentPlayingCardId,nativeVideoPlayer[_0xfd2cf(0x23b)],nativeVideoPlayer[_0xfd2cf(0x124)]),nativeVideoPlayer[_0xfd2cf(0x23b)]>=0x5&&!userViews[currentPlayingCardId]&&incrementViewCount(currentPlayingCardId),isAutoplayEnabled&&!nextPlayNotificationShown&&nativeVideoPlayer['duration']-nativeVideoPlayer[_0xfd2cf(0x23b)]<=0x5&&showNextPlayNotification();}function setProgress(){const _0x4ac17d=_0x4f3a04;nativeVideoPlayer[_0x4ac17d(0x23b)]=progressBar[_0x4ac17d(0x2d9)];}function formatTime(_0x223cc2){const _0x342225=_0x4f3a04;if(isNaN(_0x223cc2))return _0x342225(0x207);const _0x194c50=new Date(_0x223cc2*0x3e8),_0x35240a=_0x194c50[_0x342225(0x153)](),_0x1e3a36=_0x194c50['getUTCMinutes'](),_0x17caec=_0x194c50[_0x342225(0x125)]()[_0x342225(0xed)]()['padStart'](0x2,'0');if(_0x35240a)return _0x35240a+':'+_0x1e3a36['toString']()[_0x342225(0x2c3)](0x2,'0')+':'+_0x17caec;return _0x1e3a36+':'+_0x17caec;}function toggleMute(){const _0x3e35e5=_0x4f3a04;nativeVideoPlayer[_0x3e35e5(0x20f)]=!nativeVideoPlayer['muted'];}function updateVolumeIcon(){const _0x52b4dc=_0x4f3a04;nativeVideoPlayer['muted']||nativeVideoPlayer['volume']===0x0?(volumeMuteIcon[_0x52b4dc(0x306)][_0x52b4dc(0x10b)]=_0x52b4dc(0x35e),volumeHighIcon[_0x52b4dc(0x306)][_0x52b4dc(0x10b)]=_0x52b4dc(0x246),muteBtn['setAttribute'](_0x52b4dc(0x252),_0x52b4dc(0x115))):(volumeMuteIcon[_0x52b4dc(0x306)][_0x52b4dc(0x10b)]='none',volumeHighIcon[_0x52b4dc(0x306)]['display']=_0x52b4dc(0x35e),muteBtn[_0x52b4dc(0xe6)](_0x52b4dc(0x252),_0x52b4dc(0x285)));}function handleVolumeChange(){const _0x12fe08=_0x4f3a04;nativeVideoPlayer[_0x12fe08(0x197)]=volumeSlider[_0x12fe08(0x2d9)],nativeVideoPlayer['muted']=volumeSlider['value']==0x0;}function toggleFitFill(){const _0x457e48=_0x4f3a04;currentScreenFitMode==='contain'?(currentScreenFitMode=_0x457e48(0x347),nativeVideoPlayer[_0x457e48(0x250)][_0x457e48(0x239)](_0x457e48(0x29e)),nativeVideoPlayer[_0x457e48(0x250)][_0x457e48(0x113)](_0x457e48(0xaf)),fillIcon['style']['display']=_0x457e48(0x246),fitIcon[_0x457e48(0x306)][_0x457e48(0x10b)]=_0x457e48(0x35e),fitFillBtn[_0x457e48(0xe6)](_0x457e48(0x252),_0x457e48(0x29f))):(currentScreenFitMode='contain',nativeVideoPlayer[_0x457e48(0x250)][_0x457e48(0x239)](_0x457e48(0xaf)),nativeVideoPlayer[_0x457e48(0x250)][_0x457e48(0x113)](_0x457e48(0x29e)),fillIcon[_0x457e48(0x306)][_0x457e48(0x10b)]=_0x457e48(0x35e),fitIcon[_0x457e48(0x306)]['display']=_0x457e48(0x246),fitFillBtn[_0x457e48(0xe6)]('aria-label',_0x457e48(0x29f)));}async function toggleFullscreen(){const _0x43e2fe=_0x4f3a04;if(!document[_0x43e2fe(0x23f)]){await videoContainer[_0x43e2fe(0x332)]();try{screen[_0x43e2fe(0x106)]&&typeof screen[_0x43e2fe(0x106)][_0x43e2fe(0x30c)]==='function'&&await screen[_0x43e2fe(0x106)][_0x43e2fe(0x30c)](_0x43e2fe(0x2d3));}catch(_0x4b8311){console[_0x43e2fe(0x214)](_0x43e2fe(0x321),_0x4b8311);}}else screen[_0x43e2fe(0x106)]&&typeof screen[_0x43e2fe(0x106)][_0x43e2fe(0x2e5)]===_0x43e2fe(0x14d)&&screen[_0x43e2fe(0x106)][_0x43e2fe(0x2e5)](),await document[_0x43e2fe(0x242)]();}function updateFullscreenIcon(){const _0x2852b7=_0x4f3a04;!document[_0x2852b7(0x23f)]?(fullscreenOpenIcon[_0x2852b7(0x306)][_0x2852b7(0x10b)]=_0x2852b7(0x35e),fullscreenCloseIcon[_0x2852b7(0x306)]['display']=_0x2852b7(0x246),fullscreenBtn[_0x2852b7(0xe6)]('aria-label',_0x2852b7(0x1cd))):(fullscreenOpenIcon[_0x2852b7(0x306)][_0x2852b7(0x10b)]='none',fullscreenCloseIcon[_0x2852b7(0x306)][_0x2852b7(0x10b)]=_0x2852b7(0x35e),fullscreenBtn[_0x2852b7(0xe6)](_0x2852b7(0x252),'Exit\x20Fullscreen'));}async function togglePip(){const _0x3439df=_0x4f3a04;if(!document['pictureInPictureEnabled'])return;try{document[_0x3439df(0x23c)]?await document[_0x3439df(0x274)]():await nativeVideoPlayer[_0x3439df(0x327)]();}catch(_0x3f1008){console['error'](_0x3439df(0x1ec),_0x3f1008);}}function togglePlaybackSpeed(){const _0x2a29b3=_0x4f3a04;nativeVideoPlayer['playbackRate']===0x1?(nativeVideoPlayer[_0x2a29b3(0x1d9)]=0x2,playbackSpeedBtn[_0x2a29b3(0xe4)]='2x'):(nativeVideoPlayer[_0x2a29b3(0x1d9)]=0x1,playbackSpeedBtn[_0x2a29b3(0xe4)]='1x');}function handleControlsVisibility(){const _0x56b69a=_0x4f3a04;clearTimeout(inactivityTimeout),videoContainer[_0x56b69a(0x250)][_0x56b69a(0x239)](_0x56b69a(0x35a)),inactivityTimeout=setTimeout(()=>{const _0x1585fc=_0x56b69a;!nativeVideoPlayer[_0x1585fc(0x2b8)]&&playerMessageOverlayEl['style'][_0x1585fc(0x10b)]===_0x1585fc(0x246)&&videoContainer[_0x1585fc(0x250)]['add'](_0x1585fc(0x35a));},0xbb8);}nativeVideoPlayer&&(nativeVideoPlayer[_0x4f3a04(0x2aa)](_0x4f3a04(0x29d),updatePlayPauseIcon),nativeVideoPlayer[_0x4f3a04(0x2aa)](_0x4f3a04(0x1f5),updatePlayPauseIcon),nativeVideoPlayer[_0x4f3a04(0x2aa)]('timeupdate',updateProgress),nativeVideoPlayer[_0x4f3a04(0x2aa)](_0x4f3a04(0x2fd),()=>{const _0x2b6dd0=_0x4f3a04;progressBar[_0x2b6dd0(0x255)]=nativeVideoPlayer['duration'],updateProgress();}),nativeVideoPlayer[_0x4f3a04(0x2aa)]('volumechange',()=>{volumeSlider['value']=nativeVideoPlayer['volume'],updateVolumeIcon();}),nativeVideoPlayer[_0x4f3a04(0x2aa)]('waiting',()=>playerLoader[_0x4f3a04(0x250)]['add'](_0x4f3a04(0x1b7))),nativeVideoPlayer[_0x4f3a04(0x2aa)](_0x4f3a04(0x26a),()=>{const _0x4b915d=_0x4f3a04;playerLoader[_0x4b915d(0x250)]['remove']('visible'),nextPlayNotificationShown=![];}),nativeVideoPlayer[_0x4f3a04(0x2aa)]('canplay',()=>playerLoader[_0x4f3a04(0x250)][_0x4f3a04(0x239)](_0x4f3a04(0x1b7))),nativeVideoPlayer[_0x4f3a04(0x2aa)](_0x4f3a04(0x19f),()=>{const _0x174712=_0x4f3a04;updatePlayPauseIcon(),clearTimeout(nextPlayTimeoutId),currentPlayingCardId&&watchHistory[currentPlayingCardId]&&(delete watchHistory[currentPlayingCardId],saveWatchHistory(),currentSection===_0x174712(0x27b)&&renderContent()),isAutoplayEnabled&&playNextVideo();}),nativeVideoPlayer[_0x4f3a04(0x2aa)](_0x4f3a04(0x35b),()=>{const _0x3185ca=_0x4f3a04;playerLoader[_0x3185ca(0x250)][_0x3185ca(0x239)]('visible');const _0x536d29=playerLoader[_0x3185ca(0x2ec)](_0x3185ca(0x1f1));if(_0x536d29)_0x536d29[_0x3185ca(0x2c5)]='';document[_0x3185ca(0x10d)](_0x3185ca(0x2ef))[_0x3185ca(0x2f3)](_0x3b7b3d=>_0x3b7b3d[_0x3185ca(0x250)]['remove'](_0x3185ca(0x20e))),updatePlayingIndicator(null);const _0x3b012f=nativeVideoPlayer['error'];console[_0x3185ca(0x35b)]('HTML5\x20Player\x20Error:',_0x3b012f);const _0x27f8a1=_0x3b012f?_0x3b012f[_0x3185ca(0x2b5)]||_0x3185ca(0xd0)+_0x3b012f['code']:_0x3185ca(0x2b9);showError(_0x3185ca(0x33d)+_0x27f8a1+_0x3185ca(0x260));}),videoContainer[_0x4f3a04(0x2aa)]('mousemove',handleControlsVisibility),videoContainer['addEventListener']('mouseleave',()=>{const _0x3b1904=_0x4f3a04;clearTimeout(inactivityTimeout),!nativeVideoPlayer['paused']&&playerMessageOverlayEl[_0x3b1904(0x306)][_0x3b1904(0x10b)]===_0x3b1904(0x246)&&videoContainer['classList'][_0x3b1904(0x113)]('controls-hidden');}),videoContainer[_0x4f3a04(0x2aa)](_0x4f3a04(0xe9),handleDoubleTap),playPauseBtn[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),_0x511de1=>{_0x511de1['stopPropagation'](),togglePlayPause();}),progressBar[_0x4f3a04(0x2aa)](_0x4f3a04(0x112),setProgress),muteBtn[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),_0x3f5eef=>{const _0x28ba0a=_0x4f3a04;_0x3f5eef[_0x28ba0a(0x18e)](),toggleMute();}),volumeSlider[_0x4f3a04(0x2aa)](_0x4f3a04(0x112),_0x3b058c=>{const _0x3e23a6=_0x4f3a04;_0x3b058c[_0x3e23a6(0x18e)](),handleVolumeChange();}),fitFillBtn[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),_0x34cd20=>{_0x34cd20['stopPropagation'](),toggleFitFill();}),fullscreenBtn[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),_0x2dae35=>{_0x2dae35['stopPropagation'](),toggleFullscreen();}),pipBtn['addEventListener'](_0x4f3a04(0x331),_0x13f8ed=>{const _0x3ce546=_0x4f3a04;_0x13f8ed[_0x3ce546(0x18e)](),togglePip();}),playbackSpeedBtn[_0x4f3a04(0x2aa)]('click',_0x57ac71=>{const _0x11d86e=_0x4f3a04;_0x57ac71[_0x11d86e(0x18e)](),togglePlaybackSpeed();}),document[_0x4f3a04(0x2aa)](_0x4f3a04(0x25e),updateFullscreenIcon));if(infoPopupCloseBtn)infoPopupCloseBtn[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),()=>closeInfoPopup());if(infoPopupOverlay)infoPopupOverlay[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),_0x6f7cf1=>{const _0x54941a=_0x4f3a04;if(_0x6f7cf1[_0x54941a(0x249)]===infoPopupOverlay)closeInfoPopup();});if(qualityPopupCloseBtn)qualityPopupCloseBtn[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),()=>closeQualityPopup());if(qualityPopupOverlay)qualityPopupOverlay[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),_0x4e328f=>{if(_0x4e328f['target']===qualityPopupOverlay)closeQualityPopup();});if(downloadQualityPopupCloseBtn)downloadQualityPopupCloseBtn[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),()=>closeDownloadQualityPopup());if(downloadQualityPopupOverlay)downloadQualityPopupOverlay[_0x4f3a04(0x2aa)]('click',_0x26822e=>{const _0x3ef2b1=_0x4f3a04;if(_0x26822e[_0x3ef2b1(0x249)]===downloadQualityPopupOverlay)closeDownloadQualityPopup();});if(downloadUnavailableCloseBtn)downloadUnavailableCloseBtn[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),()=>{if(!downloadUnavailableCloseBtn['disabled'])closeUnavailableLinkPopup();});if(downloadUnavailablePopupOverlay)downloadUnavailablePopupOverlay['addEventListener']('click',_0x19648b=>{const _0x3d6d43=_0x4f3a04;if(_0x19648b[_0x3d6d43(0x249)]===downloadUnavailablePopupOverlay&&!downloadUnavailableCloseBtn[_0x3d6d43(0x29c)])closeUnavailableLinkPopup();});searchInputEl&&(searchInputEl['addEventListener'](_0x4f3a04(0x112),_0x44e835=>{const _0x57f4bc=_0x4f3a04;showSuggestions(_0x44e835[_0x57f4bc(0x249)][_0x57f4bc(0x2d9)]);}),searchInputEl[_0x4f3a04(0x2aa)]('focus',_0x48b65c=>{const _0x6c8fc0=_0x4f3a04;if(_0x48b65c[_0x6c8fc0(0x249)]['value'][_0x6c8fc0(0x19b)]>=0x1&&suggestionsDropdownEl[_0x6c8fc0(0xee)]['length']>0x0)showSuggestions(_0x48b65c[_0x6c8fc0(0x249)]['value']);else _0x48b65c[_0x6c8fc0(0x249)]['value'][_0x6c8fc0(0x19b)]>=0x1&&showSuggestions(_0x48b65c[_0x6c8fc0(0x249)][_0x6c8fc0(0x2d9)]);}),searchInputEl['addEventListener'](_0x4f3a04(0xcc),_0x2e5e08=>{const _0x3e80ab=_0x4f3a04,_0x5bac65=suggestionsDropdownEl[_0x3e80ab(0x10d)](_0x3e80ab(0x169));if(suggestionsDropdownEl[_0x3e80ab(0x306)][_0x3e80ab(0x10b)]==='block'&&_0x5bac65[_0x3e80ab(0x19b)]>0x0){if(_0x2e5e08[_0x3e80ab(0x18d)]===_0x3e80ab(0x156))_0x2e5e08[_0x3e80ab(0x198)](),activeSuggestionIndex=(activeSuggestionIndex+0x1)%_0x5bac65[_0x3e80ab(0x19b)],updateActiveSuggestion(_0x5bac65);else{if(_0x2e5e08[_0x3e80ab(0x18d)]===_0x3e80ab(0x146))_0x2e5e08[_0x3e80ab(0x198)](),activeSuggestionIndex=(activeSuggestionIndex-0x1+_0x5bac65[_0x3e80ab(0x19b)])%_0x5bac65[_0x3e80ab(0x19b)],updateActiveSuggestion(_0x5bac65);else _0x2e5e08[_0x3e80ab(0x18d)]===_0x3e80ab(0x1d6)&&activeSuggestionIndex>-0x1&&(_0x2e5e08[_0x3e80ab(0x198)](),_0x5bac65[activeSuggestionIndex][_0x3e80ab(0x331)]());}}}),document[_0x4f3a04(0x2aa)](_0x4f3a04(0x331),_0x1e0c21=>{const _0x377e1a=_0x4f3a04;searchInputEl&&suggestionsDropdownEl&&!searchInputEl[_0x377e1a(0x172)](_0x1e0c21[_0x377e1a(0x249)])&&!suggestionsDropdownEl[_0x377e1a(0x172)](_0x1e0c21[_0x377e1a(0x249)])&&(suggestionsDropdownEl[_0x377e1a(0x306)][_0x377e1a(0x10b)]='none',activeSuggestionIndex=-0x1);}));function updateActiveSuggestion(_0x2855af){const _0x59fe31=_0x4f3a04;_0x2855af[_0x59fe31(0x2f3)]((_0x5407fe,_0x2ceb55)=>{const _0x47d9d3=_0x59fe31;_0x5407fe['classList']['toggle'](_0x47d9d3(0x2cb),_0x2ceb55===activeSuggestionIndex);if(_0x2ceb55===activeSuggestionIndex)_0x5407fe['focus']();});}function toggleDrawer(){const _0x2e079c=_0x4f3a04,_0x3f335a=drawerMenuEl['classList'][_0x2e079c(0x172)](_0x2e079c(0x158));!_0x3f335a&&(triggerElement=document[_0x2e079c(0x269)]);const _0x4fb46d=drawerMenuEl[_0x2e079c(0x250)]['toggle'](_0x2e079c(0x158));drawerOverlayEl[_0x2e079c(0x250)][_0x2e079c(0x119)](_0x2e079c(0x1b7)),menuBtn['setAttribute'](_0x2e079c(0xe3),String(_0x4fb46d)),drawerMenuEl['setAttribute'](_0x2e079c(0x168),String(!_0x4fb46d)),menuBtn[_0x2e079c(0xf6)]=_0x4fb46d?_0x2e079c(0x21b):'☰',menuBtn['classList']['toggle']('close-icon',_0x4fb46d),menuBtn['setAttribute'](_0x2e079c(0x252),_0x4fb46d?'Close\x20Menu':_0x2e079c(0x1a3));if(_0x4fb46d){const _0x38deda=drawerMenuEl[_0x2e079c(0x2ec)]('#drawerUserProfile')||drawerNavListEl[_0x2e079c(0x2ec)](_0x2e079c(0x167));if(_0x38deda)_0x38deda[_0x2e079c(0xb5)]();}else triggerElement?triggerElement[_0x2e079c(0xb5)]():menuBtn[_0x2e079c(0xb5)](),triggerElement=null;}function setActiveNavLink(_0x35cb8f){const _0x51448a=_0x4f3a04;navLinks['forEach'](_0x45fe4d=>_0x45fe4d[_0x51448a(0x250)][_0x51448a(0x239)](_0x51448a(0x2e2)));if(_0x35cb8f)_0x35cb8f['classList'][_0x51448a(0x113)](_0x51448a(0x2e2));bottomNavLinks['forEach'](_0x4ddc51=>_0x4ddc51[_0x51448a(0x250)][_0x51448a(0x239)](_0x51448a(0x2e2)));const _0x42eb7b=document[_0x51448a(0x2ec)]('.bottom-nav-item[data-section=\x22'+(_0x35cb8f?_0x35cb8f[_0x51448a(0xf1)]['section']:'')+'\x22]');if(_0x42eb7b)_0x42eb7b[_0x51448a(0x250)][_0x51448a(0x113)](_0x51448a(0x2e2));}function showLoader(_0x40694b){const _0x54a39a=_0x4f3a04;loader[_0x54a39a(0x306)][_0x54a39a(0x10b)]=_0x40694b?_0x54a39a(0xc3):_0x54a39a(0x246),_0x40694b&&(contentListContainer&&(contentListContainer[_0x54a39a(0xf6)]='',contentListContainer[_0x54a39a(0x250)][_0x54a39a(0x239)]('content-visible')),allCategoriesViewElementsContainer&&(allCategoriesViewElementsContainer[_0x54a39a(0xf6)]='',allCategoriesViewElementsContainer[_0x54a39a(0x250)]['remove'](_0x54a39a(0xb4))),showEmptyState(![]),hideError());}function showError(_0x50ba75){const _0x5cc3d1=_0x4f3a04;document[_0x5cc3d1(0x10d)]('.list-item-card.clicked-to-play')[_0x5cc3d1(0x2f3)](_0x425a37=>_0x425a37[_0x5cc3d1(0x250)][_0x5cc3d1(0x239)](_0x5cc3d1(0x20e)));if(errorMessageEl){const _0xc52209=document[_0x5cc3d1(0x236)](_0x50ba75);errorMessageEl['innerHTML']='',errorMessageEl[_0x5cc3d1(0x2dc)](_0xc52209);const _0x5cabc1=document['createElement'](_0x5cc3d1(0x1bc));_0x5cabc1[_0x5cc3d1(0xe4)]=_0x5cc3d1(0x1cb),_0x5cabc1[_0x5cc3d1(0x1ba)]=_0x5cc3d1(0x2e4),_0x5cabc1[_0x5cc3d1(0x306)][_0x5cc3d1(0x199)]='margin-top:\x2020px;\x20width:\x20auto;\x20padding:\x2010px\x2020px;\x20font-size:\x2015px;',_0x5cabc1['onclick']=()=>{const _0x147678=_0x5cc3d1;closeAllPopups(),closeInlineVideoPlayer(!![]),currentSection=_0x147678(0x27b);const _0x115349=drawerNavListEl[_0x147678(0x2ec)]('.nav-link[data-section=\x22all\x22]');_0x115349&&setActiveNavLink(_0x115349),resetNavigation(),renderContent();},errorMessageEl[_0x5cc3d1(0x2dc)](document['createElement']('br')),errorMessageEl[_0x5cc3d1(0x2dc)](_0x5cabc1),errorMessageEl[_0x5cc3d1(0x306)][_0x5cc3d1(0x10b)]=_0x5cc3d1(0x35e);}if(contentListContainer)contentListContainer[_0x5cc3d1(0xf6)]='';if(allCategoriesViewElementsContainer)allCategoriesViewElementsContainer['innerHTML']='';showEmptyState(![]),showLoader(![]),console[_0x5cc3d1(0x35b)](_0x5cc3d1(0x17b),_0x50ba75);}function hideError(){const _0x9b83dd=_0x4f3a04;if(errorMessageEl)errorMessageEl[_0x9b83dd(0x306)][_0x9b83dd(0x10b)]=_0x9b83dd(0x246);}function showEmptyState(_0x40168b,_0x325e22='No\x20content\x20available\x20here.'){const _0x3fc5af=_0x4f3a04;if(!emptyStateAnimationEl)return;const _0x4f496f=emptyStateAnimationEl[_0x3fc5af(0x2ec)](_0x3fc5af(0x2a1));let _0x274e6b=emptyStateAnimationEl[_0x3fc5af(0x2ec)](_0x3fc5af(0x309));if(_0x40168b){!_0x274e6b&&(_0x274e6b=document[_0x3fc5af(0x12e)]('p'),_0x274e6b[_0x3fc5af(0x1ba)]=_0x3fc5af(0x31f),emptyStateAnimationEl['appendChild'](_0x274e6b));_0x274e6b['textContent']=_0x325e22,emptyStateAnimationEl[_0x3fc5af(0x306)]['display']='flex';_0x4f496f&&typeof _0x4f496f[_0x3fc5af(0x29d)]===_0x3fc5af(0x14d)&&(_0x4f496f[_0x3fc5af(0x21a)](),_0x4f496f[_0x3fc5af(0x29d)]());if(contentListContainer)contentListContainer[_0x3fc5af(0xf6)]='';if(allCategoriesViewElementsContainer)allCategoriesViewElementsContainer[_0x3fc5af(0xf6)]='';hideError();}else emptyStateAnimationEl['style']['display']='none',_0x4f496f&&typeof _0x4f496f[_0x3fc5af(0x21a)]==='function'&&_0x4f496f[_0x3fc5af(0x21a)]();}function closeAllPopups(){closeProfilePopup(!![]),closeCommentsPopup(!![]),closeInfoPopup(!![]),closeQualityPopup(!![]),closeDownloadQualityPopup(!![]),closeGeneratingLinkPopup(!![]),closeUnavailableLinkPopup(!![]);}function showSuggestions(_0x141ca0){const _0x5c6a36=_0x4f3a04;activeSuggestionIndex=-0x1;if(!_0x141ca0||_0x141ca0[_0x5c6a36(0x19b)]<0x1){suggestionsDropdownEl['innerHTML']='',suggestionsDropdownEl['style'][_0x5c6a36(0x10b)]=_0x5c6a36(0x246);return;}const _0x5aba80=_0x141ca0[_0x5c6a36(0xd4)](),_0x3dec51=new Map();allContentData[_0x5c6a36(0x2b4)](_0x9a6b9=>_0x9a6b9[_0x5c6a36(0x1e5)]&&_0x9a6b9[_0x5c6a36(0x31b)]&&_0x9a6b9[_0x5c6a36(0x270)][_0x5c6a36(0xd4)]()[_0x5c6a36(0xca)](_0x5aba80))[_0x5c6a36(0x2f3)](_0x5e4183=>{const _0x1f93f8=_0x5c6a36;!_0x3dec51[_0x1f93f8(0x2b3)](_0x5e4183[_0x1f93f8(0x1e5)])&&_0x3dec51[_0x1f93f8(0xea)](_0x5e4183[_0x1f93f8(0x1e5)],{'title':_0x5e4183['folderTitle'],'type':_0x1f93f8(0x27d)});});const _0x554cb9=allContentData['filter'](_0x3518d4=>_0x3518d4[_0x5c6a36(0x1e5)]&&!_0x3518d4[_0x5c6a36(0x31b)]&&_0x3518d4['title']['toLowerCase']()[_0x5c6a36(0xca)](_0x5aba80))[_0x5c6a36(0x1a5)](_0x45b6c4=>({..._0x45b6c4,'type':_0x5c6a36(0x277)})),_0x1b568c=uniqueFolderTitles[_0x5c6a36(0x2b4)](_0x2f71c2=>_0x2f71c2[_0x5c6a36(0xd4)]()[_0x5c6a36(0xca)](_0x5aba80))['map'](_0x4a5920=>({'title':_0x4a5920,'type':_0x5c6a36(0x27d)})),_0x342e01=new Map();[..._0x1b568c,..._0x3dec51[_0x5c6a36(0xd7)]()][_0x5c6a36(0x2f3)](_0x583d9d=>{const _0x375f9e=_0x5c6a36;!_0x342e01['has'](_0x583d9d[_0x375f9e(0x270)])&&_0x342e01[_0x375f9e(0xea)](_0x583d9d[_0x375f9e(0x270)],_0x583d9d);});const _0xc0e23b=[..._0x342e01[_0x5c6a36(0xd7)](),..._0x554cb9]['slice'](0x0,0xa);suggestionsDropdownEl['innerHTML']='',_0xc0e23b[_0x5c6a36(0x19b)]>0x0?(_0xc0e23b[_0x5c6a36(0x2f3)](_0x3bbd9a=>{const _0x4b3c2b=_0x5c6a36,_0x284852=document[_0x4b3c2b(0x12e)]('div');_0x284852[_0x4b3c2b(0x1ba)]=_0x4b3c2b(0x14c),_0x284852[_0x4b3c2b(0x299)]=-0x1;const _0x2bc7c4=_0x3bbd9a[_0x4b3c2b(0x270)],_0x475c48=_0x2bc7c4['toLowerCase']()[_0x4b3c2b(0x128)](_0x5aba80),_0x55bde1=_0x475c48+_0x5aba80['length'],_0x31b4a8=_0x2bc7c4['substring'](0x0,_0x475c48)+'<strong>'+_0x2bc7c4[_0x4b3c2b(0x221)](_0x475c48,_0x55bde1)+_0x4b3c2b(0x329)+_0x2bc7c4[_0x4b3c2b(0x221)](_0x55bde1);let _0x2f80f6='';_0x3bbd9a[_0x4b3c2b(0x334)]===_0x4b3c2b(0x27d)&&(_0x2f80f6=_0x4b3c2b(0x2cf));const _0x4b599e=document[_0x4b3c2b(0x12e)]('span');_0x4b599e[_0x4b3c2b(0x1ba)]=_0x4b3c2b(0xf0),_0x4b599e[_0x4b3c2b(0xf6)]=_0x31b4a8,_0x284852[_0x4b3c2b(0xf6)]=_0x2f80f6,_0x284852[_0x4b3c2b(0x2dc)](_0x4b599e),_0x284852['addEventListener'](_0x4b3c2b(0x331),()=>{const _0x1b5c8f=_0x4b3c2b;searchInputEl[_0x1b5c8f(0x2d9)]='',suggestionsDropdownEl['style'][_0x1b5c8f(0x10b)]=_0x1b5c8f(0x246),activeSuggestionIndex=-0x1,closeAllPopups(),closeInlineVideoPlayer(!![]);let _0x15d011;if(_0x3bbd9a[_0x1b5c8f(0x334)]===_0x1b5c8f(0x277)){const _0x20bd02=Object['keys'](appConfig[_0x1b5c8f(0x132)])[_0x1b5c8f(0x11a)](_0x4e7e78=>{const _0x108ce4=_0x1b5c8f,_0x368722=appConfig[_0x108ce4(0x132)][_0x4e7e78]['dataKey'];return _0x3bbd9a[_0x368722];})||'all';currentSection=_0x20bd02,setActiveNavLink(document['querySelector'](_0x1b5c8f(0x318)+_0x20bd02+'\x22]')),navigationPath=[_0x3bbd9a[_0x1b5c8f(0x1e5)],_0x3bbd9a[_0x1b5c8f(0x31b)]||''],currentView='subfolder',_0x15d011=_0x3bbd9a['id'];}else{if(_0x3bbd9a[_0x1b5c8f(0x334)]==='folder'){const _0x273b0c=allContentData['find'](_0x13a2b4=>_0x13a2b4['folderTitle']===_0x3bbd9a[_0x1b5c8f(0x270)]),_0x2717d8=_0x273b0c?Object[_0x1b5c8f(0x135)](appConfig[_0x1b5c8f(0x132)])[_0x1b5c8f(0x11a)](_0x2b23c6=>{const _0x39da98=_0x1b5c8f,_0x184d62=appConfig[_0x39da98(0x132)][_0x2b23c6][_0x39da98(0x137)];return _0x273b0c[_0x184d62];})||_0x1b5c8f(0x27b):_0x1b5c8f(0x27b);currentSection=_0x2717d8,setActiveNavLink(document['querySelector']('.nav-link[data-section=\x22'+_0x2717d8+'\x22]')),navigationPath=[],currentView=_0x1b5c8f(0x101),_0x15d011=_0x1b5c8f(0x358)+_0x3bbd9a[_0x1b5c8f(0x270)];}}renderContent(),setTimeout(()=>{const _0x539216=_0x1b5c8f,_0x2205a2=document[_0x539216(0x2ec)](_0x539216(0xe2)+_0x15d011+'\x22]');_0x2205a2&&(_0x2205a2['scrollIntoView']({'behavior':_0x539216(0xfd),'block':_0x539216(0x108)}),_0x2205a2[_0x539216(0x250)]['add'](_0x539216(0x254)),setTimeout(()=>_0x2205a2[_0x539216(0x250)][_0x539216(0x239)](_0x539216(0x254)),0x9c4));},ANIMATION_DURATION+0x64);}),suggestionsDropdownEl['appendChild'](_0x284852);}),suggestionsDropdownEl[_0x5c6a36(0x306)]['display']=_0x5c6a36(0x35e)):suggestionsDropdownEl[_0x5c6a36(0x306)][_0x5c6a36(0x10b)]=_0x5c6a36(0x246);}async function fetchDataFromSheet(){const _0x43773e=_0x4f3a04;if(isFetchingSheet)return;if(!appConfig[_0x43773e(0x2c7)]||!appConfig['sheetId']||!Array[_0x43773e(0x247)](appConfig[_0x43773e(0x205)])||appConfig[_0x43773e(0x205)][_0x43773e(0x19b)]===0x0){showError(_0x43773e(0x1f0));return;}isFetchingSheet=!![],showLoader(!![]);const _0x5e7cf5=appConfig['sheetNames'][_0x43773e(0x1a5)](_0x71d73c=>{const _0xbbb016=_0x43773e,_0x56fd00=_0x71d73c+_0xbbb016(0x1c3),_0xbcaa1e=_0xbbb016(0xb0)+appConfig['sheetId']+_0xbbb016(0x17f)+_0x56fd00+_0xbbb016(0x1e6)+appConfig[_0xbbb016(0x2c7)]+_0xbbb016(0x16e);return fetch(_0xbcaa1e)[_0xbbb016(0x279)](_0x2378a2=>{const _0x22cd2f=_0xbbb016;if(!_0x2378a2['ok'])return _0x2378a2[_0x22cd2f(0x2bd)]()[_0x22cd2f(0x279)](_0x130b19=>{const _0x1d8396=_0x22cd2f;throw new Error(_0x1d8396(0x28f)+_0x2378a2[_0x1d8396(0x1a6)]+_0x1d8396(0x357)+_0x71d73c+_0x1d8396(0x336)+(_0x130b19[_0x1d8396(0x35b)]?.['message']||_0x2378a2[_0x1d8396(0x2f4)]));});return _0x2378a2[_0x22cd2f(0x2bd)]()[_0x22cd2f(0x279)](_0x4f9c7c=>({'sheetName':_0x71d73c,'data':_0x4f9c7c}));});});try{const _0x168b03=await Promise[_0x43773e(0x2fb)](_0x5e7cf5);let _0x1ae76e=[],_0x4b383b=[],_0x2c9708=[],_0x3d2a97=![];_0x168b03['forEach'](_0x112d1b=>{const _0x459de8=_0x43773e;if(_0x112d1b['status']===_0x459de8(0xbc)){const {sheetName:_0x5854a8,data:_0x283b46}=_0x112d1b['value'];if(_0x283b46['values']&&_0x283b46[_0x459de8(0xd7)][_0x459de8(0x19b)]>0x0){if(!_0x3d2a97&&_0x5854a8===appConfig['sheetNames'][0x0]){const _0x3ac73f=_0x283b46['values'][0x1]||[];headerImageUrl=(_0x3ac73f[COL['HEADER_IMG_URL']]||'')['trim'](),initializeAppUI(),_0x3d2a97=!![];}_0x283b46[_0x459de8(0xd7)][_0x459de8(0x2f7)](0x2)[_0x459de8(0x2f3)]((_0x452ca7,_0x3e0fa8)=>{const _0x5ac58a=_0x459de8;if(!Array['isArray'](_0x452ca7))return;const _0x58d0ac=(_0x452ca7[COL['SPLASH_MEDIA_URL']]||'')['trim']();_0x58d0ac&&_0x2c9708[_0x5ac58a(0x21f)]({'mediaUrl':_0x58d0ac});const _0x4a5f5a=String(_0x452ca7[COL[_0x5ac58a(0x12a)]]||'')['trim'](),_0x1a9fe1=String(_0x452ca7[COL['WEBSITE_LINK']]||'')[_0x5ac58a(0x13b)]();_0x4a5f5a&&_0x1a9fe1&&!_0x4b383b[_0x5ac58a(0x11a)](_0x3886c2=>_0x3886c2[_0x5ac58a(0x2a3)]===_0x1a9fe1)&&_0x4b383b[_0x5ac58a(0x21f)]({'name':_0x4a5f5a,'url':_0x1a9fe1});const _0x438d52=String(_0x452ca7[COL[_0x5ac58a(0x34d)]]||'')['trim'](),_0x4350f0=String(_0x452ca7[COL[_0x5ac58a(0xc7)]]||'')[_0x5ac58a(0x13b)]();if(_0x438d52){const _0x32790d=String(_0x452ca7[COL[_0x5ac58a(0x22a)]]||'')[_0x5ac58a(0x13b)](),_0x17da5a=_0x32790d[_0x5ac58a(0x2d6)](',')['map'](_0x46071f=>_0x46071f['trim']()),_0x5e3760=_0x17da5a[0x0],_0x2ca8d9=_0x17da5a[_0x5ac58a(0x19b)]>0x1&&_0x17da5a[0x1]?_0x17da5a[0x1]:null,_0x220727=String(_0x452ca7[COL[_0x5ac58a(0x28d)]]||'')[_0x5ac58a(0x13b)](),_0x42f80d=_0x220727['split'](',')['map'](_0x12d19e=>_0x12d19e['trim']()),_0x4d511c=_0x42f80d[0x0],_0x5c3f95=_0x42f80d[_0x5ac58a(0x19b)]>0x1&&_0x42f80d[0x1]?_0x42f80d[0x1]:null,_0x39e4fc=_0x5ac58a(0x141)+_0x5854a8[_0x5ac58a(0xf8)](/\s/g,'_')+'-'+(_0x3e0fa8+0x2);let _0x378b6a=String(_0x452ca7[COL[_0x5ac58a(0x179)]]||'')[_0x5ac58a(0x13b)]();const _0x269ed5=[],_0x8cd49a=new Set(),_0x4639cb=(_0x4dfa87,_0x40a629)=>{const _0x55f253=_0x5ac58a;if(!_0x4dfa87||!_0x4dfa87[_0x55f253(0x13b)]())return null;const _0x182ec7=_0x4dfa87[_0x55f253(0x2d6)](','),_0x25b395=(_0x182ec7[0x0]||'')['trim']();if(!_0x25b395)return null;const _0x595566=_0x182ec7[_0x55f253(0x19b)]>0x1&&_0x182ec7[0x1]['trim']()?_0x182ec7[0x1]['trim']():_0x40a629;return{'url':_0x25b395,'label':_0x595566};},_0x178836=_0x4639cb(String(_0x452ca7[COL[_0x5ac58a(0x227)]]||''),_0x5ac58a(0x24e)),_0x2e1f2a=_0x4639cb(String(_0x452ca7[COL['QUALITY_MEDIUM_URL']]||''),_0x5ac58a(0x253)),_0x45e65c=_0x4639cb(String(_0x452ca7[COL[_0x5ac58a(0x2bb)]]||''),_0x5ac58a(0x1de));_0x178836&&!_0x8cd49a[_0x5ac58a(0x2b3)](_0x178836[_0x5ac58a(0x2a3)])&&(_0x269ed5[_0x5ac58a(0x21f)](_0x178836),_0x8cd49a['add'](_0x178836['url']));_0x2e1f2a&&!_0x8cd49a['has'](_0x2e1f2a[_0x5ac58a(0x2a3)])&&(_0x269ed5[_0x5ac58a(0x21f)](_0x2e1f2a),_0x8cd49a[_0x5ac58a(0x113)](_0x2e1f2a[_0x5ac58a(0x2a3)]));_0x45e65c&&!_0x8cd49a[_0x5ac58a(0x2b3)](_0x45e65c['url'])&&(_0x269ed5[_0x5ac58a(0x21f)](_0x45e65c),_0x8cd49a[_0x5ac58a(0x113)](_0x45e65c[_0x5ac58a(0x2a3)]));let _0x11c823=String(_0x452ca7[COL['STREAM_URL']]||'')[_0x5ac58a(0x13b)]()||null;_0x11c823&&!_0x8cd49a['has'](_0x11c823)&&_0x269ed5[_0x5ac58a(0x26f)]({'label':_0x5ac58a(0x353),'url':_0x11c823});!_0x11c823&&_0x269ed5[_0x5ac58a(0x19b)]>0x0&&(_0x11c823=_0x269ed5[0x0][_0x5ac58a(0x2a3)]);const _0xbd1f1b=[],_0x28b71f=(_0x4b2b4d,_0x2f9f9a)=>{const _0x1642f5=_0x5ac58a;if(!_0x4b2b4d||!_0x4b2b4d[_0x1642f5(0x13b)]())return null;const _0x413400=_0x4b2b4d[_0x1642f5(0x2d6)](','),_0x4f2a7a=(_0x413400[0x0]||'')[_0x1642f5(0x13b)]();if(!_0x4f2a7a)return null;const _0x1c44ab=_0x413400[_0x1642f5(0x19b)]>0x1&&_0x413400[0x1][_0x1642f5(0x13b)]()?_0x413400[0x1][_0x1642f5(0x13b)]():_0x2f9f9a;return{'url':_0x4f2a7a,'label':_0x1c44ab};},_0x23a214=_0x28b71f(String(_0x452ca7[COL['DOWNLOAD_URL_480P']]||''),_0x5ac58a(0x24f)),_0x2cc727=_0x28b71f(String(_0x452ca7[COL[_0x5ac58a(0x19c)]]||''),'720p'),_0x1e30a0=_0x28b71f(String(_0x452ca7[COL[_0x5ac58a(0x2f0)]]||''),_0x5ac58a(0x27c));if(_0x23a214)_0xbd1f1b[_0x5ac58a(0x21f)](_0x23a214);if(_0x2cc727)_0xbd1f1b['push'](_0x2cc727);if(_0x1e30a0)_0xbd1f1b[_0x5ac58a(0x21f)](_0x1e30a0);const _0x56b311=!_0x11c823&&_0x269ed5['length']===0x0,_0x25836e=String(_0x452ca7[COL['IS_MAINTENANCE']]||'')['toUpperCase']()===_0x5ac58a(0x230),_0x2c6577=_0x25836e||_0x56b311;if(_0x2c6577&&(!_0x378b6a||_0x378b6a===DEFAULT_SVG_ICON_DATA_URI))_0x378b6a=OFFLINE_IMAGE_URL;else!_0x378b6a&&(_0x378b6a=DEFAULT_SVG_ICON_DATA_URI);const _0xf442ae=String(_0x452ca7[COL[_0x5ac58a(0x27f)]]||'')['trim'](),_0x3f0e94=_0xf442ae?_0xf442ae['split'](',')[_0x5ac58a(0x1a5)](_0x18fd1c=>_0x18fd1c[_0x5ac58a(0x13b)]())[_0x5ac58a(0x2b4)](Boolean):[];_0x1ae76e[_0x5ac58a(0x21f)]({'id':_0x39e4fc,'title':_0x438d52,'streamUrlFallback':_0x11c823,'logoUrl':_0x378b6a,'qualityOptions':_0x269ed5,'downloadOptions':_0xbd1f1b,'isMovie':String(_0x452ca7[COL[_0x5ac58a(0x195)]]||'')[_0x5ac58a(0x107)]()===_0x5ac58a(0x230),'isSeries':String(_0x452ca7[COL[_0x5ac58a(0x161)]]||'')['toUpperCase']()==='TRUE','isAnime':String(_0x452ca7[COL[_0x5ac58a(0x240)]]||'')[_0x5ac58a(0x107)]()===_0x5ac58a(0x230),'isAnimation':String(_0x452ca7[COL[_0x5ac58a(0x265)]]||'')['toUpperCase']()===_0x5ac58a(0x230),'isLiveTV':![],'isTrending':String(_0x452ca7[COL[_0x5ac58a(0xfe)]]||'')[_0x5ac58a(0x107)]()==='TRUE','requiresVpn':String(_0x452ca7[COL[_0x5ac58a(0x142)]]||'')[_0x5ac58a(0x107)]()==='TRUE','isMaintenance':_0x2c6577,'watermarkLogoUrl':String(_0x452ca7[COL[_0x5ac58a(0x1fa)]]||'')[_0x5ac58a(0x13b)]()||null,'loaderAnimationUrl':String(_0x452ca7[COL[_0x5ac58a(0x192)]]||'')[_0x5ac58a(0x13b)]()||null,'folderTitle':_0x5e3760,'folderBannerUrl':_0x2ca8d9,'subFolderTitle':_0x4d511c,'subFolderBannerUrl':_0x5c3f95,'badgeTexts':_0x3f0e94,'badgeText':_0x3f0e94[_0x5ac58a(0x19b)]>0x0?_0x3f0e94[0x0]:'','ratingText':String(_0x452ca7[COL[_0x5ac58a(0x130)]]||'')[_0x5ac58a(0x13b)](),'liveTVFolderTitle':''});}else{if(_0x4350f0){const _0x2f40b2=_0x5ac58a(0x2d1)+_0x5854a8[_0x5ac58a(0xf8)](/\s/g,'_')+'-'+(_0x3e0fa8+0x2),_0x4a9d5d=String(_0x452ca7[COL[_0x5ac58a(0x31e)]]||'')[_0x5ac58a(0x13b)](),_0x1132a4=String(_0x452ca7[COL[_0x5ac58a(0x133)]]||'')[_0x5ac58a(0x107)]()==='TRUE'||!_0x4a9d5d;_0x1ae76e['push']({'id':_0x2f40b2,'title':_0x4350f0,'logoUrl':String(_0x452ca7[COL[_0x5ac58a(0x296)]]||'')[_0x5ac58a(0x13b)]()||DEFAULT_SVG_ICON_DATA_URI,'streamUrlFallback':_0x4a9d5d,'watermarkLogoUrl':String(_0x452ca7[COL[_0x5ac58a(0x10e)]]||'')[_0x5ac58a(0x13b)]()||null,'loaderAnimationUrl':String(_0x452ca7[COL[_0x5ac58a(0x1da)]]||'')['trim']()||null,'isMaintenance':_0x1132a4,'isLiveTV':!![],'liveTVFolderTitle':String(_0x452ca7[COL[_0x5ac58a(0x2c8)]]||'')[_0x5ac58a(0x13b)]()||'Live\x20TV\x20Channels','isMovie':![],'isSeries':![],'isAnime':![],'isAnimation':![],'qualityOptions':[],'downloadOptions':[],'folderTitle':'','subFolderTitle':'','badgeTexts':[],'badgeText':'','ratingText':'','requiresVpn':![],'isTrending':![]});}}});}}else _0x112d1b[_0x459de8(0x1a6)]===_0x459de8(0x262)&&console[_0x459de8(0x214)](_0x459de8(0x359),_0x112d1b['reason'][_0x459de8(0x2b5)]||_0x112d1b[_0x459de8(0x2f5)]);}),allContentData=_0x1ae76e,websiteLinks=_0x4b383b,splashMediaItems=_0x2c9708,allContentData[_0x43773e(0x19b)]===0x0&&websiteLinks[_0x43773e(0x19b)]===0x0&&splashMediaItems[_0x43773e(0x19b)]===0x0?showError(_0x43773e(0x2de)):(uniqueFolderTitles=[...new Set(allContentData[_0x43773e(0x1a5)](_0x47bda0=>_0x47bda0[_0x43773e(0x1e5)])[_0x43773e(0x2b4)](Boolean))]['sort']((_0x47a54d,_0x2da9d9)=>_0x47a54d[_0x43773e(0x355)](_0x2da9d9)),saveDataToCache(),renderContent());}catch(_0x339397){showError(_0x43773e(0xbe)+_0x339397[_0x43773e(0x2b5)]+_0x43773e(0x15a));if(allContentData[_0x43773e(0x19b)]>0x0)renderContent();}finally{showLoader(![]),isFetchingSheet=![];}}function proceedToPlayOrQualitySelect(_0x33d460){const _0x3bc9d1=_0x4f3a04;if(!_0x33d460){document[_0x3bc9d1(0x10d)]('.list-item-card.clicked-to-play')[_0x3bc9d1(0x2f3)](_0x244adb=>_0x244adb[_0x3bc9d1(0x250)][_0x3bc9d1(0x239)](_0x3bc9d1(0x20e)));return;}if(_0x33d460[_0x3bc9d1(0x219)]){openPlayerInMaintenanceMode(_0x33d460);return;}if(_0x33d460[_0x3bc9d1(0x228)]){openInlineVideoPlayer(_0x33d460[_0x3bc9d1(0x2e3)],_0x33d460[_0x3bc9d1(0x270)],_0x33d460);return;}const _0x59aa4f=_0x33d460[_0x3bc9d1(0xc8)]?_0x33d460['qualityOptions'][_0x3bc9d1(0x2b4)](_0x3c49e9=>_0x3c49e9['url']&&_0x3c49e9[_0x3bc9d1(0x15e)]):[];if(_0x59aa4f[_0x3bc9d1(0x19b)]>0x1)openQualityPopup(_0x33d460,_0x59aa4f);else{if(_0x59aa4f[_0x3bc9d1(0x19b)]===0x1){let _0xda6dd9=0x0;watchHistory[_0x33d460['id']]&&(_0xda6dd9=watchHistory[_0x33d460['id']][_0x3bc9d1(0x23b)]),openInlineVideoPlayer(_0x59aa4f[0x0][_0x3bc9d1(0x2a3)],_0x33d460[_0x3bc9d1(0x270)],_0x33d460,_0xda6dd9,_0x59aa4f[0x0][_0x3bc9d1(0x15e)]);}else{if(_0x33d460[_0x3bc9d1(0x2e3)]){let _0x27db94=0x0;watchHistory[_0x33d460['id']]&&(_0x27db94=watchHistory[_0x33d460['id']][_0x3bc9d1(0x23b)]),openInlineVideoPlayer(_0x33d460['streamUrlFallback'],_0x33d460['title'],_0x33d460,_0x27db94,_0x3bc9d1(0x222));}else{document['querySelectorAll'](_0x3bc9d1(0x2ef))[_0x3bc9d1(0x2f3)](_0x5e4cfa=>_0x5e4cfa[_0x3bc9d1(0x250)][_0x3bc9d1(0x239)](_0x3bc9d1(0x20e))),showError(_0x3bc9d1(0x190)+_0x33d460[_0x3bc9d1(0x270)]+'\x22.');if(triggerElement)triggerElement[_0x3bc9d1(0xb5)]();}}}}function createListItemCard(_0xea70fe,_0x2a9613={}){const _0xfa5a1f=_0x4f3a04,{isFeaturedItem:isFeaturedItem=![],isHistoryItem:isHistoryItem=![],isFolder:isFolder=![],folderItemCount:folderItemCount=0x0,bannerUrl:bannerUrl=null,isLiveTV:isLiveTV=![]}=_0x2a9613,_0x53dfab=document[_0xfa5a1f(0x12e)](_0xfa5a1f(0x143));_0x53dfab[_0xfa5a1f(0x1ba)]=_0xfa5a1f(0x343),_0x53dfab[_0xfa5a1f(0xf1)][_0xfa5a1f(0x11e)]=_0xea70fe['id'];if(isFeaturedItem)_0x53dfab[_0xfa5a1f(0x250)][_0xfa5a1f(0x113)](_0xfa5a1f(0x15d));if(isFolder)_0x53dfab[_0xfa5a1f(0x250)][_0xfa5a1f(0x113)](_0xfa5a1f(0x1e7));if(isLiveTV)_0x53dfab['classList'][_0xfa5a1f(0x113)](_0xfa5a1f(0x2b2));let _0x336388,_0xf8d8b4=_0xfa5a1f(0x2a5);if(isFolder)bannerUrl?_0x336388=bannerUrl:(_0x336388=DEFAULT_FOLDER_ICON_URL,_0xf8d8b4+=_0xfa5a1f(0x25b));else{_0x336388=_0xea70fe[_0xfa5a1f(0x2fe)];if(_0xea70fe[_0xfa5a1f(0x219)]&&(_0xea70fe[_0xfa5a1f(0x2fe)]===DEFAULT_SVG_ICON_DATA_URI||!_0xea70fe[_0xfa5a1f(0x2fe)]))_0x336388=OFFLINE_IMAGE_URL,_0xf8d8b4+='\x20is-offline-icon';else _0xea70fe[_0xfa5a1f(0x2fe)]===DEFAULT_SVG_ICON_DATA_URI&&(_0xf8d8b4+=_0xfa5a1f(0xe0));}const _0x442ecc=_0xfa5a1f(0x2ee)+DEFAULT_SVG_ICON_DATA_URI+_0xfa5a1f(0x2ad),_0x166b1e=_0xea70fe[_0xfa5a1f(0x1b0)]&&_0xea70fe[_0xfa5a1f(0x1b0)][_0xfa5a1f(0x19b)]>0x0&&!isFolder?_0xfa5a1f(0x10c)+_0xea70fe[_0xfa5a1f(0x1b0)][0x0]+_0xfa5a1f(0x2e1):'',_0x851789=_0xea70fe[_0xfa5a1f(0x15b)]&&!isFolder?_0xfa5a1f(0x1ed)+_0xea70fe[_0xfa5a1f(0x15b)]+_0xfa5a1f(0x275):'',_0x3d42e6=!isFeaturedItem&&!isFolder?_0xfa5a1f(0x17d)+_0xea70fe['id']+'\x22><svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20fill=\x22currentColor\x22\x20d=\x22M12\x204.5C7\x204.5\x202.73\x207.61\x201\x2012c1.73\x204.39\x206\x207.5\x2011\x207.5s9.27-3.11\x2011-7.5c-1.73-4.39-6-7.5-11-7.5zM12\x2017c-2.76\x200-5-2.24-5-5s2.24-5\x205-5\x205\x202.24\x205\x205-2.24\x205-5\x205zm0-8c-1.66\x200-3\x201.34-3\x203s1.34\x203\x203\x203\x203-1.34\x203-3-1.34-3-3-3z\x22></path></svg><span\x20class=\x22view-count\x22>0</span></div>':'',_0x1ff954=_0xea70fe[_0xfa5a1f(0x270)],_0x1fd65e=_0xfa5a1f(0x203)+_0x1ff954+'\x22>'+_0x1ff954+_0xfa5a1f(0x2e1),_0x1fc369=_0xea70fe[_0xfa5a1f(0x219)]?_0xfa5a1f(0x184):'',_0x574f9f=_0xea70fe[_0xfa5a1f(0x228)]&&!_0xea70fe['isMaintenance']?_0xfa5a1f(0x308):'',_0x184459=!isFeaturedItem&&!isFolder?_0xfa5a1f(0xda)+_0xea70fe['id']+_0xfa5a1f(0x341)+_0xea70fe['id']+_0xfa5a1f(0x311):'',_0x12273c=!isFeaturedItem?_0xfa5a1f(0x346)+_0x1fd65e+'</div>\x0a\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20'+_0x184459+_0xfa5a1f(0x282):'',_0x22ce70=_0xfa5a1f(0xb1),_0xf9c1d5=isHistoryItem?'<div\x20class=\x22history-progress-bar\x22></div>':'',_0x505ca3=isHistoryItem?_0xfa5a1f(0xcd):'',_0x23e523=_0xfa5a1f(0x1c0);_0x53dfab[_0xfa5a1f(0xf6)]=_0xfa5a1f(0x13d)+_0x166b1e+_0xfa5a1f(0xdc)+_0x505ca3+_0xfa5a1f(0x2ae)+_0x574f9f+_0xfa5a1f(0x201)+_0x1fc369+_0xfa5a1f(0x34c)+_0x336388+'\x22\x20alt=\x22'+(_0xea70fe['title']||'Thumbnail')+'\x22\x20class=\x22'+_0xf8d8b4+_0xfa5a1f(0x268)+_0x442ecc+_0xfa5a1f(0x2c9)+_0x22ce70+_0xfa5a1f(0x224)+_0xf9c1d5+_0xfa5a1f(0x224)+_0x851789+_0xfa5a1f(0x224)+_0x3d42e6+_0xfa5a1f(0x224)+_0x23e523+_0xfa5a1f(0xb9)+_0x12273c;if(isHistoryItem&&watchHistory[_0xea70fe['id']]){const _0x42c843=watchHistory[_0xea70fe['id']],_0x32e9ad=_0x42c843['currentTime']/_0x42c843[_0xfa5a1f(0x124)]*0x64,_0x57f534=_0x53dfab[_0xfa5a1f(0x2ec)](_0xfa5a1f(0x245));if(_0x57f534)_0x57f534[_0xfa5a1f(0x306)][_0xfa5a1f(0xdf)]=_0x32e9ad+'%';}if(!isFeaturedItem){_0x53dfab['setAttribute'](_0xfa5a1f(0x273),'button'),_0x53dfab[_0xfa5a1f(0x299)]=0x0;const _0x2b0c06=_0x108351=>{const _0x1c9d8e=_0xfa5a1f;if(_0x108351&&(_0x108351[_0x1c9d8e(0x249)]['closest']('.remove-history-btn')||_0x108351['target']['closest'](_0x1c9d8e(0xdd))))return;isFolder?(navigationPath[_0x1c9d8e(0x21f)](_0xea70fe[_0x1c9d8e(0x270)]),currentView=navigationPath[_0x1c9d8e(0x19b)]===0x1?_0x1c9d8e(0x27d):_0x1c9d8e(0x238),renderContent()):(document[_0x1c9d8e(0x10d)](_0x1c9d8e(0x2ef))[_0x1c9d8e(0x2f3)](_0x1b86f9=>_0x1b86f9['classList'][_0x1c9d8e(0x239)](_0x1c9d8e(0x20e))),_0x53dfab[_0x1c9d8e(0x250)][_0x1c9d8e(0x113)]('clicked-to-play'),currentPopupItem=_0xea70fe,triggerElement=_0x53dfab,proceedToPlayOrQualitySelect(_0xea70fe));};_0x53dfab[_0xfa5a1f(0x2aa)](_0xfa5a1f(0x331),_0x2b0c06),_0x53dfab[_0xfa5a1f(0x2aa)](_0xfa5a1f(0x14b),_0x332492=>{const _0x1fcdff=_0xfa5a1f;(_0x332492[_0x1fcdff(0x18d)]===_0x1fcdff(0x1d6)||_0x332492[_0x1fcdff(0x18d)]==='\x20')&&(_0x332492[_0x1fcdff(0x198)](),_0x2b0c06(_0x332492));});const _0x35ce92=_0x53dfab[_0xfa5a1f(0x2ec)](_0xfa5a1f(0x157));_0x35ce92&&_0x35ce92['addEventListener']('click',_0x586586=>{const _0x14fd5b=_0xfa5a1f;_0x586586[_0x14fd5b(0x18e)](),_0x586586['preventDefault'](),watchHistory[_0xea70fe['id']]&&(delete watchHistory[_0xea70fe['id']],saveWatchHistory(),renderContent());});if(db&&!isFolder){const _0x2cd702=_0x53dfab['querySelector']('.like-btn'),_0x20c17b=_0x53dfab['querySelector'](_0xfa5a1f(0x193));if(_0x2cd702)_0x2cd702[_0xfa5a1f(0x2aa)](_0xfa5a1f(0x331),_0x10e324=>{const _0x3b9037=_0xfa5a1f;_0x10e324['stopPropagation'](),window[_0x3b9037(0x176)](_0xea70fe['id'],_0x3b9037(0x1f7));});if(_0x20c17b)_0x20c17b['addEventListener'](_0xfa5a1f(0x331),_0x57d0a4=>{const _0x453509=_0xfa5a1f;_0x57d0a4['stopPropagation'](),window[_0x453509(0x176)](_0xea70fe['id'],_0x453509(0x152));});window['loadLikeDislikeCounts'](_0xea70fe['id']),!isFeaturedItem&&window['loadViewCount'](_0xea70fe['id']);}}else _0x53dfab[_0xfa5a1f(0x299)]=-0x1;return _0x53dfab;}function renderContinueWatching(){const _0x22224b=_0x4f3a04,_0x481f62=Object[_0x22224b(0x138)](watchHistory)[_0x22224b(0x1e4)](([,_0x3fe2ea],[,_0x3a56cc])=>_0x3a56cc[_0x22224b(0x185)]-_0x3fe2ea[_0x22224b(0x185)])[_0x22224b(0x1a5)](([_0x428d9b,_0x595c95])=>({'id':_0x428d9b,..._0x595c95})),_0x333c08=document[_0x22224b(0x303)]('continueWatchingSection');if(_0x333c08)_0x333c08['remove']();if(_0x481f62['length']>0x0){const _0x3e09ae=document[_0x22224b(0x12e)](_0x22224b(0x143));_0x3e09ae['id']='continueWatchingSection',_0x3e09ae['className']=_0x22224b(0x22e);const _0x3afc0c=document['createElement']('h3');_0x3afc0c[_0x22224b(0x1ba)]=_0x22224b(0x24a);const _0x855c96=document[_0x22224b(0x12e)](_0x22224b(0x1b5));_0x855c96[_0x22224b(0xe4)]=_0x22224b(0xc1),_0x3afc0c['appendChild'](_0x855c96);const _0x538c65=document[_0x22224b(0x12e)](_0x22224b(0x1bc));_0x538c65['id']=_0x22224b(0xbb),_0x538c65['setAttribute'](_0x22224b(0x252),_0x22224b(0x314)),_0x538c65['innerHTML']=_0x22224b(0x325),_0x538c65[_0x22224b(0x27e)]=()=>{const _0x41a6dc=_0x22224b;watchHistory={},saveWatchHistory(),renderContent(),showCustomToast(_0x41a6dc(0x2c2),'success');},_0x3afc0c['appendChild'](_0x538c65);const _0x3955df=document[_0x22224b(0x12e)]('div');_0x3955df['className']=_0x22224b(0x191),_0x481f62[_0x22224b(0x2f3)](_0x4019e5=>{const _0x5131fb=_0x22224b,_0x500671=allContentData[_0x5131fb(0x11a)](_0x4e36c8=>_0x4e36c8['id']===_0x4019e5['id']);if(_0x500671&&!_0x500671[_0x5131fb(0x228)]){const _0x1e7e61=createListItemCard(_0x500671,{'isHistoryItem':!![]});_0x3955df[_0x5131fb(0x2dc)](_0x1e7e61);}}),_0x3955df[_0x22224b(0xee)][_0x22224b(0x19b)]>0x0&&(_0x3e09ae[_0x22224b(0x2dc)](_0x3afc0c),_0x3e09ae[_0x22224b(0x2dc)](_0x3955df),allCategoriesViewElementsContainer['prepend'](_0x3e09ae));}}function renderContent(_0x51107a={}){const _0x2aea4b=_0x4f3a04;if(isTransitioning)return;isTransitioning=!![];if(!appConfig[_0x2aea4b(0x132)]){console[_0x2aea4b(0x214)](_0x2aea4b(0xfc)),isTransitioning=![];return;}const _0x2a8913=allCategoriesViewElementsContainer[_0x2aea4b(0x250)][_0x2aea4b(0x172)](_0x2aea4b(0xb4))?allCategoriesViewElementsContainer:contentListContainer[_0x2aea4b(0x250)][_0x2aea4b(0x172)](_0x2aea4b(0xb4))?contentListContainer:null,_0x54b08e=()=>{const _0x58e4a7=_0x2aea4b;allCategoriesViewElementsContainer[_0x58e4a7(0xf6)]='',contentListContainer[_0x58e4a7(0xf6)]='',allCategoriesViewElementsContainer[_0x58e4a7(0x250)][_0x58e4a7(0x239)]('content-visible','content-fade-out'),contentListContainer[_0x58e4a7(0x250)]['remove'](_0x58e4a7(0xb4),_0x58e4a7(0x338)),hideError(),showEmptyState(![]),scrollableContentAreaEl[_0x58e4a7(0x28c)]=0x0,updateSectionHeader();if(currentView===_0x58e4a7(0x101))renderCategoryView(_0x51107a);else{if(currentView===_0x58e4a7(0x27d))renderFolderView(_0x51107a);else currentView===_0x58e4a7(0x238)&&renderSubFolderView(_0x51107a);}updatePlayingIndicator(currentPlayingCardId);const _0x7ada17=currentSection==='all'&&currentView===_0x58e4a7(0x101)?allCategoriesViewElementsContainer:contentListContainer;_0x7ada17[_0x58e4a7(0x250)]['add'](_0x58e4a7(0xb4));};_0x2a8913?(_0x2a8913['classList'][_0x2aea4b(0x113)]('content-fade-out'),setTimeout(()=>{_0x54b08e(),isTransitioning=![];},ANIMATION_DURATION)):(_0x54b08e(),isTransitioning=![]);}function renderBannerAd(){const _0x47c5e4=_0x4f3a04,_0x1adfc8=document[_0x47c5e4(0x12e)](_0x47c5e4(0x143));return _0x1adfc8['id']='bannerAdContainer',injectBannerAd(_0x1adfc8),_0x1adfc8;}function renderHomePageContent(){const _0x5823db=_0x4f3a04;renderContinueWatching();splashMediaItems[_0x5823db(0x19b)]>0x0&&splashMediaItems[_0x5823db(0x2f3)](_0x1f4bd=>{const _0x857355=_0x5823db,_0x542630=document['createElement'](_0x857355(0x143));_0x542630['className']=_0x857355(0x1e3);const _0x2ef528=[_0x857355(0x330),'.webm',_0x857355(0x33f)][_0x857355(0x1d0)](_0x3110d0=>_0x1f4bd[_0x857355(0x100)]['toLowerCase']()[_0x857355(0xca)](_0x3110d0));let _0x2286f7;_0x2ef528?(_0x2286f7=document[_0x857355(0x12e)]('video'),_0x2286f7[_0x857355(0x220)]=!![],_0x2286f7[_0x857355(0x1ef)]=!![],_0x2286f7[_0x857355(0x20f)]=!![],_0x2286f7[_0x857355(0x2f9)]=!![],_0x2286f7[_0x857355(0xe6)](_0x857355(0x251),'')):_0x2286f7=document[_0x857355(0x12e)](_0x857355(0x14f)),_0x2286f7['src']=_0x1f4bd[_0x857355(0x100)],_0x2286f7['className']=_0x857355(0x352),_0x2286f7[_0x857355(0x22f)]='Promotional\x20Content',_0x542630['appendChild'](_0x2286f7),allCategoriesViewElementsContainer[_0x857355(0x2dc)](_0x542630);});const _0x531181=allContentData[_0x5823db(0x2b4)](_0x2f393a=>_0x2f393a['isTrending']&&!_0x2f393a[_0x5823db(0x219)]&&!_0x2f393a[_0x5823db(0x228)]);if(_0x531181[_0x5823db(0x19b)]>0x0){const _0x5704bc=document[_0x5823db(0x12e)](_0x5823db(0x143));_0x5704bc[_0x5823db(0x1ba)]='trending-panel';const _0xe5f09b=document[_0x5823db(0x12e)]('h3');_0xe5f09b[_0x5823db(0x1ba)]=_0x5823db(0x1be),_0xe5f09b['textContent']=_0x5823db(0x20b),_0x5704bc[_0x5823db(0x2dc)](_0xe5f09b);const _0x141ee0=document[_0x5823db(0x12e)](_0x5823db(0x143));_0x141ee0[_0x5823db(0x1ba)]=_0x5823db(0x256);let _0x5dcaea=shuffleArray([..._0x531181]);_0x5dcaea['forEach'](_0x126f7f=>{const _0x41a868=_0x5823db;_0x141ee0[_0x41a868(0x2dc)](createListItemCard(_0x126f7f,{'isFeaturedItem':!![]}));}),_0x5dcaea['length']>0x0&&_0x5dcaea[_0x5823db(0x2f3)](_0x4d609a=>{const _0x374bc9=_0x5823db;_0x141ee0[_0x374bc9(0x2dc)](createListItemCard(_0x4d609a,{'isFeaturedItem':!![]}));}),_0x5704bc[_0x5823db(0x2dc)](_0x141ee0),allCategoriesViewElementsContainer[_0x5823db(0x2dc)](_0x5704bc);}allCategoriesViewElementsContainer[_0x5823db(0x2dc)](renderBannerAd());currentUser&&currentUser['id']&&renderAndAttachCommentsSection(allCategoriesViewElementsContainer);if(websiteLinks['length']>0x0){const _0x2c4aaf=document[_0x5823db(0x12e)](_0x5823db(0x143));_0x2c4aaf['id']='ourWebsitesSection',_0x2c4aaf[_0x5823db(0xf6)]=_0x5823db(0x127);const _0x1995b0=document['createElement'](_0x5823db(0x143));_0x1995b0['className']=_0x5823db(0x183),websiteLinks[_0x5823db(0x2f3)](_0x44002b=>{const _0x5a03b8=_0x5823db,_0x3dba04=document[_0x5a03b8(0x12e)]('a');_0x3dba04[_0x5a03b8(0x206)]=_0x44002b[_0x5a03b8(0x2a3)],_0x3dba04[_0x5a03b8(0xe4)]=_0x44002b[_0x5a03b8(0x12c)],_0x3dba04[_0x5a03b8(0x1ba)]=_0x5a03b8(0x2d7),_0x3dba04[_0x5a03b8(0x249)]='_blank',_0x3dba04['rel']=_0x5a03b8(0x287),_0x1995b0['appendChild'](_0x3dba04);}),_0x2c4aaf[_0x5823db(0x2dc)](_0x1995b0),allCategoriesViewElementsContainer['appendChild'](_0x2c4aaf);}allCategoriesViewElementsContainer[_0x5823db(0xee)][_0x5823db(0x19b)]===0x0&&allContentData[_0x5823db(0x19b)]===0x0&&!isFetchingSheet&&!isFetchingConfig&&showEmptyState(!![],'No\x20content\x20or\x20information\x20available.');}function renderCategoryView(_0x3a574c={}){const _0x3972c2=_0x4f3a04;allCategoriesViewElementsContainer[_0x3972c2(0x306)][_0x3972c2(0x10b)]=_0x3972c2(0xc3),contentListContainer['style'][_0x3972c2(0x10b)]=_0x3972c2(0x246);if(currentSection===_0x3972c2(0x27b)){renderHomePageContent();return;}const _0xcbabd9=appConfig[_0x3972c2(0x132)][currentSection];if(!_0xcbabd9){showError('Category\x20not\x20found.');return;}const _0x22c02b=allContentData['filter'](_0x430a0d=>_0x430a0d[_0xcbabd9[_0x3972c2(0x137)]]);if(_0x22c02b[_0x3972c2(0x19b)]===0x0){showEmptyState(!![],'No\x20content\x20in\x20\x22'+_0xcbabd9['name']+'\x22.');return;}if(currentSection===_0x3972c2(0x228)){const _0x20a320=_0x22c02b[_0x3972c2(0x1a2)]((_0x2a295e,_0x92f2fe)=>{const _0x5816a7=_0x3972c2,_0x2ce6bd=_0x92f2fe[_0x5816a7(0x171)]||_0x5816a7(0x1f2);if(!_0x2a295e[_0x2ce6bd])_0x2a295e[_0x2ce6bd]=[];return _0x2a295e[_0x2ce6bd][_0x5816a7(0x21f)](_0x92f2fe),_0x2a295e;},{});let _0x5b74bc=Object[_0x3972c2(0x135)](_0x20a320)[_0x3972c2(0x1e4)]((_0x3f7c2b,_0x736ae5)=>_0x3f7c2b[_0x3972c2(0x355)](_0x736ae5));_0x3a574c[_0x3972c2(0x217)]&&(_0x5b74bc=shuffleArray(_0x5b74bc));_0x5b74bc[_0x3972c2(0x2f3)](_0x32e8f6=>{const _0x2a4bf8=_0x3972c2,_0x5a8771=_0x20a320[_0x32e8f6];_0x3a574c['randomize']&&shuffleArray(_0x5a8771);const _0x43cd8a=document[_0x2a4bf8(0x12e)](_0x2a4bf8(0x143));_0x43cd8a['className']=_0x2a4bf8(0x22e);const _0x426ede=document[_0x2a4bf8(0x12e)]('h3');_0x426ede[_0x2a4bf8(0x1ba)]=_0x2a4bf8(0x24a),_0x426ede['textContent']=_0x32e8f6,_0x43cd8a[_0x2a4bf8(0x2dc)](_0x426ede);const _0x349fdd=document[_0x2a4bf8(0x12e)]('div');_0x349fdd['className']=_0x2a4bf8(0x191),_0x5a8771[_0x2a4bf8(0x2f3)](_0x2453ca=>{const _0x5f4812=_0x2a4bf8;_0x349fdd[_0x5f4812(0x2dc)](createListItemCard(_0x2453ca,{'isLiveTV':!![]}));}),_0x43cd8a[_0x2a4bf8(0x2dc)](_0x349fdd),contentListContainer[_0x2a4bf8(0x2dc)](_0x43cd8a);}),contentListContainer[_0x3972c2(0x306)]['display']=_0x3972c2(0xc3),allCategoriesViewElementsContainer['style']['display']=_0x3972c2(0x246);return;}const _0x155dbb=_0x22c02b[_0x3972c2(0x1a2)]((_0x5caf63,_0x3c9f6a)=>{const _0x578a5d=_0x3972c2,_0x5290f6=_0x3c9f6a[_0x578a5d(0x1e5)]||_0x578a5d(0x2f1);if(!_0x5caf63[_0x5290f6])_0x5caf63[_0x5290f6]=[];return _0x5caf63[_0x5290f6][_0x578a5d(0x21f)](_0x3c9f6a),_0x5caf63;},{});let _0x53e263=Object[_0x3972c2(0x135)](_0x155dbb)[_0x3972c2(0x2b4)](_0x4ab422=>_0x4ab422!==_0x3972c2(0x2f1))[_0x3972c2(0x1e4)]((_0x575e85,_0x29e768)=>_0x575e85[_0x3972c2(0x355)](_0x29e768)),_0x10588f=_0x155dbb[_0x3972c2(0x2f1)]||[];_0x3a574c[_0x3972c2(0x217)]&&(_0x53e263=shuffleArray(_0x53e263),_0x10588f=shuffleArray(_0x10588f));_0x53e263[_0x3972c2(0x2f3)](_0x21990f=>{const _0x1bede0=_0x3972c2,_0x4be1c9=_0x155dbb[_0x21990f],_0x2f25d0=_0x4be1c9['some'](_0x598a2a=>_0x598a2a[_0x1bede0(0x31b)]),_0x27d48e=_0x4be1c9[_0x1bede0(0x11a)](_0x50efab=>_0x50efab[_0x1bede0(0x16b)])?.[_0x1bede0(0x16b)]||null;if(_0x2f25d0){if(!contentListContainer[_0x1bede0(0x2ec)](_0x1bede0(0x126))){const _0x4c6ff2=document[_0x1bede0(0x12e)](_0x1bede0(0x143));_0x4c6ff2[_0x1bede0(0x1ba)]='folder-grid',contentListContainer['appendChild'](_0x4c6ff2);}const _0x19fe3e=createListItemCard({'id':'folder-'+_0x21990f,'title':_0x21990f},{'isFolder':!![],'folderItemCount':_0x4be1c9[_0x1bede0(0x19b)],'bannerUrl':_0x27d48e});contentListContainer[_0x1bede0(0x2ec)]('.folder-grid')[_0x1bede0(0x2dc)](_0x19fe3e);}else{const _0x5aac96=0x5,_0x522c8e=document[_0x1bede0(0x12e)](_0x1bede0(0x143));_0x522c8e[_0x1bede0(0x1ba)]=_0x1bede0(0x22e);const _0x3eec45=document[_0x1bede0(0x12e)]('h3');_0x3eec45['className']='section-row-title',_0x3eec45['textContent']=_0x21990f,_0x522c8e[_0x1bede0(0x2dc)](_0x3eec45);const _0x2b826c=document['createElement'](_0x1bede0(0x143));_0x2b826c[_0x1bede0(0x1ba)]=_0x1bede0(0x191);let _0x2a9234=[..._0x4be1c9];_0x3a574c[_0x1bede0(0x217)]&&(_0x2a9234=shuffleArray(_0x2a9234));const _0x506a27=_0x2a9234[_0x1bede0(0x19b)]>_0x5aac96?_0x2a9234['slice'](0x0,_0x5aac96):_0x2a9234;_0x506a27[_0x1bede0(0x2f3)](_0x1dc416=>{_0x2b826c['appendChild'](createListItemCard(_0x1dc416));});if(_0x2a9234['length']>_0x5aac96){const _0x415559=document[_0x1bede0(0x12e)](_0x1bede0(0x143));_0x415559['className']='see-more-card',_0x415559[_0x1bede0(0xf6)]=_0x1bede0(0x243),_0x415559[_0x1bede0(0x27e)]=()=>{const _0x557c3b=_0x1bede0;navigationPath=[_0x21990f,''],currentView=_0x557c3b(0x238),renderContent();},_0x2b826c[_0x1bede0(0x2dc)](_0x415559);}_0x522c8e[_0x1bede0(0x2dc)](_0x2b826c),contentListContainer[_0x1bede0(0x2dc)](_0x522c8e);}});if(_0x10588f['length']>0x0){if(!contentListContainer[_0x3972c2(0x2ec)](_0x3972c2(0x126))){const _0x3a7e69=document[_0x3972c2(0x12e)](_0x3972c2(0x143));_0x3a7e69[_0x3972c2(0x1ba)]=_0x3972c2(0xf2),contentListContainer[_0x3972c2(0x2dc)](_0x3a7e69);}_0x10588f[_0x3972c2(0x2f3)](_0x20aefb=>{const _0x4da815=_0x3972c2;contentListContainer[_0x4da815(0x2ec)](_0x4da815(0x126))[_0x4da815(0x2dc)](createListItemCard(_0x20aefb));});}contentListContainer[_0x3972c2(0x306)][_0x3972c2(0x10b)]=_0x3972c2(0xc3);}function renderFolderView(_0x1fec0f={}){const _0x239b81=_0x4f3a04;contentListContainer[_0x239b81(0x306)]['display']=_0x239b81(0xc3);const _0x24656d=navigationPath[0x0],_0x3b39b1=allContentData[_0x239b81(0x2b4)](_0x1832ea=>_0x1832ea['folderTitle']===_0x24656d);let _0x399a7a=[...new Set(_0x3b39b1[_0x239b81(0x1a5)](_0x2424ff=>_0x2424ff['subFolderTitle'])['filter'](Boolean))][_0x239b81(0x1e4)]();if(_0x399a7a[_0x239b81(0x19b)]===0x0){renderSubFolderView(_0x1fec0f);return;}_0x1fec0f[_0x239b81(0x217)]&&(_0x399a7a=shuffleArray(_0x399a7a));const _0x5c3f42=document['createElement'](_0x239b81(0x143));_0x5c3f42[_0x239b81(0x1ba)]=_0x239b81(0xf2),_0x399a7a[_0x239b81(0x2f3)](_0xceecf4=>{const _0x37fefb=_0x239b81,_0x244364=_0x3b39b1[_0x37fefb(0x2b4)](_0x2ca50d=>_0x2ca50d['subFolderTitle']===_0xceecf4),_0x3f935a=_0x244364['length'],_0x1e6df5=_0x244364[_0x37fefb(0x11a)](_0x2ac024=>_0x2ac024[_0x37fefb(0xd5)])?.[_0x37fefb(0xd5)]||null,_0xa89019=createListItemCard({'id':_0x37fefb(0xab)+_0xceecf4,'title':_0xceecf4},{'isFolder':!![],'folderItemCount':_0x3f935a,'bannerUrl':_0x1e6df5});_0x5c3f42[_0x37fefb(0x2dc)](_0xa89019);}),contentListContainer[_0x239b81(0x2dc)](_0x5c3f42);}function renderSubFolderView(_0x1de0e1={}){const _0x2180cb=_0x4f3a04;contentListContainer[_0x2180cb(0x306)]['display']=_0x2180cb(0xc3);const [_0x3e1b9b,_0x4924d0]=navigationPath;let _0x21c458=allContentData[_0x2180cb(0x2b4)](_0x1da007=>_0x1da007[_0x2180cb(0x1e5)]===_0x3e1b9b&&(_0x4924d0!==''?_0x1da007['subFolderTitle']===_0x4924d0:!![]));if(_0x21c458[_0x2180cb(0x19b)]===0x0){showEmptyState(!![],'No\x20content\x20in\x20\x22'+(_0x4924d0||_0x3e1b9b)+'\x22.');return;}_0x1de0e1[_0x2180cb(0x217)]&&(_0x21c458=shuffleArray(_0x21c458));const _0x653fc9=document[_0x2180cb(0x12e)](_0x2180cb(0x143));_0x653fc9[_0x2180cb(0x1ba)]=_0x2180cb(0xf2),_0x21c458[_0x2180cb(0x2f3)](_0x1a39ae=>{const _0x4b2ef7=_0x2180cb;_0x653fc9[_0x4b2ef7(0x2dc)](createListItemCard(_0x1a39ae));}),contentListContainer[_0x2180cb(0x2dc)](_0x653fc9);}function updateSectionHeader(){const _0x433dd9=_0x4f3a04;if(!appConfig[_0x433dd9(0x132)])return;const _0x1388ae=document[_0x433dd9(0x2ec)](_0x433dd9(0x1bb));if(_0x1388ae){const _0xd99c9e=currentSection===_0x433dd9(0x27b)&&navigationPath['length']===0x0;_0x1388ae['classList']['toggle']('hidden',!_0xd99c9e);}if(currentSection===_0x433dd9(0x27b)&&navigationPath[_0x433dd9(0x19b)]===0x0){sectionTitleWrapperEl[_0x433dd9(0x306)][_0x433dd9(0x10b)]=_0x433dd9(0x246),allCategoriesViewElementsContainer[_0x433dd9(0x306)][_0x433dd9(0x10b)]=_0x433dd9(0xc3),contentListContainer['style'][_0x433dd9(0x10b)]=_0x433dd9(0x246);return;}sectionTitleWrapperEl[_0x433dd9(0x306)][_0x433dd9(0x10b)]=_0x433dd9(0x35e),allCategoriesViewElementsContainer[_0x433dd9(0x306)][_0x433dd9(0x10b)]=_0x433dd9(0x246),contentListContainer[_0x433dd9(0x306)][_0x433dd9(0x10b)]='flex';currentSection!==_0x433dd9(0x27b)&&navigationPath[_0x433dd9(0x19b)]===0x0&&currentView===_0x433dd9(0x101)?refreshSectionBtn[_0x433dd9(0x306)][_0x433dd9(0x10b)]=_0x433dd9(0xc3):refreshSectionBtn['style'][_0x433dd9(0x10b)]=_0x433dd9(0x246);if(navigationPath[_0x433dd9(0x19b)]>0x0)backBtn['style'][_0x433dd9(0x10b)]=_0x433dd9(0xc3),sectionTitleIconEl[_0x433dd9(0x306)][_0x433dd9(0x10b)]=_0x433dd9(0x246),sectionTitleEl[_0x433dd9(0xe4)]=[...navigationPath][_0x433dd9(0x2b4)](Boolean)[_0x433dd9(0x147)]()||_0x433dd9(0x1ce);else{backBtn[_0x433dd9(0x306)]['display']=_0x433dd9(0x246);const _0x31cb5a=appConfig['categoryDetails'][currentSection];_0x31cb5a&&(sectionTitleEl[_0x433dd9(0xe4)]=_0x31cb5a['name'],sectionTitleIconEl[_0x433dd9(0x2c5)]=_0x31cb5a[_0x433dd9(0xfb)],sectionTitleIconEl['style'][_0x433dd9(0x10b)]=_0x433dd9(0x35e));}}function resetNavigation(){const _0x5770e1=_0x4f3a04;navigationPath=[],currentView=_0x5770e1(0x101),currentSearchTerm=null;}function navigateBack(){const _0x2081bd=_0x4f3a04;if(navigationPath[_0x2081bd(0x19b)]>0x0){navigationPath['pop']();navigationPath[_0x2081bd(0x19b)]>0x0&&navigationPath[navigationPath[_0x2081bd(0x19b)]-0x1]===''&&navigationPath[_0x2081bd(0x147)]();currentView=navigationPath[_0x2081bd(0x19b)]>0x0?'folder':'category';if(currentView===_0x2081bd(0x101)){const _0x26eee9=document[_0x2081bd(0x2ec)](_0x2081bd(0xeb));_0x26eee9&&_0x26eee9['dataset']['section']!==currentSection&&(currentSection=_0x26eee9['dataset']['section']);}}renderContent();}function handleSectionRefresh(){const _0x32667a=_0x4f3a04;refreshSectionBtn&&(refreshSectionBtn[_0x32667a(0x250)][_0x32667a(0x113)]('spinning'),setTimeout(()=>refreshSectionBtn['classList']['remove'](_0x32667a(0x349)),0x258)),renderContent({'randomize':!![]});}function updatePlayingIndicator(_0x3dc2e9){const _0xd91ad3=_0x4f3a04;currentPlayingCardId&&document[_0xd91ad3(0x10d)](_0xd91ad3(0x266)+currentPlayingCardId+'\x22]')[_0xd91ad3(0x2f3)](_0x379170=>_0x379170[_0xd91ad3(0x250)][_0xd91ad3(0x239)](_0xd91ad3(0x23a))),_0x3dc2e9&&document[_0xd91ad3(0x10d)]('[data-item-id=\x22'+_0x3dc2e9+'\x22]')['forEach'](_0x4b33dd=>{const _0x59f57f=_0xd91ad3;!_0x4b33dd[_0x59f57f(0x250)][_0x59f57f(0x172)]('featured-item')&&_0x4b33dd[_0x59f57f(0x250)][_0x59f57f(0x113)](_0x59f57f(0x23a));}),currentPlayingCardId=_0x3dc2e9;}function populateNowPlayingInfo(_0xc04b08,_0x59a9fc=null){const _0x19f0f3=_0x4f3a04;if(!_0xc04b08){nowPlayingInfoWrapperEl['style']['display']=_0x19f0f3(0x246);return;};let _0x4129a7=appConfig[_0x19f0f3(0x132)][currentSection]?.['name']||_0x19f0f3(0x261);nowPlayingTitleEl[_0x19f0f3(0xe4)]=_0xc04b08[_0x19f0f3(0x270)],nowPlayingSectionEl['textContent']=_0x4129a7;const _0x4b8f24=_0xc04b08[_0x19f0f3(0x228)]?_0xc04b08[_0x19f0f3(0x171)]:_0xc04b08['subFolderTitle']?_0xc04b08[_0x19f0f3(0x1e5)]+_0x19f0f3(0x16f)+_0xc04b08['subFolderTitle']:_0xc04b08['folderTitle'];_0x4b8f24?(nowPlayingFolderTextEl[_0x19f0f3(0xe4)]=_0x4b8f24,nowPlayingFolderEl[_0x19f0f3(0x306)][_0x19f0f3(0x10b)]=_0x19f0f3(0xc3)):nowPlayingFolderEl['style'][_0x19f0f3(0x10b)]='none';_0x59a9fc&&!_0xc04b08[_0x19f0f3(0x228)]?(nowPlayingQualityTextEl[_0x19f0f3(0xe4)]=_0x59a9fc,nowPlayingQualityEl[_0x19f0f3(0x306)][_0x19f0f3(0x10b)]=_0x19f0f3(0xc3)):nowPlayingQualityEl[_0x19f0f3(0x306)][_0x19f0f3(0x10b)]='none';_0xc04b08['badgeTexts']&&_0xc04b08['badgeTexts']['length']>0x0&&!_0xc04b08[_0x19f0f3(0x228)]?(nowPlayingBadgeTextEl[_0x19f0f3(0xe4)]=_0xc04b08[_0x19f0f3(0x1b0)][0x0],nowPlayingBadgeEl[_0x19f0f3(0x306)][_0x19f0f3(0x10b)]=_0x19f0f3(0x19e)):nowPlayingBadgeEl[_0x19f0f3(0x306)]['display']=_0x19f0f3(0x246);const _0x46bddf=document[_0x19f0f3(0x303)](_0x19f0f3(0x1e9));if(_0x46bddf)_0x46bddf['remove']();if(_0xc04b08[_0x19f0f3(0x1b0)]&&_0xc04b08[_0x19f0f3(0x1b0)][_0x19f0f3(0x19b)]>0x1){const _0x258061=document[_0x19f0f3(0x12e)](_0x19f0f3(0x143));_0x258061['id']=_0x19f0f3(0x1e9),_0x258061[_0x19f0f3(0x1ba)]=_0x19f0f3(0x2da);const _0x5ddbb5=document[_0x19f0f3(0x12e)](_0x19f0f3(0x143));_0x5ddbb5['className']='now-playing-additional-badges-track',_0xc04b08[_0x19f0f3(0x1b0)]['slice'](0x1)[_0x19f0f3(0x2f3)](_0x3cf8f7=>{const _0x210a5f=_0x19f0f3,_0x570060=document['createElement'](_0x210a5f(0x1b5));_0x570060[_0x210a5f(0x1ba)]='now-playing-additional-badge',_0x570060['textContent']=_0x3cf8f7,_0x5ddbb5[_0x210a5f(0x2dc)](_0x570060);}),_0x258061[_0x19f0f3(0xf6)]=_0x19f0f3(0x13a),_0x258061[_0x19f0f3(0x2dc)](_0x5ddbb5);const _0x4fc31d=nowPlayingSectionEl['closest']('.now-playing-meta');_0x4fc31d&&_0x4fc31d[_0x19f0f3(0x235)][_0x19f0f3(0xd9)](_0x258061,_0x4fc31d['nextSibling']);}if(_0xc04b08['ratingText']&&!_0xc04b08[_0x19f0f3(0x228)]){nowPlayingRatingEl['style']['display']='flex',nowPlayingRatingTextEl[_0x19f0f3(0xe4)]=_0xc04b08[_0x19f0f3(0x15b)];const _0x3118a4=parseFloat(_0xc04b08['ratingText']),_0x9c14bd=0xa,_0x350bb9=_0x3118a4/_0x9c14bd*0x64;nowPlayingRatingStarsEl[_0x19f0f3(0x306)][_0x19f0f3(0xdf)]=_0x350bb9+'%';}else nowPlayingRatingEl['style'][_0x19f0f3(0x10b)]=_0x19f0f3(0x246);nowPlayingWarningEl[_0x19f0f3(0x306)]['display']=_0xc04b08[_0x19f0f3(0x1dd)]?_0x19f0f3(0xc3):_0x19f0f3(0x246),nowPlayingDownloadBtnEl[_0x19f0f3(0x306)][_0x19f0f3(0x10b)]=_0xc04b08[_0x19f0f3(0x228)]?'none':_0x19f0f3(0x34b),nowPlayingDownloadBtnEl[_0x19f0f3(0x27e)]=()=>handleDownloadClick(_0xc04b08),nowPlayingLikesEl[_0x19f0f3(0xf1)][_0x19f0f3(0x11e)]=_0xc04b08['id'],nowPlayingViewsEl[_0x19f0f3(0xf1)][_0x19f0f3(0x11e)]=_0xc04b08['id'],db&&currentUser['id']&&([nowPlayingLikeBtnEl,nowPlayingDislikeBtnEl][_0x19f0f3(0x2f3)](_0x3560dc=>_0x3560dc[_0x19f0f3(0xf1)]['itemId']=_0xc04b08['id']),nowPlayingLikeBtnEl[_0x19f0f3(0x27e)]=()=>window['handleVote'](_0xc04b08['id'],_0x19f0f3(0x1f7)),nowPlayingDislikeBtnEl['onclick']=()=>window[_0x19f0f3(0x176)](_0xc04b08['id'],_0x19f0f3(0x152)),window[_0x19f0f3(0x289)](_0xc04b08['id']),window[_0x19f0f3(0x188)](_0xc04b08['id']));}function openPlayerInMaintenanceMode(_0xef490c){const _0x1c271a=_0x4f3a04;triggerElement=document[_0x1c271a(0x269)],closeInlineVideoPlayer(!![]),inlinePlayerTitleText[_0x1c271a(0xe4)]=_0xef490c['title'],updatePlayingIndicator(_0xef490c['id']),populateNowPlayingInfo(_0xef490c),nowPlayingInfoWrapperEl[_0x1c271a(0x306)][_0x1c271a(0x10b)]='block',playerAdjacentContentEl[_0x1c271a(0x306)][_0x1c271a(0x10b)]=_0x1c271a(0x35e),playerMessageOverlayEl[_0x1c271a(0x306)]['display']=_0x1c271a(0xc3),nativeVideoPlayer['style']['display']=_0x1c271a(0x246),customVideoControls[_0x1c271a(0x306)][_0x1c271a(0x10b)]=_0x1c271a(0x246),playerLoader[_0x1c271a(0x250)][_0x1c271a(0x239)]('visible'),inlinePlayerWrapper[_0x1c271a(0x250)][_0x1c271a(0x113)](_0x1c271a(0x2e2)),setLiveTVPlayerMode(_0xef490c[_0x1c271a(0x228)]),setPlayerWrapperHeight(),handleControlsVisibility();}function setLiveTVPlayerMode(_0x16e4a8){const _0x46ad90=_0x4f3a04;isCurrentPlayerLiveTV=_0x16e4a8,liveIndicatorEl[_0x46ad90(0x306)][_0x46ad90(0x10b)]=_0x16e4a8?'flex':'none';const _0x14b1a2=autoplayToggleEl[_0x46ad90(0x32f)](_0x46ad90(0x181));_0x14b1a2&&(_0x14b1a2[_0x46ad90(0x306)][_0x46ad90(0x10b)]=_0x16e4a8?_0x46ad90(0x246):_0x46ad90(0xc3)),_0x16e4a8?appContainerEl['classList'][_0x46ad90(0x113)](_0x46ad90(0x276)):appContainerEl[_0x46ad90(0x250)][_0x46ad90(0x239)](_0x46ad90(0x276));}async function openInlineVideoPlayer(_0x1b0590,_0x53866a,_0x527cfa,_0x14081d=0x0,_0x3d67b8=null){const _0xa05c47=_0x4f3a04;if(!_0x1b0590)return document[_0xa05c47(0x10d)](_0xa05c47(0x151))[_0xa05c47(0x2f3)](_0x3362f8=>_0x3362f8[_0xa05c47(0x250)][_0xa05c47(0x239)]('clicked-to-play')),showError(_0xa05c47(0x18c));triggerElement=document['activeElement'];if(inlinePlayerWrapper[_0xa05c47(0x250)][_0xa05c47(0x172)](_0xa05c47(0x2e2))&&currentlyPlayingStreamUrl===_0x1b0590)return;closeInlineVideoPlayer(!![]),inlinePlayerTitleText['textContent']=_0x53866a,currentlyPlayingStreamUrl=_0x1b0590,updatePlayingIndicator(_0x527cfa['id']),populateNowPlayingInfo(_0x527cfa,_0x3d67b8),nowPlayingInfoWrapperEl['style'][_0xa05c47(0x10b)]=_0xa05c47(0x35e),playerAdjacentContentEl['style']['display']='block',populateUpNextSection(_0x527cfa);const _0x5dfb41=document[_0xa05c47(0x303)](_0xa05c47(0x212)),_0x58d5ab=document['getElementById'](_0xa05c47(0x194));db&&currentUser['id']?([_0x5dfb41,_0x58d5ab][_0xa05c47(0x2f3)](_0x991e9c=>{const _0x124aff=_0xa05c47;_0x991e9c['classList'][_0x124aff(0x239)](_0x124aff(0x2fc)),_0x991e9c[_0x124aff(0xf1)]['itemId']=_0x527cfa['id'];}),_0x5dfb41[_0xa05c47(0x27e)]=()=>window[_0xa05c47(0x176)](_0x527cfa['id'],'like'),_0x58d5ab[_0xa05c47(0x27e)]=()=>window['handleVote'](_0x527cfa['id'],'dislike'),window[_0xa05c47(0x289)](_0x527cfa['id'])):[_0x5dfb41,_0x58d5ab][_0xa05c47(0x2f3)](_0x4f799a=>_0x4f799a['classList'][_0xa05c47(0x113)](_0xa05c47(0x2fc)));playerMessageOverlayEl[_0xa05c47(0x306)]['display']=_0xa05c47(0x246),nativeVideoPlayer[_0xa05c47(0x306)][_0xa05c47(0x10b)]=_0xa05c47(0x35e),customVideoControls[_0xa05c47(0x306)]['display']=_0xa05c47(0xc3);const _0x4ca128=playerLoader[_0xa05c47(0x2ec)](_0xa05c47(0x155)),_0x3b9ac9=playerLoader[_0xa05c47(0x2ec)]('.custom-loader-img');_0x527cfa[_0xa05c47(0x1c6)]?(_0x3b9ac9[_0xa05c47(0x2c5)]=_0x527cfa['loaderAnimationUrl'],_0x3b9ac9[_0xa05c47(0x306)][_0xa05c47(0x10b)]=_0xa05c47(0x35e),_0x4ca128[_0xa05c47(0x306)][_0xa05c47(0x10b)]=_0xa05c47(0x246)):(_0x3b9ac9[_0xa05c47(0x306)][_0xa05c47(0x10b)]='none',_0x4ca128['style'][_0xa05c47(0x10b)]=_0xa05c47(0x35e));playerLoader[_0xa05c47(0x250)][_0xa05c47(0x113)](_0xa05c47(0x1b7)),progressBar['value']=0x0,progressBar[_0xa05c47(0x306)]['background']='rgba(255,\x20255,\x20255,\x200.3)',timeDisplay[_0xa05c47(0xe4)]='00:00\x20/\x2000:00',currentScreenFitMode=_0xa05c47(0x281),nativeVideoPlayer[_0xa05c47(0x250)]['remove']('video-mode-cover'),nativeVideoPlayer[_0xa05c47(0x250)][_0xa05c47(0x113)](_0xa05c47(0x29e)),fillIcon[_0xa05c47(0x306)][_0xa05c47(0x10b)]='block',fitIcon['style'][_0xa05c47(0x10b)]='none',fitFillBtn[_0xa05c47(0xe6)]('aria-label',_0xa05c47(0x29f)),nativeVideoPlayer[_0xa05c47(0x1d9)]=0x1,playbackSpeedBtn[_0xa05c47(0xe4)]='1x',inlinePlayerWrapper[_0xa05c47(0x250)][_0xa05c47(0x113)](_0xa05c47(0x2e2)),setLiveTVPlayerMode(_0x527cfa['isLiveTV']),setPlayerWrapperHeight();hlsInstance&&(hlsInstance[_0xa05c47(0x1cf)](),hlsInstance=null);if(_0x1b0590[_0xa05c47(0xca)](_0xa05c47(0x348))){if(Hls[_0xa05c47(0x231)]())hlsInstance=new Hls(),hlsInstance['loadSource'](_0x1b0590),hlsInstance[_0xa05c47(0x30b)](nativeVideoPlayer),hlsInstance['on'](Hls[_0xa05c47(0x24d)][_0xa05c47(0x26c)],function(){const _0xf60812=_0xa05c47;_0x14081d>0x0&&isFinite(_0x14081d)&&!_0x527cfa[_0xf60812(0x228)]&&(nativeVideoPlayer[_0xf60812(0x23b)]=_0x14081d);});else{if(nativeVideoPlayer[_0xa05c47(0x2a0)](_0xa05c47(0x30d)))nativeVideoPlayer[_0xa05c47(0x2c5)]=_0x1b0590,_0x14081d>0x0&&isFinite(_0x14081d)&&!_0x527cfa[_0xa05c47(0x228)]&&(nativeVideoPlayer[_0xa05c47(0x23b)]=_0x14081d);else{showError(_0xa05c47(0xf9));return;}}}else nativeVideoPlayer['src']=_0x1b0590,_0x14081d>0x0&&isFinite(_0x14081d)&&!_0x527cfa[_0xa05c47(0x228)]&&(nativeVideoPlayer[_0xa05c47(0x23b)]=_0x14081d);_0x527cfa[_0xa05c47(0x1c8)]?(nativePlayerWatermarkEl[_0xa05c47(0x2ec)]('img')['src']=_0x527cfa[_0xa05c47(0x1c8)],nativePlayerWatermarkEl['classList'][_0xa05c47(0x239)](_0xa05c47(0x2fc))):nativePlayerWatermarkEl['classList']['add'](_0xa05c47(0x2fc));try{await nativeVideoPlayer[_0xa05c47(0x29d)](),handleControlsVisibility(),showBottomBannerAd();}catch(_0x7790d3){document[_0xa05c47(0x10d)]('.list-item-card.clicked-to-play,\x20.live-tv-card.clicked-to-play')[_0xa05c47(0x2f3)](_0x4908bd=>_0x4908bd[_0xa05c47(0x250)][_0xa05c47(0x239)]('clicked-to-play')),updatePlayingIndicator(null),console['warn'](_0xa05c47(0x2a4),_0x7790d3[_0xa05c47(0x12c)],_0x7790d3[_0xa05c47(0x2b5)]);}}function closeInlineVideoPlayer(_0xfba63e=![]){const _0x7fe023=_0x4f3a04;hideBottomBannerAd();hlsInstance&&(hlsInstance['destroy'](),hlsInstance=null);setLiveTVPlayerMode(![]),nowPlayingInfoWrapperEl['style'][_0x7fe023(0x10b)]=_0x7fe023(0x246),nowPlayingQualityEl['style'][_0x7fe023(0x10b)]=_0x7fe023(0x246),playerAdjacentContentEl[_0x7fe023(0x306)]['display']=_0x7fe023(0x246),upNextContainerEl[_0x7fe023(0x306)]['display']=_0x7fe023(0x246),upNextItemsEl['innerHTML']='';const _0x4fc170=document[_0x7fe023(0x303)](_0x7fe023(0x1e9));if(_0x4fc170)_0x4fc170[_0x7fe023(0x239)]();hideNextPlayNotification();nativeVideoPlayer&&(nativeVideoPlayer[_0x7fe023(0x1f5)](),nativeVideoPlayer[_0x7fe023(0x136)](_0x7fe023(0x2c5)),nativeVideoPlayer[_0x7fe023(0x1eb)](),nativeVideoPlayer[_0x7fe023(0xec)]='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');if(nativePlayerWatermarkEl)nativePlayerWatermarkEl[_0x7fe023(0x250)][_0x7fe023(0x113)](_0x7fe023(0x2fc));playerLoader[_0x7fe023(0x250)][_0x7fe023(0x239)](_0x7fe023(0x1b7));const _0x557cae=playerLoader[_0x7fe023(0x2ec)](_0x7fe023(0x1f1));if(_0x557cae)_0x557cae[_0x7fe023(0x2c5)]='';clearTimeout(inactivityTimeout),document['querySelectorAll'](_0x7fe023(0x151))[_0x7fe023(0x2f3)](_0x1c553b=>_0x1c553b['classList'][_0x7fe023(0x239)]('clicked-to-play')),updatePlayingIndicator(null),inlinePlayerWrapper['classList'][_0x7fe023(0x239)](_0x7fe023(0x2e2)),setPlayerWrapperHeight(),inlinePlayerTitleText['textContent']=_0x7fe023(0x1d1),currentlyPlayingStreamUrl=null,playerMessageOverlayEl[_0x7fe023(0x306)][_0x7fe023(0x10b)]=_0x7fe023(0x246),nowPlayingWarningEl[_0x7fe023(0x306)]['display']='none',nativeVideoPlayer['style'][_0x7fe023(0x10b)]=_0x7fe023(0x35e),customVideoControls[_0x7fe023(0x306)]['display']=_0x7fe023(0xc3);if(!_0xfba63e&&triggerElement)triggerElement[_0x7fe023(0xb5)](),triggerElement=null;else!_0xfba63e&&customPlayerCloseBtn&&customPlayerCloseBtn[_0x7fe023(0xb5)]();}function setPlayerWrapperHeight(){const _0x4e7373=_0x4f3a04;if(!inlinePlayerWrapper)return;const _0x54964f=parseFloat(getComputedStyle(document[_0x4e7373(0x23d)])['getPropertyValue'](_0x4e7373(0x1e2)));if(!inlinePlayerWrapper[_0x4e7373(0x250)][_0x4e7373(0x172)](_0x4e7373(0x2e2))){inlinePlayerWrapper[_0x4e7373(0x306)]['height']=getComputedStyle(document[_0x4e7373(0x23d)])['getPropertyValue']('--player-wrapper-height-collapsed');return;}let _0x35f727=getComputedStyle(document[_0x4e7373(0x23d)])['getPropertyValue'](_0x4e7373(0x1aa))['trim'](),_0x9783e9;if(_0x35f727[_0x4e7373(0x232)]('vh'))_0x9783e9=parseFloat(_0x35f727)/0x64*window[_0x4e7373(0x26b)];else _0x35f727['endsWith']('px')?_0x9783e9=parseFloat(_0x35f727):_0x9783e9=window['innerHeight']*0.5;const _0x2e8fd4=0x96,_0x1cdcc4=window[_0x4e7373(0x26b)]-(appHeaderEl?appHeaderEl[_0x4e7373(0x344)]:parseFloat(getComputedStyle(document[_0x4e7373(0x23d)])[_0x4e7373(0x28e)](_0x4e7373(0x1c4)))),_0x525435=sectionTitleWrapperEl&&sectionTitleWrapperEl[_0x4e7373(0x306)][_0x4e7373(0x10b)]!==_0x4e7373(0x246)?sectionTitleWrapperEl[_0x4e7373(0x344)]:0x0,_0x580b99=0x64;_0x9783e9>_0x1cdcc4-_0x525435-_0x580b99&&(_0x9783e9=_0x1cdcc4-_0x525435-_0x580b99);_0x9783e9<_0x2e8fd4&&(_0x9783e9=_0x2e8fd4);if(_0x9783e9<0x0)_0x9783e9=0x0;inlinePlayerWrapper[_0x4e7373(0x306)][_0x4e7373(0x209)]=_0x9783e9+'px';const _0x54ea27=inlinePlayerWrapper[_0x4e7373(0x2ec)]('.video-container');_0x54ea27&&(_0x54ea27['style'][_0x4e7373(0x209)]=_0x4e7373(0x182)+_0x54964f+_0x4e7373(0x302));}function openInfoPopup(_0x3c52e,_0x32b23d){const _0x2dfe26=_0x4f3a04;if(!infoPopupOverlay)return;triggerElement=document[_0x2dfe26(0x269)],currentPopupItem=_0x3c52e,infoPopupBannerImg[_0x2dfe26(0x2c5)]=_0x3c52e[_0x2dfe26(0x2fe)],infoPopupBannerImg['onerror']=()=>{const _0x3e5cfe=_0x2dfe26;infoPopupBannerImg[_0x3e5cfe(0x2c5)]=DEFAULT_SVG_ICON_DATA_URI;},infoPopupTitleEl[_0x2dfe26(0xe4)]=_0x3c52e['title'],infoPopupSectionEl[_0x2dfe26(0xe4)]=_0x32b23d;_0x3c52e[_0x2dfe26(0x1b0)]&&_0x3c52e[_0x2dfe26(0x1b0)][_0x2dfe26(0x19b)]>0x0?(infoPopupBadgeTextEl['textContent']=_0x3c52e[_0x2dfe26(0x1b0)][0x0],infoPopupBadgeEl[_0x2dfe26(0x306)][_0x2dfe26(0x10b)]=_0x2dfe26(0x35e)):infoPopupBadgeEl[_0x2dfe26(0x306)]['display']=_0x2dfe26(0x246);const _0x36bedf=document[_0x2dfe26(0x2ec)]('.list-item-card[data-item-id=\x22'+_0x3c52e['id']+'\x22]');_0x36bedf&&db&&currentUser['id']?(infoPopupLikesEl['style'][_0x2dfe26(0x10b)]=_0x2dfe26(0xc3),infoPopupViewsEl['style'][_0x2dfe26(0x10b)]=_0x2dfe26(0xc3),infoPopupVoteContainer[_0x2dfe26(0x306)][_0x2dfe26(0x10b)]=_0x2dfe26(0xc3),infoPopupLikeBtn[_0x2dfe26(0xf1)][_0x2dfe26(0x11e)]=_0x3c52e['id'],infoPopupDislikeBtn[_0x2dfe26(0xf1)][_0x2dfe26(0x11e)]=_0x3c52e['id'],window['loadLikeDislikeCounts'](_0x3c52e['id']),window['loadViewCount'](_0x3c52e['id'])):(infoPopupLikesEl[_0x2dfe26(0x306)][_0x2dfe26(0x10b)]=_0x2dfe26(0x246),infoPopupViewsEl[_0x2dfe26(0x306)][_0x2dfe26(0x10b)]=_0x2dfe26(0x246),infoPopupVoteContainer['style'][_0x2dfe26(0x10b)]=_0x2dfe26(0x246));if(_0x3c52e['ratingText']){infoPopupRatingEl['style'][_0x2dfe26(0x10b)]='flex',infoPopupRatingTextEl['textContent']=_0x3c52e[_0x2dfe26(0x15b)];const _0x334e21=parseFloat(_0x3c52e[_0x2dfe26(0x15b)]),_0x2ad9e4=0xa,_0x14e201=_0x334e21/_0x2ad9e4*0x64;infoPopupRatingStarsEl[_0x2dfe26(0x306)]['width']=_0x14e201+'%';}else infoPopupRatingEl[_0x2dfe26(0x306)][_0x2dfe26(0x10b)]=_0x2dfe26(0x246);infoPopupStatusMessageEl[_0x2dfe26(0x250)][_0x2dfe26(0x239)]('maintenance',_0x2dfe26(0x23e));if(_0x3c52e[_0x2dfe26(0x219)])infoPopupStatusMessageEl[_0x2dfe26(0xf6)]=_0x2dfe26(0x26d),infoPopupStatusMessageEl[_0x2dfe26(0x250)][_0x2dfe26(0x113)](_0x2dfe26(0x293)),infoPopupStatusMessageEl[_0x2dfe26(0x306)]['display']=_0x2dfe26(0x35e);else _0x3c52e[_0x2dfe26(0x1dd)]?(infoPopupStatusMessageEl['innerHTML']=_0x2dfe26(0x1b1),infoPopupStatusMessageEl['classList'][_0x2dfe26(0x113)](_0x2dfe26(0x23e)),infoPopupStatusMessageEl[_0x2dfe26(0x306)]['display']=_0x2dfe26(0x35e)):infoPopupStatusMessageEl[_0x2dfe26(0x306)][_0x2dfe26(0x10b)]=_0x2dfe26(0x246);infoPopupDownloadBtn[_0x2dfe26(0x306)]['display']=_0x2dfe26(0x34b),infoPopupDownloadBtn['onclick']=()=>handleDownloadClick(_0x3c52e),infoPopupOverlay['classList'][_0x2dfe26(0x113)](_0x2dfe26(0x1b7));if(infoPopupCloseBtn)infoPopupCloseBtn['focus']();}function closeInfoPopup(_0x461ba2=![]){const _0x4f45cc=_0x4f3a04;if(!infoPopupOverlay)return;infoPopupOverlay[_0x4f45cc(0x250)][_0x4f45cc(0x239)](_0x4f45cc(0x1b7)),currentPopupItem=null,infoPopupLikeBtn&&(infoPopupLikeBtn[_0x4f45cc(0x27e)]=null,infoPopupLikeBtn['dataset']['itemId']=''),infoPopupDislikeBtn&&(infoPopupDislikeBtn[_0x4f45cc(0x27e)]=null,infoPopupDislikeBtn[_0x4f45cc(0xf1)][_0x4f45cc(0x11e)]=''),infoPopupDownloadBtn&&(infoPopupDownloadBtn['onclick']=null,infoPopupDownloadBtn[_0x4f45cc(0x306)][_0x4f45cc(0x10b)]=_0x4f45cc(0x246)),!_0x461ba2&&triggerElement&&(triggerElement[_0x4f45cc(0xb5)](),triggerElement=null);}function openQualityPopup(_0x255f1d,_0x5a84a7){const _0x3f34be=_0x4f3a04;if(!qualityPopupOverlay||!qualityOptionsContainer||!_0x255f1d||_0x255f1d[_0x3f34be(0x219)])return;triggerElement=document[_0x3f34be(0x269)],currentPopupItem=_0x255f1d;qualityPopupTitleEl&&(qualityPopupTitleEl[_0x3f34be(0xf6)]=_0x3f34be(0xd2)+escapeHTML(_0x255f1d[_0x3f34be(0x270)])+_0x3f34be(0x280));qualityOptionsContainer[_0x3f34be(0xf6)]='';if(!_0x5a84a7||_0x5a84a7[_0x3f34be(0x19b)]===0x0){if(_0x255f1d[_0x3f34be(0x2e3)]){let _0x571205=watchHistory[_0x255f1d['id']]?watchHistory[_0x255f1d['id']][_0x3f34be(0x23b)]:0x0;openInlineVideoPlayer(_0x255f1d[_0x3f34be(0x2e3)],_0x255f1d['title'],_0x255f1d,_0x571205,_0x3f34be(0x222));}else document[_0x3f34be(0x10d)](_0x3f34be(0x2ef))[_0x3f34be(0x2f3)](_0x2108bf=>_0x2108bf[_0x3f34be(0x250)][_0x3f34be(0x239)]('clicked-to-play')),showError(_0x3f34be(0x2ed));closeQualityPopup(!![]);return;}_0x5a84a7[_0x3f34be(0x2f3)]((_0x355bd9,_0x38e257)=>{const _0xe35ea9=_0x3f34be,_0x15818a=document[_0xe35ea9(0x12e)]('button');_0x15818a[_0xe35ea9(0x1ba)]='quality-option-btn',_0x15818a[_0xe35ea9(0xe4)]=_0x355bd9[_0xe35ea9(0x15e)],_0x15818a[_0xe35ea9(0x27e)]=()=>{const _0x3b1754=_0xe35ea9;closeQualityPopup(!![]);let _0x4b5a0a=watchHistory[_0x255f1d['id']]?watchHistory[_0x255f1d['id']][_0x3b1754(0x23b)]:0x0;openInlineVideoPlayer(_0x355bd9['url'],_0x255f1d['title'],_0x255f1d,_0x4b5a0a,_0x355bd9[_0x3b1754(0x15e)]);},qualityOptionsContainer[_0xe35ea9(0x2dc)](_0x15818a),_0x38e257===0x0&&setTimeout(()=>_0x15818a[_0xe35ea9(0xb5)](),0x0);}),qualityPopupOverlay[_0x3f34be(0x250)][_0x3f34be(0x113)](_0x3f34be(0x1b7)),_0x5a84a7[_0x3f34be(0x19b)]===0x0&&qualityPopupCloseBtn&&qualityPopupCloseBtn[_0x3f34be(0xb5)]();}function closeQualityPopup(_0x4a2e4d=![]){const _0xde4136=_0x4f3a04;if(!qualityPopupOverlay)return;qualityPopupOverlay[_0xde4136(0x250)][_0xde4136(0x239)](_0xde4136(0x1b7));!_0x4a2e4d&&currentPopupItem&&triggerElement&&!nativeVideoPlayer[_0xde4136(0x2c5)]&&triggerElement[_0xde4136(0x250)][_0xde4136(0x239)](_0xde4136(0x20e));if(!_0x4a2e4d&&triggerElement){if(!nativeVideoPlayer[_0xde4136(0x2c5)])triggerElement[_0xde4136(0xb5)]();else{if(videoContainer)videoContainer[_0xde4136(0xb5)]();}}}function openDownloadQualityPopup(_0x188364,_0x2c4f39){const _0x77d598=_0x4f3a04;if(!downloadQualityPopupOverlay||!downloadQualityOptionsContainer)return;triggerElement=document[_0x77d598(0x269)],currentPopupItem=_0x188364,downloadQualityOptionsContainer[_0x77d598(0xf6)]='',_0x2c4f39[_0x77d598(0x2f3)]((_0x311476,_0x108dd4)=>{const _0x39b2dc=_0x77d598,_0x16f59b=document[_0x39b2dc(0x12e)](_0x39b2dc(0x1bc));_0x16f59b['className']=_0x39b2dc(0xc0),_0x16f59b[_0x39b2dc(0xe4)]=_0x311476[_0x39b2dc(0x15e)],_0x16f59b['onclick']=()=>{closeDownloadQualityPopup(!![]),openGeneratingLinkPopup(_0x311476['url'],_0x188364);},downloadQualityOptionsContainer[_0x39b2dc(0x2dc)](_0x16f59b),_0x108dd4===0x0&&setTimeout(()=>_0x16f59b[_0x39b2dc(0xb5)](),0x0);}),downloadQualityPopupOverlay['classList'][_0x77d598(0x113)]('visible');}function closeDownloadQualityPopup(_0x69c594=![]){const _0x1ab825=_0x4f3a04;if(!downloadQualityPopupOverlay)return;downloadQualityPopupOverlay[_0x1ab825(0x250)]['remove'](_0x1ab825(0x1b7)),!_0x69c594&&triggerElement&&(triggerElement[_0x1ab825(0xb5)](),triggerElement=null);}async function handleDownloadClick(_0x575010){const _0x23554d=_0x4f3a04;if(!_0x575010||_0x575010[_0x23554d(0x228)]){openGeneratingLinkPopup(null,_0x575010);return;}const _0x274812=_0x575010[_0x23554d(0x1e1)]['filter'](_0x11b7a8=>_0x11b7a8[_0x23554d(0x2a3)]);if(_0x274812[_0x23554d(0x19b)]===0x0)openGeneratingLinkPopup(null,_0x575010);else _0x274812[_0x23554d(0x19b)]===0x1?openGeneratingLinkPopup(_0x274812[0x0][_0x23554d(0x2a3)],_0x575010):openGeneratingLinkPopup(_0x23554d(0x1a1),_0x575010);}function openGeneratingLinkPopup(_0x2e1fa2,_0x3b8721){const _0x558630=_0x4f3a04;if(!downloadGeneratingPopupOverlay||!downloadGeneratingTimerEl)return;triggerElement=document[_0x558630(0x269)];if(downloadCountdownIntervalId)clearInterval(downloadCountdownIntervalId);downloadGeneratingTimerEl[_0x558630(0xe4)]='Loading\x20Ad...',downloadGeneratingPopupOverlay[_0x558630(0x250)][_0x558630(0x113)](_0x558630(0x1b7)),injectBannerAd(generatingAdContainer);let _0x1cc274=0xa;downloadGeneratingTimerEl[_0x558630(0xe4)]=_0x1cc274+'s',downloadCountdownIntervalId=setInterval(()=>{const _0x197c68=_0x558630;_0x1cc274--,downloadGeneratingTimerEl[_0x197c68(0xe4)]=_0x1cc274+'s';if(_0x1cc274<=0x0){clearInterval(downloadCountdownIntervalId),closeGeneratingLinkPopup(!![]);if(_0x2e1fa2===_0x197c68(0x1a1))openDownloadQualityPopup(_0x3b8721,_0x3b8721[_0x197c68(0x1e1)][_0x197c68(0x2b4)](_0x37cfa1=>_0x37cfa1[_0x197c68(0x2a3)]));else _0x2e1fa2?(window[_0x197c68(0x158)](_0x2e1fa2,_0x197c68(0x322)),showCustomToast('Download\x20started\x20in\x20a\x20new\x20tab!','success',0x1388)):openUnavailableLinkPopup();}},0x3e8);}function closeGeneratingLinkPopup(_0x395925=![]){const _0x488ff7=_0x4f3a04;if(!downloadGeneratingPopupOverlay)return;downloadCountdownIntervalId&&(clearInterval(downloadCountdownIntervalId),downloadCountdownIntervalId=null),downloadGeneratingPopupOverlay[_0x488ff7(0x250)][_0x488ff7(0x239)](_0x488ff7(0x1b7)),!_0x395925&&triggerElement&&(triggerElement[_0x488ff7(0xb5)](),triggerElement=null);}function openUnavailableLinkPopup(){const _0x535bc1=_0x4f3a04;if(!downloadUnavailablePopupOverlay)return;triggerElement=document[_0x535bc1(0x269)],downloadUnavailablePopupOverlay['classList'][_0x535bc1(0x113)](_0x535bc1(0x1b7)),injectBannerAd(unavailableAdContainer),downloadUnavailableCloseBtn[_0x535bc1(0x29c)]=!![],unavailableCloseBtnText['style'][_0x535bc1(0x10b)]=_0x535bc1(0x246),unavailableCloseBtnTimer[_0x535bc1(0x306)]['display']='block';let _0x505d7f=0xa;unavailableCloseBtnTimer[_0x535bc1(0xe4)]=_0x505d7f+'s';if(unavailableCloseBtnIntervalId)clearInterval(unavailableCloseBtnIntervalId);unavailableCloseBtnIntervalId=setInterval(()=>{const _0x3a900c=_0x535bc1;_0x505d7f--,unavailableCloseBtnTimer[_0x3a900c(0xe4)]=_0x505d7f+'s',_0x505d7f<=0x0&&(clearInterval(unavailableCloseBtnIntervalId),downloadUnavailableCloseBtn[_0x3a900c(0x29c)]=![],unavailableCloseBtnText[_0x3a900c(0x306)]['display']=_0x3a900c(0x35e),unavailableCloseBtnTimer[_0x3a900c(0x306)][_0x3a900c(0x10b)]=_0x3a900c(0x246),(document['activeElement']===document[_0x3a900c(0x17a)]||document[_0x3a900c(0x269)]===null)&&downloadUnavailableCloseBtn[_0x3a900c(0xb5)]());},0x3e8);}function closeUnavailableLinkPopup(_0x251709=![]){const _0x1c0f12=_0x4f3a04;if(!downloadUnavailablePopupOverlay)return;unavailableCloseBtnIntervalId&&(clearInterval(unavailableCloseBtnIntervalId),unavailableCloseBtnIntervalId=null),downloadUnavailablePopupOverlay[_0x1c0f12(0x250)]['remove'](_0x1c0f12(0x1b7)),!_0x251709&&triggerElement&&(triggerElement[_0x1c0f12(0xb5)](),triggerElement=null);}function populateUpNextSection(_0x1fede8){const _0x1ee50e=_0x4f3a04;upNextItemsEl['innerHTML']='';let _0xd91601=[];if(_0x1fede8['isLiveTV'])_0xd91601=allContentData['filter'](_0x2c665c=>_0x2c665c['isLiveTV']&&_0x2c665c['id']!==_0x1fede8['id']&&_0x2c665c[_0x1ee50e(0x171)]===_0x1fede8[_0x1ee50e(0x171)]&&!_0x2c665c[_0x1ee50e(0x219)]);else{const _0x32a771=_0x1fede8[_0x1ee50e(0x1e5)];if(!_0x32a771){upNextContainerEl[_0x1ee50e(0x306)]['display']=_0x1ee50e(0x246);return;}_0xd91601=allContentData['filter'](_0x5d2872=>{const _0x3afcca=_0x1ee50e;if(_0x5d2872['id']===_0x1fede8['id']||_0x5d2872[_0x3afcca(0x219)]||_0x5d2872[_0x3afcca(0x228)])return![];if(_0x5d2872[_0x3afcca(0x1e5)]!==_0x1fede8[_0x3afcca(0x1e5)])return![];return _0x1fede8['subFolderTitle']?_0x5d2872['subFolderTitle']===_0x1fede8[_0x3afcca(0x31b)]:!_0x5d2872[_0x3afcca(0x31b)];});}if(_0xd91601[_0x1ee50e(0x19b)]===0x0){upNextContainerEl[_0x1ee50e(0x306)][_0x1ee50e(0x10b)]=_0x1ee50e(0x246);return;}_0xd91601=shuffleArray(_0xd91601),_0xd91601[_0x1ee50e(0x2f3)](_0x5f06dd=>{const _0x4a9818=_0x1ee50e;upNextItemsEl[_0x4a9818(0x2dc)](createListItemCard(_0x5f06dd,{'isFeaturedItem':![],'isLiveTV':_0x5f06dd['isLiveTV']}));}),upNextContainerEl[_0x1ee50e(0x306)][_0x1ee50e(0x10b)]='block';}function getNextVideoItem(){const _0x3fbe83=_0x4f3a04,_0x164a42=upNextItemsEl[_0x3fbe83(0x2ec)](_0x3fbe83(0x24c));if(!_0x164a42)return null;const _0x2f6658=_0x164a42['dataset'][_0x3fbe83(0x11e)];return allContentData[_0x3fbe83(0x11a)](_0x2f4fdf=>_0x2f4fdf['id']===_0x2f6658);}function playNextVideo(){const _0x55ad12=_0x4f3a04;hideNextPlayNotification();const _0x113ffa=getNextVideoItem();_0x113ffa?proceedToPlayOrQualitySelect(_0x113ffa):(console[_0x55ad12(0x2d8)](_0x55ad12(0x319)),closeInlineVideoPlayer(![]));}function showNextPlayNotification(){const _0x47d20b=_0x4f3a04,_0x51491f=getNextVideoItem();if(!_0x51491f||nextPlayNotificationShown)return;nextPlayNotificationShown=!![],nextPlayingTitleEl['textContent']=_0x51491f[_0x47d20b(0x270)],nextPlayingOverlayEl[_0x47d20b(0x250)][_0x47d20b(0x113)]('visible'),videoContainer['classList'][_0x47d20b(0x113)]('controls-hidden'),nextPlayTimeoutId=setTimeout(()=>{isAutoplayEnabled?playNextVideo():hideNextPlayNotification();},0x1388);}function hideNextPlayNotification(){const _0x5e861c=_0x4f3a04;clearTimeout(nextPlayTimeoutId),nextPlayTimeoutId=null,nextPlayingOverlayEl[_0x5e861c(0x250)]['remove'](_0x5e861c(0x1b7));}window[_0x4f3a04(0x2aa)](_0x4f3a04(0x2ea),()=>{setPlayerWrapperHeight();});function populateDrawerMenu(){const _0x4bc0df=_0x4f3a04;if(!drawerNavListEl||!appConfig[_0x4bc0df(0x132)]){console['warn'](_0x4bc0df(0x11b));return;}drawerNavListEl['innerHTML']='',navLinks=[],Object[_0x4bc0df(0x138)](appConfig[_0x4bc0df(0x132)])[_0x4bc0df(0x2f3)](([_0x3f3aa8,_0x19289f])=>{const _0x57698f=_0x4bc0df,_0x978194=document['createElement']('li'),_0xd87fff=document[_0x57698f(0x12e)]('a');_0xd87fff[_0x57698f(0x206)]='#',_0xd87fff[_0x57698f(0x250)][_0x57698f(0x113)](_0x57698f(0x12d));if(_0x3f3aa8===currentSection)_0xd87fff[_0x57698f(0x250)][_0x57698f(0x113)](_0x57698f(0x2e2));_0xd87fff[_0x57698f(0xf1)][_0x57698f(0x298)]=_0x3f3aa8,_0xd87fff[_0x57698f(0xf1)][_0x57698f(0x1bf)]=_0x19289f[_0x57698f(0xfb)];const _0x502d72=document[_0x57698f(0x12e)](_0x57698f(0x14f));_0x502d72['src']=_0x19289f[_0x57698f(0xfb)],_0x502d72[_0x57698f(0x22f)]=_0x19289f['name']+_0x57698f(0x301);const _0xa30ee8=document['createElement'](_0x57698f(0x1b5));_0xa30ee8[_0x57698f(0x1ba)]=_0x57698f(0x323),_0xa30ee8[_0x57698f(0xe4)]=_0x19289f[_0x57698f(0x12c)],_0xd87fff[_0x57698f(0x2dc)](_0x502d72),_0xd87fff[_0x57698f(0x2dc)](_0xa30ee8),_0x978194[_0x57698f(0x2dc)](_0xd87fff),drawerNavListEl['appendChild'](_0x978194),navLinks[_0x57698f(0x21f)](_0xd87fff),_0xd87fff['addEventListener'](_0x57698f(0x331),_0x466b75=>{const _0x8e2da1=_0x57698f;_0x466b75[_0x8e2da1(0x198)]();const _0x496714=_0xd87fff[_0x8e2da1(0xf1)][_0x8e2da1(0x298)];currentSection!==_0x496714&&inlinePlayerWrapper[_0x8e2da1(0x250)][_0x8e2da1(0x172)](_0x8e2da1(0x2e2))&&closeInlineVideoPlayer(![]),closeAllPopups(),currentSection=_0x496714,setActiveNavLink(_0xd87fff),resetNavigation(),renderContent(),drawerMenuEl[_0x8e2da1(0x250)][_0x8e2da1(0x172)](_0x8e2da1(0x158))&&toggleDrawer();});});}function populateBottomNav(){const _0x1b1c47=_0x4f3a04;if(!bottomNavEl||!appConfig[_0x1b1c47(0x132)])return;bottomNavEl[_0x1b1c47(0xf6)]='',bottomNavLinks=[];const _0x2fdb70=[_0x1b1c47(0x27b),_0x1b1c47(0x11d),_0x1b1c47(0x2af),'isLiveTV'],_0x4433ec={'all':{'key':_0x1b1c47(0x27b),'svg':_0x1b1c47(0x313)},'isMovie':{'key':_0x1b1c47(0x11d),'svg':'<svg\x20viewBox=\x220\x200\x2024\x2024\x22><path\x20d=\x22M18\x204l2\x204h-3l-2-4h-2l2\x204h-3l-2-4H8l2\x204H7L5\x204H4c-1.1\x200-2\x20.9-2\x202v12c0\x201.1.9\x202\x202\x202h16c1.1\x200\x202-.9\x202-2V4h-4z\x22/></svg>'},'isSeries':{'key':_0x1b1c47(0x2af),'svg':_0x1b1c47(0x149)},'isLiveTV':{'key':_0x1b1c47(0x228),'svg':_0x1b1c47(0x110)}};for(const _0x50986b of _0x2fdb70){const _0x54d287=Object[_0x1b1c47(0xd7)](appConfig['categoryDetails'])['find'](_0x5cbb32=>_0x5cbb32['dataKey']===_0x50986b);if(_0x54d287){const _0x35d091=document[_0x1b1c47(0x12e)](_0x1b1c47(0x1bc));_0x35d091[_0x1b1c47(0x1ba)]=_0x1b1c47(0x340),_0x35d091[_0x1b1c47(0xf1)][_0x1b1c47(0x298)]=Object[_0x1b1c47(0x135)](appConfig[_0x1b1c47(0x132)])['find'](_0xb1ac0e=>appConfig[_0x1b1c47(0x132)][_0xb1ac0e]===_0x54d287),_0x35d091[_0x1b1c47(0xf6)]=_0x4433ec[_0x50986b][_0x1b1c47(0xb3)]+'<span>'+_0x54d287[_0x1b1c47(0x12c)]+_0x1b1c47(0x280),_0x35d091[_0x1b1c47(0x2aa)](_0x1b1c47(0x331),()=>{const _0x2d651e=_0x1b1c47,_0x47f1d2=drawerNavListEl[_0x2d651e(0x2ec)]('.nav-link[data-section=\x22'+_0x35d091['dataset']['section']+'\x22]');_0x47f1d2&&_0x47f1d2[_0x2d651e(0x331)]();}),bottomNavEl[_0x1b1c47(0x2dc)](_0x35d091),bottomNavLinks[_0x1b1c47(0x21f)](_0x35d091);}}}function updateHeaderTitle(){const _0x1229a7=_0x4f3a04,_0x5963b1=document[_0x1229a7(0x2ec)](_0x1229a7(0xc5));headerImageUrl?(_0x5963b1[_0x1229a7(0x306)][_0x1229a7(0x10b)]=_0x1229a7(0x246),appTitleLogoEl[_0x1229a7(0x306)]['display']=_0x1229a7(0x246),appTitleTextImageEl[_0x1229a7(0x2c5)]=headerImageUrl,appTitleTextImageEl['style'][_0x1229a7(0x10b)]=_0x1229a7(0x35e)):(_0x5963b1['style']['display']=_0x1229a7(0xc3),appTitleLogoEl['style'][_0x1229a7(0x10b)]=_0x1229a7(0x19e),appTitleTextImageEl[_0x1229a7(0x306)][_0x1229a7(0x10b)]=_0x1229a7(0x246),appTitleTextImageEl['src']='');}function initializeAppUI(){const _0x578a38=_0x4f3a04;menuBtn['innerHTML']='☰';const _0x27156e=_0x578a38(0x354);loginScreenLogoEl&&(loginScreenLogoEl[_0x578a38(0x2c5)]=_0x27156e);appTitleLogoEl&&(appTitleLogoEl[_0x578a38(0x2c5)]=_0x27156e);updateHeaderTitle(),renderUserProfileInDrawer(),populateDrawerMenu(),populateBottomNav(),loadWatchHistory(),loadUserVotes(),loadUserViews(),isAutoplayEnabled=localStorage['getItem'](AUTOPLAY_KEY)===_0x578a38(0x284),autoplayToggleEl[_0x578a38(0x1ae)]=isAutoplayEnabled,autoplayToggleEl[_0x578a38(0x2aa)](_0x578a38(0x350),()=>{const _0x94307a=_0x578a38;isAutoplayEnabled=autoplayToggleEl[_0x94307a(0x1ae)],localStorage[_0x94307a(0xff)](AUTOPLAY_KEY,isAutoplayEnabled);}),cancelNextPlayBtn[_0x578a38(0x2aa)](_0x578a38(0x331),hideNextPlayNotification),backBtn[_0x578a38(0x2aa)](_0x578a38(0x331),handleBackPress),refreshSectionBtn[_0x578a38(0x2aa)](_0x578a38(0x331),handleSectionRefresh);pipBtn&&pipBtn['classList'][_0x578a38(0x119)](_0x578a38(0x2fc),!document[_0x578a38(0x131)]);if(infoPopupLikeBtn)infoPopupLikeBtn['addEventListener']('click',()=>{const _0x456fcc=_0x578a38;if(currentPopupItem&&currentUser['id'])window[_0x456fcc(0x176)](currentPopupItem['id'],_0x456fcc(0x1f7));});if(infoPopupDislikeBtn)infoPopupDislikeBtn[_0x578a38(0x2aa)](_0x578a38(0x331),()=>{const _0x23b8de=_0x578a38;if(currentPopupItem&&currentUser['id'])window[_0x23b8de(0x176)](currentPopupItem['id'],_0x23b8de(0x152));});const _0x5e5ec9=drawerNavListEl[_0x578a38(0x2ec)]('.nav-link[data-section=\x22'+currentSection+'\x22]')||drawerNavListEl[_0x578a38(0x2ec)](_0x578a38(0x2d2));if(_0x5e5ec9)setActiveNavLink(_0x5e5ec9);setPlayerWrapperHeight();}async function runNormalStartup(){const _0x127b87=_0x4f3a04,_0x4208e0=localStorage[_0x127b87(0xc4)](USER_NAME_KEY),_0x4aca6f=localStorage['getItem'](USER_ID_KEY);if(_0x4208e0&&_0x4aca6f){currentUser['id']=_0x4aca6f,currentUser[_0x127b87(0x12c)]=_0x4208e0;if(db){const _0x320c78=doc(db,_0x127b87(0xfa),_0x4aca6f);try{const _0x4ef8a3=await getDoc(_0x320c78);if(_0x4ef8a3[_0x127b87(0x2b7)]()){const _0x364725=_0x4ef8a3[_0x127b87(0x148)]();currentUser[_0x127b87(0x12c)]=_0x364725[_0x127b87(0x12c)]||_0x4208e0,currentUser[_0x127b87(0x2c1)]=_0x364725[_0x127b87(0x2c1)]||DEFAULT_PROFILE_PIC_URL;}}catch(_0x59cdde){console['error'](_0x127b87(0x21d),_0x59cdde);}}userProfilesCache[_0x4aca6f]={...currentUser},proceedToApp();const _0x1c44a9=loadDataFromCache();initializeAppUI(),_0x1c44a9?(renderContent(),fetchDataFromSheet()):await fetchDataFromSheet();}else loginButtonEl[_0x127b87(0x29c)]=!![],loginOverlayEl[_0x127b87(0x306)][_0x127b87(0x10b)]=_0x127b87(0xc3),appContainerEl[_0x127b87(0x250)]['remove']('visible'),document[_0x127b87(0x17a)][_0x127b87(0x250)][_0x127b87(0x239)](_0x127b87(0xcb)),loadDataFromCache(),initializeAppUI();}function handleBackPress(){const _0x306e29=_0x4f3a04;if(document[_0x306e29(0x23f)]){document[_0x306e29(0x242)]&&document[_0x306e29(0x242)]();return;}if(document['querySelector']('.profile-popup-overlay.visible')){closeProfilePopup();return;}if(document['querySelector'](_0x306e29(0x320))){closeCommentsPopup();return;}if(downloadGeneratingPopupOverlay[_0x306e29(0x250)]['contains']('visible')){closeGeneratingLinkPopup();return;}if(downloadUnavailablePopupOverlay['classList']['contains']('visible')&&!downloadUnavailableCloseBtn[_0x306e29(0x29c)]){closeUnavailableLinkPopup();return;}if(qualityPopupOverlay[_0x306e29(0x250)][_0x306e29(0x172)]('visible')){closeQualityPopup();return;}if(downloadQualityPopupOverlay[_0x306e29(0x250)][_0x306e29(0x172)](_0x306e29(0x1b7))){closeDownloadQualityPopup();return;}if(infoPopupOverlay[_0x306e29(0x250)][_0x306e29(0x172)](_0x306e29(0x1b7))){closeInfoPopup();return;}if(drawerMenuEl['classList'][_0x306e29(0x172)](_0x306e29(0x158))){toggleDrawer();return;}if(inlinePlayerWrapper[_0x306e29(0x250)][_0x306e29(0x172)]('active')){closeInlineVideoPlayer(![]);return;}if(navigationPath['length']>0x0){navigateBack();return;}if(currentSection!=='all'){const _0x3a2eba=drawerNavListEl[_0x306e29(0x2ec)](_0x306e29(0x2d2));_0x3a2eba&&_0x3a2eba[_0x306e29(0x331)]();return;}if(backPressExitIntent){navigator['app']?.[_0x306e29(0x2e9)]();return;}backPressExitIntent=!![],showCustomToast(_0x306e29(0x215),_0x306e29(0x1ff),0x7d0);if(backPressTimeoutId)clearTimeout(backPressTimeoutId);backPressTimeoutId=setTimeout(()=>{backPressExitIntent=![];},0x7d0);}document[_0x4f3a04(0x2aa)](_0x4f3a04(0x34a),async()=>{const _0x355cd5=_0x4f3a04;loadUserVotes(),loadUserViews(),await fetchAppConfiguration(),document[_0x355cd5(0x2aa)](_0x355cd5(0x1b4),_0x182543=>{const _0x48abd4=_0x355cd5;if(_0x182543[_0x48abd4(0x249)][_0x48abd4(0x160)]===_0x48abd4(0xde)||_0x182543[_0x48abd4(0x249)][_0x48abd4(0x160)]==='TEXTAREA')return;_0x182543['preventDefault']();}),history[_0x355cd5(0x116)](null,''),window[_0x355cd5(0x2aa)](_0x355cd5(0x1fb),_0x23394d=>{const _0x4397f1=_0x355cd5;history[_0x4397f1(0x116)](null,''),handleBackPress();}),runNormalStartup();});
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getFirestore, collection, doc, addDoc, onSnapshot, query, orderBy, serverTimestamp, limit, runTransaction, getDoc, setDoc, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { getDatabase, ref, onValue, set, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+if (window.self === window.top) {
+    document.body.innerHTML = '';
+   
+    document.body.style.backgroundColor = '#1c1c2e';
+    document.body.style.color = '#fff';
+    document.body.style.textAlign = 'center';
+    document.body.style.paddingTop = '50px';
+    document.body.style.fontFamily = 'Arial, sans-serif';
+    
+    document.body.innerHTML = `
+        <h1 style="color: #ff6b6b;">Access Denied</h1>
+        <p>You cannot access this page directly.</p>
+        <p>Please visit <a style="color: #61dafb;" href="https://movixhub.netlify.app/">our main page</a> to continue.</p>
+    `;
+    
+    throw new Error("Direct access is not permitted.");
+}
+
+const CONFIG_FILE_URL = 'https://raw.githubusercontent.com/yashrajwaghotkar/Live-TV-For-Android-TV/420c8d22b3cbf7f65c8e27280621e46635ae7d78/config.json'; 
+const DEFAULT_SVG_ICON_DATA_URI = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSIxOCIgaGVpZDRoPSIxOCIgcng9IjIiIHJ5PSIyIj48L2NpcmNsZT48Y2lyY2xlIGN4PSI4LjUiIHkyPSI4LjUiIHI9IjEuNSI+PC9jaXJjbGU+PHBvbHlsaW5lIHBvaW50cz0iMjEgMTUgMTYgMTAgNSAyMSI+PC9wb2x5bGluZT48L3N2Zz4=';
+const DEFAULT_FOLDER_ICON_URL = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZDRoPSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJjdXJyZW50Q29sb3IiPjxwYXRoIGQ9Ik0xMCA0SDRjLTEuMTEgMC0yIC44OS0yIDJ2MTJhMiAyIDAgMCAwIDIgMmgxNmEyIDIgMCAwIDAgMi0yVjhjMC0xLjExLS45LTItMi0yaC04bC0yLTJ6Ij48L3BhdGg+PC9zdmc+';
+const DEFAULT_PROFILE_PIC_URL = 'https://i.ibb.co/nsrvqTV9/profile.gif';
+const OFFLINE_IMAGE_URL = 'https://i.ibb.co/Df22ZJyh/soon.gif';
+const CACHE_EXPIRY_DURATION = 6 * 60 * 60 * 1000;
+const APP_CACHE_KEY = 'entertainmentAppCache_v18_live_tv_folders'; // Cache version updated
+const WATCH_HISTORY_KEY = 'entertainmentAppWatchHistory';
+const USER_NAME_KEY = 'entertainmentAppUserName';
+const USER_ID_KEY = 'entertainmentAppUserId';
+const VOTE_STORAGE_KEY = 'entertainmentAppVotes';
+const VIEW_STORAGE_KEY = 'entertainmentAppViews';
+const AUTOPLAY_KEY = 'entertainmentAppAutoplay';
+
+const COL = {
+    TITLE: 0,                  
+    STREAM_URL: 1,              
+    LOGO_URL: 2,                
+    IS_MOVIE: 3,                
+    IS_SERIES: 4,               
+    IS_ANIME: 5,                
+    IS_ANIMATION: 6,            
+    QUALITY_LOW_URL: 7,        
+    QUALITY_MEDIUM_URL: 8,   
+    QUALITY_HIGH_URL: 9,      
+    RATING: 10,                 
+    BADGE_TEXT: 11,            
+    FOLDER_TITLE: 12,           
+    SUB_FOLDER_TITLE: 13,       
+    REQUIRES_VPN: 14,           
+    IS_MAINTENANCE: 15,         
+    IS_TRENDING: 16,            
+    LOADER_ANIMATION_URL: 17,   
+    WATERMARK_LOGO_URL: 18,     
+    HEADER_IMG_URL: 19,         
+    SPLASH_MEDIA_URL: 20,      
+    WEBSITE_LINK: 21,           
+    WEBSITE_NAME: 22,           
+    DOWNLOAD_URL_480P: 23,      
+    DOWNLOAD_URL_720P: 24,      
+    DOWNLOAD_URL_1080P: 25,     
+    LIVE_TV_NAME: 26,           
+    LIVE_TV_LOGO_URL: 27,       
+    LIVE_TV_STREAM_URL: 28,     
+    LIVE_TV_WATERMARK_URL: 29,  
+    LIVE_TV_LOADER_URL: 30,     
+    LIVE_TV_MAINTENANCE: 31,    
+    LIVE_TV_FOLDER_TITLE: 32    
+};
+
+let appConfig = {};
+let triggerElement = null;
+let allCategoriesInfoText = "";
+let websiteLinks = [];
+let currentPlayingCardId = null;
+let watchHistory = {};
+let userVotes = {};
+let userViews = {};
+let uniqueFolderTitles = [];
+let currentSearchTerm = null;
+let headerImageUrl = null;
+let splashMediaItems = [];
+let hasShownSplashPopup = false;
+let allContentData = [];
+let currentSection = 'all';
+let currentlyPlayingStreamUrl = null;
+let isCurrentPlayerLiveTV = false; 
+let isFetchingConfig = false;
+let isFetchingSheet = false;
+let currentPopupItem = null;
+let downloadCountdownIntervalId = null;
+let unavailableCloseBtnIntervalId = null;
+let activeSuggestionIndex = -1;
+let currentScreenFitMode = 'contain';
+let inactivityTimeout;
+let customToastTimeoutId = null; 
+let isBottomAdInjected = false;
+let isAutoplayEnabled = false;
+let nextPlayTimeoutId = null;
+let nextPlayNotificationShown = false;
+let isTransitioning = false;
+const ANIMATION_DURATION = 300; 
+
+let currentView = 'category'; 
+let navigationPath = []; 
+
+let backPressExitIntent = false;
+let backPressTimeoutId = null;
+
+let currentUser = { id: null, name: 'Guest', profilePictureUrl: DEFAULT_PROFILE_PIC_URL };
+let userProfilesCache = {};
+
+let firebaseApp;
+let db;
+let rtdb; // Realtime Database instance
+let hlsInstance = null; 
+let isNonAutoQualityPlaying = false;
+let suggestionTimeout = null;
+let currentPresenceRef = null; // For Live TV view count
+let presenceListenerUnsubscribe = null; // To detach the listener
+
+const loginOverlayEl = document.getElementById('loginOverlay');
+const loginButtonEl = document.getElementById('loginButton');
+const userNameInputEl = document.getElementById('userNameInput');
+const loginErrorMsgEl = document.getElementById('loginErrorMsg');
+const loginScreenLogoEl = document.getElementById('loginScreenLogo');
+const appContainerEl = document.getElementById('appContainer');
+const appHeaderEl = document.getElementById('appHeader');
+const appTitleLogoEl = document.getElementById('appTitleLogo');
+const appTitleTextImageEl = document.getElementById('appTitleTextImage');
+const menuBtn = document.getElementById('menuBtn');
+const drawerMenuEl = document.getElementById('drawerMenu');
+const drawerNavListEl = document.getElementById('drawerNavList');
+const drawerOverlayEl = document.getElementById('drawerOverlay');
+const sectionTitleEl = document.getElementById('sectionTitle');
+const sectionTitleIconEl = document.getElementById('sectionTitleIcon');
+const backBtn = document.getElementById('backBtn');
+const refreshSectionBtn = document.getElementById('refreshSectionBtn');
+const allCategoriesViewElementsContainer = document.getElementById('allCategoriesViewElements');
+const contentListContainer = document.getElementById('contentListContainer');
+let navLinks = [];
+const loader = document.getElementById('loader');
+const errorMessageEl = document.getElementById('errorMessage');
+const emptyStateAnimationEl = document.getElementById('emptyStateAnimation');
+const mainContentWrapperEl = document.getElementById('mainContentWrapper');
+const inlinePlayerWrapper = document.getElementById('inlinePlayerWrapper');
+const inlinePlayerTitleText = document.getElementById('inlinePlayerTitleText');
+const customPlayerCloseBtn = document.getElementById('customPlayerCloseBtn');
+const scrollableContentAreaEl = document.getElementById('scrollableContentArea');
+const sectionTitleWrapperEl = document.getElementById('sectionTitleWrapper');
+const videoContainer = document.getElementById('videoContainer');
+const nativeVideoPlayer = document.getElementById('inlineVideoPlayer');
+const nativePlayerWatermarkEl = document.getElementById('nativePlayerWatermark');
+const customVideoControls = document.getElementById('customVideoControls');
+const playerLoader = document.getElementById('playerLoader');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const playIcon = document.getElementById('playIcon');
+const pauseIcon = document.getElementById('pauseIcon');
+const progressBar = document.getElementById('progressBar');
+const timeDisplay = document.getElementById('timeDisplay');
+const muteBtn = document.getElementById('muteBtn');
+const volumeHighIcon = document.getElementById('volumeHighIcon');
+const volumeMuteIcon = document.getElementById('volumeMuteIcon');
+const volumeSlider = document.getElementById('volumeSlider');
+const fitFillBtn = document.getElementById('fitFillBtn');
+const fitIcon = document.getElementById('fitIcon');
+const fillIcon = document.getElementById('fillIcon');
+const fullscreenBtn = document.getElementById('fullscreenBtn');
+const fullscreenOpenIcon = document.getElementById('fullscreenOpenIcon');
+const fullscreenCloseIcon = document.getElementById('fullscreenCloseIcon');
+const pipBtn = document.getElementById('pipBtn');
+const playbackSpeedBtn = document.getElementById('playbackSpeedBtn');
+const seekBackwardIndicator = document.getElementById('seekBackwardIndicator');
+const seekForwardIndicator = document.getElementById('seekForwardIndicator');
+const liveIndicatorEl = document.getElementById('liveIndicator');
+const playbackSuggestionOverlayEl = document.getElementById('playbackSuggestionOverlay');
+const playbackSuggestionTextEl = document.getElementById('playbackSuggestionText');
+let lastTap = 0;
+let singleTapTimeout = null;
+const searchInputEl = document.getElementById('searchInput');
+const suggestionsDropdownEl = document.getElementById('suggestionsDropdown');
+const infoPopupOverlay = document.getElementById('infoPopupOverlay');
+const infoPopupCloseBtn = document.getElementById('infoPopupCloseBtn');
+const infoPopupBannerImg = document.getElementById('infoPopupBannerImg');
+const infoPopupTitleEl = document.getElementById('infoPopupTitle');
+const infoPopupLikesEl = document.getElementById('infoPopupLikes');
+const infoPopupLikeCountEl = document.getElementById('infoPopupLikeCount');
+const infoPopupViewsEl = document.getElementById('infoPopupViews');
+const infoPopupViewCountEl = document.getElementById('infoPopupViewCount');
+const infoPopupSectionEl = document.getElementById('infoPopupSection');
+const infoPopupStatusMessageEl = document.getElementById('infoPopupStatusMessage');
+const infoPopupRatingEl = document.getElementById('infoPopupRating');
+const infoPopupRatingTextEl = document.getElementById('infoPopupRatingText');
+const infoPopupRatingStarsEl = document.getElementById('infoPopupRatingStars');
+const infoPopupDownloadBtn = document.getElementById('infoPopupDownloadBtn');
+const infoPopupBadgeEl = document.getElementById('infoPopupBadge');
+const infoPopupBadgeTextEl = document.getElementById('infoPopupBadgeText');
+const infoPopupVoteContainer = document.getElementById('infoPopupVoteContainer');
+const infoPopupLikeBtn = document.getElementById('infoPopupLikeBtn');
+const infoPopupDislikeBtn = document.getElementById('infoPopupDislikeBtn');
+const qualityPopupOverlay = document.getElementById('qualityPopupOverlay');
+const qualityPopupCloseBtn = document.getElementById('qualityPopupCloseBtn');
+const qualityOptionsContainer = document.getElementById('qualityOptionsContainer');
+const qualityPopupTitleEl = document.getElementById('qualityPopupTitle'); 
+const downloadQualityPopupOverlay = document.getElementById('downloadQualityPopupOverlay');
+const downloadQualityPopupCloseBtn = document.getElementById('downloadQualityPopupCloseBtn');
+const downloadQualityOptionsContainer = document.getElementById('downloadQualityOptionsContainer');
+const bottomNavEl = document.getElementById('bottomNav');
+let bottomNavLinks = [];
+const welcomeToastEl = document.getElementById('welcomeToast');
+const welcomeToastMessageEl = document.getElementById('welcomeToastMessage');
+const welcomeToastCloseBtn = document.getElementById('welcomeToastCloseBtn');
+const profilePopupOverlay = document.getElementById('profilePopupOverlay');
+const profilePopupCloseBtn = document.getElementById('profilePopupCloseBtn');
+const profileEditForm = document.getElementById('profileEditForm');
+const profileNameDisplay = document.getElementById('profileNameDisplay');
+const profilePicUrlInput = document.getElementById('profilePicUrlInput');
+const profileErrorMsg = document.getElementById('profileErrorMsg');
+const saveProfileBtn = document.getElementById('saveProfileBtn');
+const downloadGeneratingPopupOverlay = document.getElementById('downloadGeneratingPopupOverlay');
+const downloadGeneratingTimerEl = document.getElementById('downloadGeneratingTimer');
+const downloadUnavailablePopupOverlay = document.getElementById('downloadUnavailablePopupOverlay');
+const downloadUnavailableCloseBtn = document.getElementById('downloadUnavailableCloseBtn');
+const playerMessageOverlayEl = document.getElementById('playerMessageOverlay');
+const playerMessageTextEl = document.getElementById('playerMessageText');
+const playerMessageIconEl = document.querySelector('.player-message-icon');
+const playerAdjacentContentEl = document.getElementById('playerAdjacentContent');
+const nowPlayingInfoWrapperEl = document.getElementById('nowPlayingInfoWrapper');
+const nowPlayingTitleEl = document.getElementById('nowPlayingTitle');
+const nowPlayingBadgeEl = document.getElementById('nowPlayingBadge');
+const nowPlayingBadgeTextEl = document.getElementById('nowPlayingBadgeText');
+const nowPlayingLikesEl = document.getElementById('nowPlayingLikes');
+const nowPlayingViewsEl = document.getElementById('nowPlayingViews');
+const nowPlayingViewCountEl = document.getElementById('nowPlayingViewCount');
+const nowPlayingRatingEl = document.getElementById('nowPlayingRating');
+const nowPlayingRatingTextEl = document.getElementById('nowPlayingRatingText');
+const nowPlayingRatingStarsEl = document.getElementById('nowPlayingRatingStars');
+const nowPlayingSectionEl = document.getElementById('nowPlayingSection');
+const nowPlayingFolderEl = document.getElementById('nowPlayingFolder');
+const nowPlayingFolderTextEl = document.getElementById('nowPlayingFolderText');
+const nowPlayingQualityEl = document.getElementById('nowPlayingQuality');
+const nowPlayingQualityTextEl = document.getElementById('nowPlayingQualityText');
+const nowPlayingVoteContainerEl = document.getElementById('nowPlayingVoteContainer');
+const nowPlayingLikeBtnEl = document.getElementById('nowPlayingLikeBtn');
+const nowPlayingDislikeBtnEl = document.getElementById('nowPlayingDislikeBtn');
+const nowPlayingDownloadBtnEl = document.getElementById('nowPlayingDownloadBtn');
+const nowPlayingWarningEl = document.getElementById('nowPlayingWarning');
+const nowPlayingWarningTextEl = document.getElementById('nowPlayingWarningText');
+const bottomBannerAdContainerEl = document.getElementById('bottomBannerAdContainer');
+const upNextContainerEl = document.getElementById('upNextContainer');
+const upNextItemsEl = document.getElementById('upNextItems');
+const autoplayToggleEl = document.getElementById('autoplayToggle');
+const nextPlayingOverlayEl = document.getElementById('nextPlayingOverlay');
+const nextPlayingTitleEl = document.getElementById('nextPlayingTitle');
+const cancelNextPlayBtn = document.getElementById('cancelNextPlayBtn');
+const generatingAdContainer = document.getElementById('generatingAdContainer');
+const unavailableAdContainer = document.getElementById('unavailableAdContainer');
+const unavailableCloseBtnText = document.querySelector('#downloadUnavailableCloseBtn .close-icon-text');
+const unavailableCloseBtnTimer = document.querySelector('#downloadUnavailableCloseBtn .close-icon-timer');
+
+function showPlaybackSuggestion(message) {
+    if (!playbackSuggestionOverlayEl || !playbackSuggestionTextEl) return;
+    if (suggestionTimeout) {
+        clearTimeout(suggestionTimeout);
+    }
+    playbackSuggestionTextEl.textContent = message;
+    playbackSuggestionOverlayEl.classList.add('visible');
+    suggestionTimeout = setTimeout(() => {
+        playbackSuggestionOverlayEl.classList.remove('visible');
+    }, 4000); 
+}
+
+function injectBannerAd(containerElement) {
+    if (!containerElement) return;
+    containerElement.innerHTML = ''; 
+    const adScript = document.createElement('script');
+    adScript.type = 'text/javascript';
+    adScript.innerHTML = `
+        atOptions = {
+            'key' : '8b5339b257d8fca6e4a1789a656216bf',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
+        };
+    `;
+    const invokeScript = document.createElement('script');
+    invokeScript.type = 'text/javascript';
+    invokeScript.src = '//www.highperformanceformat.com/8b5339b257d8fca6e4a1789a656216bf/invoke.js';
+    
+    containerElement.appendChild(adScript);
+    containerElement.appendChild(invokeScript);
+}
+
+function showBottomBannerAd() {
+    if (!bottomBannerAdContainerEl) return;
+    if (!isBottomAdInjected) {
+        injectBannerAd(bottomBannerAdContainerEl);
+        isBottomAdInjected = true;
+    }
+    bottomBannerAdContainerEl.style.display = 'flex';
+}
+
+function hideBottomBannerAd() {
+    if (!bottomBannerAdContainerEl) return;
+    bottomBannerAdContainerEl.style.display = 'none';
+}
+
+function showWelcomeToast() {
+    if (!welcomeToastEl || !welcomeToastMessageEl) return;
+    const welcomeMessage = `Welcome back, <strong>${escapeHTML(currentUser.name)}</strong>! Ready for some entertainment?`;
+    showCustomToast(welcomeMessage, 'info', 5000);
+}
+
+
+function hideCustomToast() {
+    if (!welcomeToastEl) return;
+    welcomeToastEl.classList.remove('visible');
+    if (customToastTimeoutId) clearTimeout(customToastTimeoutId);
+}
+
+function showCustomToast(message, type = 'info', duration = 5000) {
+    if (!welcomeToastEl || !welcomeToastMessageEl) return;
+
+    const iconEl = welcomeToastEl.querySelector('.welcome-toast-icon');
+    const titleEl = welcomeToastEl.querySelector('.welcome-toast-title');
+    
+    if (customToastTimeoutId) clearTimeout(customToastTimeoutId);
+
+    
+    switch (type) {
+        case 'success':
+            iconEl.innerHTML = '&#9989;'; 
+            titleEl.textContent = 'Success!';
+            welcomeToastEl.style.borderLeftColor = '#4CAF50'; 
+            break;
+        case 'error':
+            iconEl.innerHTML = '&#10060;'; 
+            titleEl.textContent = 'Error!';
+            welcomeToastEl.style.borderLeftColor = 'var(--highlight-color)';
+            break;
+        default: 
+            iconEl.innerHTML = '&#127916;'; 
+            titleEl.textContent = 'Greetings!';
+            welcomeToastEl.style.borderLeftColor = 'var(--accent-color)';
+            break;
+    }
+
+    welcomeToastMessageEl.innerHTML = message;
+    welcomeToastEl.classList.add('visible');
+    
+    customToastTimeoutId = setTimeout(hideCustomToast, duration);
+}
+
+if (welcomeToastCloseBtn) {
+    welcomeToastCloseBtn.addEventListener('click', hideCustomToast);
+}
+
+function renderUserProfileInDrawer() {
+    const existingProfile = document.getElementById('drawerUserProfile');
+    if (existingProfile) existingProfile.remove();
+    const profileHTML = `
+        <div class="drawer-user-profile" id="drawerUserProfile" role="button" tabindex="0" aria-label="Edit your profile">
+            <img id="drawerProfilePic" src="${escapeHTML(currentUser.profilePictureUrl)}" alt="User Profile Picture" onerror="this.onerror=null; this.src='${DEFAULT_PROFILE_PIC_URL}';">
+            <div class="drawer-user-info">
+                <strong id="drawerUserName">${escapeHTML(currentUser.name)}</strong>
+                <span>View and edit profile</span>
+            </div>
+        </div>
+    `;
+    const drawerNavContainer = document.querySelector('.drawer-nav-container');
+    if (drawerNavContainer) {
+        drawerNavContainer.insertAdjacentHTML('afterbegin', profileHTML);
+        document.getElementById('drawerUserProfile').addEventListener('click', openProfilePopup);
+    }
+     
+    const commentForm = document.getElementById('commentForm');
+    if (commentForm) {
+        commentForm.style.setProperty('--current-user-avatar', `url('${escapeHTML(currentUser.profilePictureUrl)}')`);
+    }
+}
+
+async function openProfilePopup() {
+    triggerElement = document.activeElement;
+    if (profileNameDisplay) profileNameDisplay.textContent = currentUser.name;
+    profilePicUrlInput.value = currentUser.profilePictureUrl === DEFAULT_PROFILE_PIC_URL ? '' : currentUser.profilePictureUrl;
+    profileErrorMsg.style.display = 'none';
+    saveProfileBtn.disabled = false;
+    profilePopupOverlay.classList.add('visible');
+    profilePicUrlInput.focus();
+}
+
+function closeProfilePopup(calledInternally = false) {
+    profilePopupOverlay.classList.remove('visible');
+    if (!calledInternally && triggerElement) {
+        triggerElement.focus();
+        triggerElement = null;
+    }
+}
+
+function getUsernameKey(rawUsername) {
+    if (typeof rawUsername !== 'string') return '';
+    const trimmedUsername = rawUsername.trim();
+    const emojiRegex = new RegExp(`^(.*?)([\\u{1F600}-\\u{1F64F}\\u{1F300}-\\u{1F5FF}\\u{1F680}-\\u{1F6FF}\\u{1F1E0}-\\u{1F1FF}\\u{2600}-\\u{26FF}\\u{2700}-\\u{27BF}]{0,2})$`, 'u');
+    const match = trimmedUsername.match(emojiRegex);
+    const namePart = match ? match[1].trim() : trimmedUsername;
+    return namePart.toLowerCase();
+}
+
+async function handleProfileSave(e) {
+    e.preventDefault();
+    if (!db || !currentUser.id) return;
+    saveProfileBtn.disabled = true;
+    saveProfileBtn.textContent = 'Saving...';
+    profileErrorMsg.style.display = 'none';
+    let newPicUrl = profilePicUrlInput.value.trim() || DEFAULT_PROFILE_PIC_URL;
+    const oldPicUrl = currentUser.profilePictureUrl;
+    if (newPicUrl === oldPicUrl) {
+        closeProfilePopup();
+        saveProfileBtn.disabled = false;
+        saveProfileBtn.textContent = 'Save Changes';
+        return;
+    }
+    const userRef = doc(db, "users", currentUser.id);
+    try {
+        await setDoc(userRef, { profilePictureUrl: newPicUrl, userId: currentUser.id }, { merge: true });
+        currentUser.profilePictureUrl = newPicUrl;
+        if (userProfilesCache[currentUser.id]) {
+            userProfilesCache[currentUser.id].profilePictureUrl = newPicUrl;
+        }
+        renderUserProfileInDrawer();
+        closeProfilePopup();
+        showCustomToast('Profile picture updated successfully!', 'success');
+    } catch (error) {
+        console.error("Error updating profile picture:", error);
+        profileErrorMsg.textContent = "Failed to update profile picture. Please try again.";
+        profileErrorMsg.style.display = 'block';
+    } finally {
+        saveProfileBtn.disabled = false;
+        saveProfileBtn.textContent = 'Save Changes';
+    }
+}
+
+function loadUserViews() {
+    try {
+        const storedViews = localStorage.getItem(VIEW_STORAGE_KEY);
+        userViews = storedViews ? JSON.parse(storedViews) : {};
+    } catch (e) {
+        console.error("Could not parse user views from storage:", e);
+        userViews = {};
+    }
+}
+
+function saveUserViews() {
+    localStorage.setItem(VIEW_STORAGE_KEY, JSON.stringify(userViews));
+}
+
+async function incrementViewCount(itemId) {
+    if (!db || !itemId || userViews[itemId] || !currentUser.id) return;
+    userViews[itemId] = true;
+    saveUserViews();
+    try {
+        const docRef = doc(db, "views", itemId);
+        await runTransaction(db, async (transaction) => {
+            const docSnap = await transaction.get(docRef);
+            if (docSnap.exists()) {
+                 const currentCount = docSnap.data().viewCount || 0;
+                 transaction.update(docRef, { viewCount: currentCount + 1 });
+            } else {
+                 transaction.set(docRef, { viewCount: 1 });
+            }
+        });
+    } catch (e) {
+        console.error("View count transaction failed: ", e);
+        delete userViews[itemId];
+        saveUserViews();
+    }
+}
+
+async function loadViewCount(itemId) {
+    if (!db) return;
+    const docRef = doc(db, "views", itemId);
+    try {
+        onSnapshot(docRef, (docSnap) => {
+            const count = docSnap.exists() ? docSnap.data().viewCount || 0 : 0;
+            const formattedCount = new Intl.NumberFormat('en-US', { notation: "compact", maximumFractionDigits: 1 }).format(count);
+            document.querySelectorAll(`.item-views-badge[data-item-id="${itemId}"]`).forEach(badge => {
+                badge.querySelector('.view-count').textContent = formattedCount;
+            });
+            if (nowPlayingInfoWrapperEl.style.display !== 'none' && currentPlayingCardId === itemId) {
+                if(nowPlayingViewCountEl) nowPlayingViewCountEl.textContent = count.toLocaleString('en-US');
+            }
+            if (infoPopupViewCountEl && currentPopupItem?.id === itemId) {
+                 infoPopupViewCountEl.textContent = count.toLocaleString('en-US');
+            }
+        });
+    } catch (error) {
+        console.error("Error getting view count: ", error);
+    }
+}
+
+function loadUserVotes() {
+    try {
+        const storedVotes = localStorage.getItem(VOTE_STORAGE_KEY);
+        userVotes = storedVotes ? JSON.parse(storedVotes) : {};
+    } catch (e) {
+        console.error("Could not parse user votes from storage:", e);
+        userVotes = {};
+    }
+}
+
+function saveUserVotes() {
+    localStorage.setItem(VOTE_STORAGE_KEY, JSON.stringify(userVotes));
+}
+
+function updateVoteUI(itemId) {
+    const voteStatus = userVotes[itemId];
+    const allLikeBtns = document.querySelectorAll(`.vote-btn.like-btn[data-item-id="${itemId}"]`);
+    const allDislikeBtns = document.querySelectorAll(`.vote-btn.dislike-btn[data-item-id="${itemId}"]`);
+    allLikeBtns.forEach(btn => {
+        btn.classList.toggle('voted-like', voteStatus === 'like');
+        const outlineIcon = btn.querySelector('.like-icon-outline');
+        const filledIcon = btn.querySelector('.like-icon-filled');
+        if (outlineIcon && filledIcon) {
+            outlineIcon.style.display = voteStatus === 'like' ? 'none' : 'inline-block';
+            filledIcon.style.display = voteStatus === 'like' ? 'inline-block' : 'none';
+        }
+    });
+    allDislikeBtns.forEach(btn => btn.classList.toggle('voted-dislike', voteStatus === 'dislike'));
+}
+
+async function loadLikeDislikeCounts(itemId) {
+    if (!db) return;
+    const docRef = doc(db, "likes", itemId);
+    try {
+        onSnapshot(docRef, (docSnap) => {
+            const data = docSnap.exists() ? docSnap.data() : { likeCount: 0, dislikeCount: 0 };
+            document.querySelectorAll(`[data-item-id="${itemId}"] .like-count`).forEach(span => span.textContent = data.likeCount || 0);
+            document.querySelectorAll(`[data-item-id="${itemId}"] .dislike-count`).forEach(span => span.textContent = data.dislikeCount || 0);
+        });
+    } catch (error) { console.error("Error getting like/dislike counts: ", error); }
+    updateVoteUI(itemId);
+}
+
+async function handleVote(itemId, newVoteType) {
+    if (!db || !currentUser.id) return;
+    const previousVote = userVotes[itemId];
+    if (newVoteType === 'like' && previousVote !== 'like') {
+        document.querySelectorAll(`.vote-btn.like-btn[data-item-id="${itemId}"]`).forEach(btn => {
+            btn.classList.add('animate-like');
+            setTimeout(() => btn.classList.remove('animate-like'), 300);
+        });
+    }
+    if (previousVote === newVoteType) { delete userVotes[itemId]; } 
+    else { userVotes[itemId] = newVoteType; }
+    saveUserVotes();
+    updateVoteUI(itemId);
+    try {
+        const docRef = doc(db, "likes", itemId);
+        await runTransaction(db, async (transaction) => {
+            const docSnap = await transaction.get(docRef);
+            let likeCount = 0;
+            let dislikeCount = 0;
+            if (docSnap.exists()) {
+                likeCount = docSnap.data().likeCount || 0;
+                dislikeCount = docSnap.data().dislikeCount || 0;
+            }
+            if (previousVote === newVoteType) { 
+                if (newVoteType === 'like') likeCount--;
+                else dislikeCount--;
+            } else { 
+                if (previousVote === 'like') likeCount--;
+                if (previousVote === 'dislike') dislikeCount--;
+                if (newVoteType === 'like') likeCount++;
+                else dislikeCount++;
+            }
+            const payload = { 
+                likeCount: Math.max(0, likeCount), 
+                dislikeCount: Math.max(0, dislikeCount) 
+            };
+            if (docSnap.exists()) {
+                transaction.update(docRef, payload);
+            } else {
+                transaction.set(docRef, payload);
+            }
+        });
+    } catch (e) {
+        console.error("Vote transaction failed: ", e);
+        if (previousVote) { userVotes[itemId] = previousVote; } 
+        else { delete userVotes[itemId]; }
+        saveUserVotes();
+        updateVoteUI(itemId);
+        showCustomToast("Could not save your vote. Please try again.", 'error');
+    }
+}
+
+function escapeHTML(str) {
+    if(typeof str !== 'string') return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+}
+
+async function loadAndDisplayComments(container, limitCount = null) {
+    if (!db) return;
+    let q;
+    if (limitCount) {
+        q = query(collection(db, "comments"), orderBy("timestamp", "desc"), limit(limitCount));
+    } else {
+        q = query(collection(db, "comments"), orderBy("timestamp", "desc"));
+    }
+    const viewAllBtn = document.getElementById('viewAllCommentsBtn');
+
+    onSnapshot(q, async (querySnapshot) => {
+        if (querySnapshot.empty) {
+            container.innerHTML = '<p style="text-align:center; color: var(--text-color-muted);">No comments yet. Be the first to comment!</p>';
+            if (viewAllBtn) viewAllBtn.style.display = 'none';
+            return;
+        }
+
+        if (viewAllBtn) {
+            const allCommentsQuery = query(collection(db, "comments"));
+            const allDocsSnapshot = await getDocs(allCommentsQuery);
+            viewAllBtn.style.display = allDocsSnapshot.size > 5 ? 'block' : 'none';
+        }
+
+        const comments = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+        const userIdsToFetch = [...new Set(comments.map(c => c.userId).filter(id => id && !userProfilesCache[id]))];
+        if (userIdsToFetch.length > 0) {
+            const fetchPromises = userIdsToFetch.map(userId => getDoc(doc(db, "users", userId)));
+            const userDocs = await Promise.all(fetchPromises);
+            userDocs.forEach(docSnap => {
+                if (docSnap.exists()) {
+                    userProfilesCache[docSnap.id] = docSnap.data();
+                }
+            });
+        }
+        container.innerHTML = '';
+        comments.forEach((comment) => {
+            let authorName = 'Anonymous';
+            let authorPic = DEFAULT_PROFILE_PIC_URL;
+            const cachedProfile = userProfilesCache[comment.userId];
+            if (cachedProfile) {
+                authorName = cachedProfile.name;
+                authorPic = cachedProfile.profilePictureUrl;
+            } else if (comment.name) {
+                authorName = comment.name;
+            }
+            const commentDate = comment.timestamp ? comment.timestamp.toDate().toLocaleString() : 'Just now';
+            const commentItem = document.createElement('div');
+            commentItem.className = 'comment-item';
+            commentItem.innerHTML = `
+                <img class="comment-avatar" src="${escapeHTML(authorPic)}" alt="${escapeHTML(authorName)}'s profile picture" onerror="this.onerror=null; this.src='${DEFAULT_PROFILE_PIC_URL}';">
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-author">${escapeHTML(authorName)}</span>
+                        <span class="comment-date">${commentDate}</span>
+                    </div>
+                    <p class="comment-text">${escapeHTML(comment.commentText)}</p>
+                </div>
+            `;
+            container.appendChild(commentItem);
+        });
+    });
+}
+
+function closeCommentsPopup(calledInternally = false) {
+    const popupOverlay = document.getElementById('commentsPopupOverlay');
+    if (!popupOverlay) return;
+    popupOverlay.classList.remove('visible');
+    popupOverlay.addEventListener('transitionend', () => {
+        popupOverlay.remove();
+        if (!calledInternally && triggerElement) {
+            triggerElement.focus();
+            triggerElement = null;
+        }
+    }, { once: true });
+}
+
+function openCommentsPopup() {
+    triggerElement = document.activeElement;
+    const popupHTML = `
+        <div class="comments-popup-overlay popup-overlay" id="commentsPopupOverlay">
+            <div class="comments-popup-content popup-content">
+                <button class="popup-close-btn" id="commentsPopupCloseBtn" aria-label="Close Comments">×</button>
+                <h3>All Public Comments</h3>
+                <div id="fullCommentList">
+                    <div class="loader"><div class="loader-spinner"></div></div>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', popupHTML);
+    const popupOverlay = document.getElementById('commentsPopupOverlay');
+    const closeBtn = document.getElementById('commentsPopupCloseBtn');
+    loadAndDisplayComments(document.getElementById('fullCommentList'));
+    setTimeout(() => { popupOverlay.classList.add('visible'); closeBtn.focus(); }, 10);
+    closeBtn.addEventListener('click', () => closeCommentsPopup());
+    popupOverlay.addEventListener('click', (e) => { if(e.target === popupOverlay) closeCommentsPopup(); });
+}
+
+function renderAndAttachCommentsSection(container) {
+    if (document.getElementById('commentsSection')) {
+        document.getElementById('commentsSection').style.display = 'block';
+        return;
+    };
+    const commentsSectionHTML = `
+        <div id="commentsSection">
+            <h3><svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"></path></svg>Public Comments</h3>
+            <form id="commentForm">
+                <div class="form-content">
+                    <textarea id="commentText" placeholder="Join the discussion..." required rows="1"></textarea>
+                    <button type="submit">
+                        <span class="btn-text">Post</span>
+                        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
+                        <span class="btn-spinner"></span>
+                    </button>
+                </div>
+            </form>
+            <div id="commentList"></div>
+            <button id="viewAllCommentsBtn" style="display: none;">View All Comments</button>
+        </div>
+    `;
+    container.insertAdjacentHTML('beforeend', commentsSectionHTML);
+    
+    const commentFormEl = document.getElementById('commentForm');
+    if (commentFormEl) {
+        commentFormEl.style.setProperty('--current-user-avatar', `url('${escapeHTML(currentUser.profilePictureUrl)}')`);
+    }
+
+    const commentForm = document.getElementById('commentForm');
+    const commentTextInput = document.getElementById('commentText');
+    const submitBtn = commentForm.querySelector('button');
+    const viewAllBtn = document.getElementById('viewAllCommentsBtn');
+    
+    commentTextInput.addEventListener('input', () => {
+        commentTextInput.style.height = 'auto';
+        commentTextInput.style.height = (commentTextInput.scrollHeight) + 'px';
+    });
+    
+    commentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!db) { showCustomToast("Comments feature not ready. Please wait.", "error"); return; }
+        const name = currentUser.name;
+        const userId = currentUser.id;
+        const text = commentTextInput.value.trim();
+        if (name && text && userId) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+            try {
+                await addDoc(collection(db, "comments"), { 
+                    name, 
+                    commentText: text, 
+                    timestamp: serverTimestamp(),
+                    userId: userId 
+                });
+                commentTextInput.value = '';
+                commentTextInput.style.height = 'auto';
+                showCustomToast("Your comment has been posted successfully.<br>Movies Hub!", 'success', 5000);
+            } catch (error) { 
+                console.error("Error adding comment: ", error);
+                showCustomToast("Failed to post comment. Please try again.", "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+            }
+        } else { showCustomToast("Please write a comment.", "error"); }
+    });
+    
+    viewAllBtn.addEventListener('click', openCommentsPopup);
+    loadAndDisplayComments(document.getElementById('commentList'), 5);
+}
+
+window.handleVote = handleVote;
+window.loadLikeDislikeCounts = loadLikeDislikeCounts;
+window.loadViewCount = loadViewCount;
+window.renderAndAttachCommentsSection = renderAndAttachCommentsSection;
+window.openCommentsPopup = openCommentsPopup;
+window.closeCommentsPopup = closeCommentsPopup;
+
+function shuffleArray(array) { let currentIndex = array.length, randomIndex; while (currentIndex != 0) { randomIndex = Math.floor(Math.random() * currentIndex); currentIndex--;[array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]; } return array; }
+function triggerHapticFeedback(intensity = 50) { /* Vibration removed */ }
+function loadDataFromCache() { const cachedData = localStorage.getItem(APP_CACHE_KEY); if (cachedData) { try { const parsed = JSON.parse(cachedData); if (parsed && parsed.timestamp && (Date.now() - parsed.timestamp < CACHE_EXPIRY_DURATION)) { console.log("Loading data from cache."); appConfig = parsed.config || {}; allContentData = parsed.data || []; allCategoriesInfoText = parsed.infoText || ""; websiteLinks = parsed.websiteLinks || []; headerImageUrl = parsed.headerImageUrl || null; splashMediaItems = parsed.splashMediaItems || []; return true; } else { console.log("Cache expired or invalid."); localStorage.removeItem(APP_CACHE_KEY); } } catch (e) { console.error("Error parsing cache:", e); localStorage.removeItem(APP_CACHE_KEY); } } return false; }
+function saveDataToCache() { const cacheObject = { timestamp: Date.now(), config: appConfig, data: allContentData, infoText: allCategoriesInfoText, websiteLinks: websiteLinks, headerImageUrl: headerImageUrl, splashMediaItems: splashMediaItems }; try { localStorage.setItem(APP_CACHE_KEY, JSON.stringify(cacheObject)); console.log("Data saved to cache."); } catch (e) { console.error("Error saving to cache:", e); } }
+function loadWatchHistory() { const storedHistory = localStorage.getItem(WATCH_HISTORY_KEY); if (storedHistory) { watchHistory = JSON.parse(storedHistory); } }
+function saveWatchHistory() { localStorage.setItem(WATCH_HISTORY_KEY, JSON.stringify(watchHistory)); }
+
+// UPDATED to store quality label
+function updateWatchHistory(itemId, currentTime, duration, qualityLabel) {
+    if (itemId && duration > 0 && currentTime > 10 && currentTime / duration < 0.95) {
+        watchHistory[itemId] = { 
+            currentTime: currentTime, 
+            duration: duration, 
+            lastWatched: Date.now(),
+            quality: qualityLabel || 'Auto' // Store the quality label
+        };
+    } else if (itemId && watchHistory[itemId]) {
+        delete watchHistory[itemId];
+    }
+    saveWatchHistory();
+}
+
+async function fetchAppConfiguration() { if (isFetchingConfig) return false; isFetchingConfig = true; try { const response = await fetch(CONFIG_FILE_URL); if (!response.ok) { throw new Error(`HTTP error! status: ${response.status} for config file.`); } const fetchedConfig = await response.json(); appConfig = {...appConfig, ...fetchedConfig}; console.log("App configuration loaded/updated:", appConfig); if (appConfig.firebaseConfig && (!db || !rtdb)) { firebaseApp = initializeApp(appConfig.firebaseConfig); db = getFirestore(firebaseApp); rtdb = getDatabase(firebaseApp); } else if (!appConfig.firebaseConfig) { console.error("Firebase config not found in the fetched JSON."); } saveDataToCache(); return true; } catch (error) { console.error("Failed to load app configuration:", error); if (!appConfig.googleSheetApiKey) { showCriticalError(`Could not load configuration file. Error: ${error.message}`); } return false; } finally { isFetchingConfig = false; } }
+function showCriticalError(message) { if (loginOverlayEl && !loginOverlayEl.classList.contains('hidden')) { const loginBox = loginOverlayEl.querySelector('.login-box'); if (loginBox) { loginBox.innerHTML = `<h1 style="color: var(--highlight-color);">Critical Error 🌐</h1><p>${message}</p>`; } } else { showError(message); } if (loginButtonEl) loginButtonEl.disabled = true; }
+function validateUsername(rawUsername) {
+    const trimmedUsername = rawUsername.trim();
+    if (trimmedUsername === "") {
+        return { isValid: false, message: 'Name cannot be empty.' };
+    }
+    const emojiRegex = new RegExp(`^(.*?)([\\u{1F600}-\\u{1F64F}\\u{1F300}-\\u{1F5FF}\\u{1F680}-\\u{1F6FF}\\u{1F1E0}-\\u{1F1FF}\\u{2600}-\\u{26FF}\\u{2700}-\\u{27BF}]{0,2})$`, 'u');
+    const match = trimmedUsername.match(emojiRegex);
+    const namePart = match ? match[1].trim() : trimmedUsername;
+    if (namePart.length < 3 || namePart.length > 20) {
+        return { isValid: false, message: 'Name part must be 3-20 characters long.' };
+    }
+    if (!/[A-Z]/.test(namePart)) {
+        return { isValid: false, message: 'Name must contain at least one capital letter.' };
+    }
+    if (!/^[a-zA-Z0-9]+$/.test(namePart)) {
+        return { isValid: false, message: 'Name can only contain letters and numbers.' };
+    }
+    return { isValid: true, message: null };
+}
+async function handleLogin() {
+    if (!db) {
+        loginErrorMsgEl.textContent = 'Database connection not ready. Please wait.';
+        loginErrorMsgEl.style.display = 'block';
+        return;
+    }
+    loginButtonEl.disabled = true;
+    loginButtonEl.textContent = 'Checking...';
+    const rawUsername = userNameInputEl.value;
+    const validation = validateUsername(rawUsername);
+    if (!validation.isValid) {
+        loginErrorMsgEl.textContent = validation.message;
+        loginErrorMsgEl.style.display = 'block';
+        loginButtonEl.disabled = false;
+        loginButtonEl.textContent = "Let's Go🎥";
+        return;
+    }
+    const finalUsername = rawUsername.trim();
+    const usernameKey = getUsernameKey(finalUsername);
+    const usernameRef = doc(db, "usernames", usernameKey);
+    try {
+        const usernameSnap = await getDoc(usernameRef);
+        if (usernameSnap.exists()) {
+            loginErrorMsgEl.textContent = 'This name is already taken. Please choose another.';
+            loginErrorMsgEl.style.display = 'block';
+            loginButtonEl.disabled = false;
+            loginButtonEl.textContent = "Let's Go🎥";
+            return;
+        }
+        loginButtonEl.textContent = 'Setting up...';
+        const userId = 'user-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        const userRef = doc(db, "users", userId);
+        await runTransaction(db, async (transaction) => {
+            const usernameDocInTransaction = await transaction.get(usernameRef);
+            if (usernameDocInTransaction.exists()) {
+                throw new Error("Username was just taken. Please try a different name.");
+            }
+            transaction.set(userRef, {
+                userId: userId,
+                name: finalUsername,
+                profilePictureUrl: DEFAULT_PROFILE_PIC_URL,
+                createdAt: serverTimestamp() 
+            });
+            transaction.set(usernameRef, { userId: userId });
+        });
+        localStorage.setItem(USER_NAME_KEY, finalUsername);
+        localStorage.setItem(USER_ID_KEY, userId);
+        currentUser = { id: userId, name: finalUsername, profilePictureUrl: DEFAULT_PROFILE_PIC_URL };
+        userProfilesCache[userId] = { ...currentUser };
+        proceedToApp();
+    } catch (error) {
+        console.error("Login transaction failed: ", error);
+        loginErrorMsgEl.textContent = error.message || 'An error occurred. Please try again.';
+        loginErrorMsgEl.style.display = 'block';
+        loginButtonEl.disabled = false;
+        loginButtonEl.textContent = "Let's Go🎥";
+    }
+}
+async function proceedToApp() {
+    document.body.classList.add('user-logged-in');
+    loginOverlayEl.classList.add('hidden'); 
+    appContainerEl.classList.add('visible'); 
+    if(menuBtn) menuBtn.focus(); 
+    loginOverlayEl.addEventListener('transitionend', () => { loginOverlayEl.style.display = 'none'; }, { once: true }); 
+    showWelcomeToast();
+    initializeAppUI(); 
+    if (allContentData.length === 0 && !isFetchingSheet) { await fetchDataFromSheet(); } 
+    else { renderContent(); }
+}
+if (loginButtonEl) { loginButtonEl.addEventListener('click', handleLogin); }
+if (userNameInputEl) { 
+    userNameInputEl.addEventListener('keypress', (e) => { 
+        if (e.key === 'Enter' && !loginButtonEl.disabled) {
+            handleLogin();
+        }
+    });
+    userNameInputEl.addEventListener('input', () => {
+        const validation = validateUsername(userNameInputEl.value);
+        if (validation.isValid) {
+            loginErrorMsgEl.style.display = 'none';
+            loginButtonEl.disabled = false;
+        } else {
+            loginErrorMsgEl.textContent = validation.message;
+            loginErrorMsgEl.style.display = 'block';
+            loginButtonEl.disabled = true;
+            loginErrorMsgEl.dataset.lastError = validation.message;
+        }
+    });
+}
+if (profilePopupCloseBtn) profilePopupCloseBtn.addEventListener('click', () => closeProfilePopup());
+if (profilePopupOverlay) profilePopupOverlay.addEventListener('click', e => { if (e.target === profilePopupOverlay) closeProfilePopup(); });
+if (profileEditForm) profileEditForm.addEventListener('submit', handleProfileSave);
+menuBtn.addEventListener('click', toggleDrawer);
+drawerOverlayEl.addEventListener('click', toggleDrawer);
+customPlayerCloseBtn.addEventListener('click', () => closeInlineVideoPlayer(false));
+document.addEventListener('keydown', (e) => { if (inlinePlayerWrapper.classList.contains('active')) { if (e.key === ' ' || e.key === 'k') { e.preventDefault(); togglePlayPause(); } else if (e.key === 'f') { e.preventDefault(); toggleFullscreen(); } else if (e.key === 'm') { e.preventDefault(); toggleMute(); } else if (e.key === 'p') { e.preventDefault(); togglePip(); } else if (e.key === 'ArrowRight' && !isCurrentPlayerLiveTV) { nativeVideoPlayer.currentTime += 5; } else if (e.key === 'ArrowLeft' && !isCurrentPlayerLiveTV) { nativeVideoPlayer.currentTime -= 5; } } if (e.key === "Escape") { e.preventDefault(); handleBackPress(); } });
+function togglePlayPause() { if (nativeVideoPlayer.paused || nativeVideoPlayer.ended) { nativeVideoPlayer.play(); } else { nativeVideoPlayer.pause(); } }
+function handleDoubleTap(e) { 
+    if (e.target.closest('#customVideoControls') || e.target.closest('#playerMessageOverlay') || e.target.closest('#nextPlayingOverlay')) { 
+        return; 
+    } 
+    e.preventDefault(); 
+    const now = new Date().getTime(); 
+    const timeSince = now - lastTap; 
+    clearTimeout(singleTapTimeout); 
+    if (timeSince < 300 && timeSince > 0) { 
+        lastTap = 0;
+        
+        if (isCurrentPlayerLiveTV) {
+            return;
+        }
+
+        if (playerLoader.classList.contains('visible')) {
+            return;
+        }
+        
+        const rect = videoContainer.getBoundingClientRect(); 
+        const tapX = e.changedTouches[0].clientX - rect.left; 
+        let indicator; 
+        if (tapX > rect.width / 2) { 
+            nativeVideoPlayer.currentTime = Math.min(nativeVideoPlayer.duration, nativeVideoPlayer.currentTime + 10); 
+            indicator = seekForwardIndicator; 
+        } else { 
+            nativeVideoPlayer.currentTime = Math.max(0, nativeVideoPlayer.currentTime - 10); 
+            indicator = seekBackwardIndicator; 
+        } 
+        indicator.classList.add('show'); 
+        setTimeout(() => indicator.classList.remove('show'), 500); 
+    } else { 
+        singleTapTimeout = setTimeout(() => { 
+            if (videoContainer.classList.contains('controls-hidden')) { 
+                handleControlsVisibility(); 
+            } else if (!nativeVideoPlayer.paused) { 
+                videoContainer.classList.add('controls-hidden'); 
+            } 
+        }, 300); 
+    } 
+    lastTap = now; 
+}
+function updatePlayPauseIcon() { if (nativeVideoPlayer.paused || nativeVideoPlayer.ended) { playIcon.style.display = 'block'; pauseIcon.style.display = 'none'; playPauseBtn.setAttribute('aria-label', 'Play'); } else { playIcon.style.display = 'none'; pauseIcon.style.display = 'block'; playPauseBtn.setAttribute('aria-label', 'Pause'); } }
+function updateProgress() { 
+    if (isCurrentPlayerLiveTV || isNaN(nativeVideoPlayer.duration)) return;
+    progressBar.value = nativeVideoPlayer.currentTime; 
+    const progressPercent = (nativeVideoPlayer.currentTime / nativeVideoPlayer.duration) * 100; 
+    progressBar.style.background = `linear-gradient(to right, var(--accent-color) ${progressPercent}%, rgba(255, 255, 255, 0.3) ${progressPercent}%)`; 
+    const currentTime = formatTime(nativeVideoPlayer.currentTime); 
+    const duration = formatTime(nativeVideoPlayer.duration); 
+    timeDisplay.textContent = `${currentTime} / ${duration}`; 
+    
+    // Pass the current quality label to watch history
+    const qualityLabel = nowPlayingQualityTextEl.textContent || 'Auto';
+    updateWatchHistory(currentPlayingCardId, nativeVideoPlayer.currentTime, nativeVideoPlayer.duration, qualityLabel); 
+
+    if (nativeVideoPlayer.currentTime >= 5 && !userViews[currentPlayingCardId]) {
+        incrementViewCount(currentPlayingCardId);
+    }
+    if (isAutoplayEnabled && !nextPlayNotificationShown && (nativeVideoPlayer.duration - nativeVideoPlayer.currentTime <= 5)) {
+        showNextPlayNotification();
+    }
+}
+function setProgress() { nativeVideoPlayer.currentTime = progressBar.value; }
+function formatTime(timeInSeconds) { if (isNaN(timeInSeconds)) return "00:00"; const date = new Date(timeInSeconds * 1000); const hours = date.getUTCHours(); const minutes = date.getUTCMinutes(); const seconds = date.getUTCSeconds().toString().padStart(2, '0'); if (hours) { return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds}`; } return `${minutes}:${seconds}`; }
+function toggleMute() { nativeVideoPlayer.muted = !nativeVideoPlayer.muted; }
+function updateVolumeIcon() { if (nativeVideoPlayer.muted || nativeVideoPlayer.volume === 0) { volumeMuteIcon.style.display = 'block'; volumeHighIcon.style.display = 'none'; muteBtn.setAttribute('aria-label', 'Unmute'); } else { volumeMuteIcon.style.display = 'none'; volumeHighIcon.style.display = 'block'; muteBtn.setAttribute('aria-label', 'Mute'); } }
+function handleVolumeChange() { nativeVideoPlayer.volume = volumeSlider.value; nativeVideoPlayer.muted = volumeSlider.value == 0; }
+function toggleFitFill() { if (currentScreenFitMode === 'contain') { currentScreenFitMode = 'cover'; nativeVideoPlayer.classList.remove('video-mode-contain'); nativeVideoPlayer.classList.add('video-mode-cover'); fillIcon.style.display = 'none'; fitIcon.style.display = 'block'; fitFillBtn.setAttribute('aria-label', 'Switch to Fit Mode'); } else { currentScreenFitMode = 'contain'; nativeVideoPlayer.classList.remove('video-mode-cover'); nativeVideoPlayer.classList.add('video-mode-contain'); fillIcon.style.display = 'block'; fitIcon.style.display = 'none'; fitFillBtn.setAttribute('aria-label', 'Switch to Fit Mode'); } }
+async function toggleFullscreen() { 
+    if (!document.fullscreenElement) { 
+        await videoContainer.requestFullscreen(); 
+        showPlaybackSuggestion("Use controls to exit fullscreen"); // Custom message on entering fullscreen
+        try { 
+            if (screen.orientation && typeof screen.orientation.lock === 'function') { 
+                await screen.orientation.lock('landscape'); 
+            } 
+        } catch (err) { 
+            console.warn('Could not lock screen to landscape:', err); 
+        } 
+    } else { 
+        if (screen.orientation && typeof screen.orientation.unlock === 'function') { 
+            screen.orientation.unlock(); 
+        } 
+        await document.exitFullscreen(); 
+    } 
+}
+function updateFullscreenIcon() { if (!document.fullscreenElement) { fullscreenOpenIcon.style.display = 'block'; fullscreenCloseIcon.style.display = 'none'; fullscreenBtn.setAttribute('aria-label', 'Enter Fullscreen'); } else { fullscreenOpenIcon.style.display = 'none'; fullscreenCloseIcon.style.display = 'block'; fullscreenBtn.setAttribute('aria-label', 'Exit Fullscreen'); } }
+async function togglePip() { if (!document.pictureInPictureEnabled) return; try { if (document.pictureInPictureElement) { await document.exitPictureInPicture(); } else { await nativeVideoPlayer.requestPictureInPicture(); } } catch (error) { console.error("PiP Error:", error); } }
+function togglePlaybackSpeed() { if (nativeVideoPlayer.playbackRate === 1) { nativeVideoPlayer.playbackRate = 2; playbackSpeedBtn.textContent = '2x'; } else { nativeVideoPlayer.playbackRate = 1; playbackSpeedBtn.textContent = '1x'; } }
+function handleControlsVisibility() { clearTimeout(inactivityTimeout); videoContainer.classList.remove('controls-hidden'); inactivityTimeout = setTimeout(() => { if (!nativeVideoPlayer.paused && playerMessageOverlayEl.style.display === 'none') { videoContainer.classList.add('controls-hidden'); } }, 3000); }
+if (nativeVideoPlayer) { nativeVideoPlayer.addEventListener('play', updatePlayPauseIcon); nativeVideoPlayer.addEventListener('pause', updatePlayPauseIcon); nativeVideoPlayer.addEventListener('timeupdate', updateProgress); nativeVideoPlayer.addEventListener('loadedmetadata', () => { progressBar.max = nativeVideoPlayer.duration; updateProgress(); }); nativeVideoPlayer.addEventListener('volumechange', () => { volumeSlider.value = nativeVideoPlayer.volume; updateVolumeIcon(); }); nativeVideoPlayer.addEventListener('waiting', () => playerLoader.classList.add('visible')); nativeVideoPlayer.addEventListener('playing', () => { playerLoader.classList.remove('visible'); nextPlayNotificationShown = false; }); nativeVideoPlayer.addEventListener('canplay', () => playerLoader.classList.remove('visible')); nativeVideoPlayer.addEventListener('ended', () => { updatePlayPauseIcon(); clearTimeout(nextPlayTimeoutId); if(currentPlayingCardId && watchHistory[currentPlayingCardId]){ delete watchHistory[currentPlayingCardId]; saveWatchHistory(); if(currentSection === 'all') { renderContent(); } } if (isAutoplayEnabled) { playNextVideo(); } }); nativeVideoPlayer.addEventListener('error', () => { playerLoader.classList.remove('visible'); const customImg = playerLoader.querySelector('.custom-loader-img'); if (customImg) customImg.src = ''; document.querySelectorAll('.list-item-card.clicked-to-play').forEach(card => card.classList.remove('clicked-to-play')); updatePlayingIndicator(null); const error = nativeVideoPlayer.error; console.error("HTML5 Player Error:", error); const errorMessage = error ? (error.message || `Code: ${error.code}`) : 'Unknown playback error'; showError(`Video Error: ${errorMessage}. Please check stream or try again.`); }); videoContainer.addEventListener('mousemove', handleControlsVisibility); videoContainer.addEventListener('mouseleave', () => { clearTimeout(inactivityTimeout); if (!nativeVideoPlayer.paused && playerMessageOverlayEl.style.display === 'none') { videoContainer.classList.add('controls-hidden'); } }); videoContainer.addEventListener('touchend', handleDoubleTap); playPauseBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlayPause(); }); progressBar.addEventListener('input', () => { if (isNonAutoQualityPlaying) { showPlaybackSuggestion("Use double-tap Gesture for a smooth playback experience"); } setProgress(); }); muteBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMute(); }); volumeSlider.addEventListener('input', (e) => { e.stopPropagation(); handleVolumeChange(); }); fitFillBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFitFill(); }); fullscreenBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFullscreen(); }); pipBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePip(); }); playbackSpeedBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePlaybackSpeed(); }); document.addEventListener('fullscreenchange', updateFullscreenIcon); }
+if (infoPopupCloseBtn) infoPopupCloseBtn.addEventListener('click', () => closeInfoPopup());
+if (infoPopupOverlay) infoPopupOverlay.addEventListener('click', (e) => { if (e.target === infoPopupOverlay) closeInfoPopup();});
+if (qualityPopupCloseBtn) qualityPopupCloseBtn.addEventListener('click', () => closeQualityPopup());
+if (qualityPopupOverlay) qualityPopupOverlay.addEventListener('click', (e) => { if (e.target === qualityPopupOverlay) closeQualityPopup(); });
+if (downloadQualityPopupCloseBtn) downloadQualityPopupCloseBtn.addEventListener('click', () => closeDownloadQualityPopup());
+if (downloadQualityPopupOverlay) downloadQualityPopupOverlay.addEventListener('click', (e) => { if (e.target === downloadQualityPopupOverlay) closeDownloadQualityPopup(); });
+if (downloadUnavailableCloseBtn) downloadUnavailableCloseBtn.addEventListener('click', () => { if(!downloadUnavailableCloseBtn.disabled) closeUnavailableLinkPopup(); });
+if (downloadUnavailablePopupOverlay) downloadUnavailablePopupOverlay.addEventListener('click', (e) => { if (e.target === downloadUnavailablePopupOverlay && !downloadUnavailableCloseBtn.disabled) closeUnavailableLinkPopup(); });
+if (searchInputEl) { searchInputEl.addEventListener('input', (e) => { showSuggestions(e.target.value); }); searchInputEl.addEventListener('focus', (e) => { if (e.target.value.length >= 1 && suggestionsDropdownEl.children.length > 0) { showSuggestions(e.target.value); } else if (e.target.value.length >=1) { showSuggestions(e.target.value); } }); searchInputEl.addEventListener('keydown', (e) => { const suggestions = suggestionsDropdownEl.querySelectorAll('.suggestion-item'); if (suggestionsDropdownEl.style.display === 'block' && suggestions.length > 0) { if (e.key === 'ArrowDown') { e.preventDefault(); activeSuggestionIndex = (activeSuggestionIndex + 1) % suggestions.length; updateActiveSuggestion(suggestions); } else if (e.key === 'ArrowUp') { e.preventDefault(); activeSuggestionIndex = (activeSuggestionIndex - 1 + suggestions.length) % suggestions.length; updateActiveSuggestion(suggestions); } else if (e.key === 'Enter' && activeSuggestionIndex > -1) { e.preventDefault(); suggestions[activeSuggestionIndex].click(); } } }); document.addEventListener('click', (e) => { if (searchInputEl && suggestionsDropdownEl && !searchInputEl.contains(e.target) && !suggestionsDropdownEl.contains(e.target)) { suggestionsDropdownEl.style.display = 'none'; activeSuggestionIndex = -1; } }); }
+function updateActiveSuggestion(suggestions) { suggestions.forEach((item, index) => { item.classList.toggle('active-suggestion', index === activeSuggestionIndex); if (index === activeSuggestionIndex) item.focus(); }); }
+function toggleDrawer(){ const isOpenCurrently = drawerMenuEl.classList.contains("open"); if (!isOpenCurrently) { triggerElement = document.activeElement; } const isOpen = drawerMenuEl.classList.toggle("open"); drawerOverlayEl.classList.toggle("visible"); menuBtn.setAttribute("aria-expanded", String(isOpen)); drawerMenuEl.setAttribute("aria-hidden", String(!isOpen)); menuBtn.innerHTML = isOpen ? "&times;" : "☰"; menuBtn.classList.toggle("close-icon", isOpen); menuBtn.setAttribute("aria-label", isOpen ? "Close Menu" : "Open Menu"); if (isOpen) { const firstFocusable = drawerMenuEl.querySelector('#drawerUserProfile') || drawerNavListEl.querySelector('a.nav-link'); if (firstFocusable) firstFocusable.focus(); } else { if (triggerElement) { triggerElement.focus(); } else { menuBtn.focus(); } triggerElement = null; } }
+function setActiveNavLink(activeLinkEl){ navLinks.forEach(link=>link.classList.remove("active")); if (activeLinkEl) activeLinkEl.classList.add("active"); bottomNavLinks.forEach(link => link.classList.remove("active")); const bottomLink = document.querySelector(`.bottom-nav-item[data-section="${activeLinkEl ? activeLinkEl.dataset.section : ''}"]`); if (bottomLink) bottomLink.classList.add('active'); }
+function showLoader(show){ loader.style.display = show ? "flex" : "none"; if(show) { if (contentListContainer) { contentListContainer.innerHTML = ""; contentListContainer.classList.remove('content-visible'); } if (allCategoriesViewElementsContainer) { allCategoriesViewElementsContainer.innerHTML = ""; allCategoriesViewElementsContainer.classList.remove('content-visible'); } showEmptyState(false); hideError(); } }
+function showError(message){ document.querySelectorAll('.list-item-card.clicked-to-play').forEach(card => card.classList.remove('clicked-to-play')); if(errorMessageEl) { const textNode = document.createTextNode(message); errorMessageEl.innerHTML = ''; errorMessageEl.appendChild(textNode); const refreshBtn = document.createElement('button'); refreshBtn.textContent = 'Refresh and Go Home'; refreshBtn.className = 'login-btn'; refreshBtn.style.cssText = "margin-top: 20px; width: auto; padding: 10px 20px; font-size: 15px;"; refreshBtn.onclick = () => { closeAllPopups(); closeInlineVideoPlayer(true); currentSection = 'all'; const allLink = drawerNavListEl.querySelector('.nav-link[data-section="all"]'); if (allLink) { setActiveNavLink(allLink); } resetNavigation(); renderContent(); }; errorMessageEl.appendChild(document.createElement('br')); errorMessageEl.appendChild(refreshBtn); errorMessageEl.style.display = "block"; } if(contentListContainer) contentListContainer.innerHTML = ""; if (allCategoriesViewElementsContainer) allCategoriesViewElementsContainer.innerHTML = ""; showEmptyState(false); showLoader(false); console.error("Application Error:", message); }
+function hideError(){ if(errorMessageEl) errorMessageEl.style.display = "none"; }
+function showEmptyState(show, message = "No content available here.") { if (!emptyStateAnimationEl) return; const lottiePlayer = emptyStateAnimationEl.querySelector('lottie-player'); let messageP = emptyStateAnimationEl.querySelector('p.empty-message'); if (show) { if (!messageP) { messageP = document.createElement('p'); messageP.className = 'empty-message'; emptyStateAnimationEl.appendChild(messageP); } messageP.textContent = message; emptyStateAnimationEl.style.display = 'flex'; if (lottiePlayer && typeof lottiePlayer.play === 'function') { lottiePlayer.stop(); lottiePlayer.play(); } if (contentListContainer) contentListContainer.innerHTML = ""; if (allCategoriesViewElementsContainer) allCategoriesViewElementsContainer.innerHTML = ""; hideError(); } else { emptyStateAnimationEl.style.display = 'none'; if (lottiePlayer && typeof lottiePlayer.stop === 'function') { lottiePlayer.stop(); } } }
+function closeAllPopups() { closeProfilePopup(true); closeCommentsPopup(true); closeInfoPopup(true); closeQualityPopup(true); closeDownloadQualityPopup(true); closeGeneratingLinkPopup(true); closeUnavailableLinkPopup(true); } // Pass true to indicate internal call
+
+function showSuggestions(query) {
+    activeSuggestionIndex = -1;
+    if (!query || query.length < 1) {
+        suggestionsDropdownEl.innerHTML = '';
+        suggestionsDropdownEl.style.display = 'none';
+        return;
+    }
+    const lowerQuery = query.toLowerCase();
+
+    const mainFoldersFromSubContent = new Map();
+    allContentData
+        .filter(item =>
+            item.folderTitle && item.subFolderTitle && 
+            item.title.toLowerCase().includes(lowerQuery)
+        )
+        .forEach(item => {
+            if (!mainFoldersFromSubContent.has(item.folderTitle)) {
+                mainFoldersFromSubContent.set(item.folderTitle, {
+                    title: item.folderTitle,
+                    type: 'folder' 
+                });
+            }
+        });
+
+    const matchedItemsInMainFolders = allContentData
+        .filter(item =>
+            item.folderTitle && !item.subFolderTitle &&
+            item.title.toLowerCase().includes(lowerQuery)
+        )
+        .map(item => ({ ...item, type: 'content' }));
+
+    // UPDATED to include horizontal list folders in search
+    const matchedHorizontalFolders = allContentData
+        .filter(item => item.folderTitle && !item.subFolderTitle)
+        .map(item => item.folderTitle);
+        
+    const uniqueHorizontalFolders = [...new Set(matchedHorizontalFolders)]
+        .filter(folderTitle => folderTitle.toLowerCase().includes(lowerQuery))
+        .map(folderTitle => ({ title: folderTitle, type: 'horizontal_folder' }));
+
+    const matchedGridFolders = uniqueFolderTitles
+        .filter(folderTitle => folderTitle.toLowerCase().includes(lowerQuery))
+        .map(folderTitle => ({
+            title: folderTitle,
+            type: 'grid_folder'
+        }));
+        
+    const combinedFolders = new Map();
+    [...uniqueHorizontalFolders, ...matchedGridFolders, ...mainFoldersFromSubContent.values()].forEach(folder => {
+        if (!combinedFolders.has(folder.title)) {
+            combinedFolders.set(folder.title, folder);
+        }
+    });
+
+    const combinedResults = [...combinedFolders.values(), ...matchedItemsInMainFolders].slice(0, 10);
+
+    suggestionsDropdownEl.innerHTML = '';
+    if (combinedResults.length > 0) {
+        combinedResults.forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'suggestion-item';
+            itemEl.tabIndex = -1;
+
+            const title = item.title;
+            const startIndex = title.toLowerCase().indexOf(lowerQuery);
+            const endIndex = startIndex + lowerQuery.length;
+            const highlightedTitle = `${title.substring(0, startIndex)}<strong>${title.substring(startIndex, endIndex)}</strong>${title.substring(endIndex)}`;
+
+            let itemHTML = `<svg class="folder-icon" viewBox="0 0 24 24"><path d="M10 4H4c-1.11 0-2 .89-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8c0-1.11-.9-2-2-2h-8l-2-2z"></path></svg>`;
+            const textSpan = document.createElement('span');
+            textSpan.className = 'suggestion-text';
+            textSpan.innerHTML = highlightedTitle;
+            itemEl.innerHTML = itemHTML;
+            itemEl.appendChild(textSpan);
+
+            itemEl.addEventListener('click', () => {
+                searchInputEl.value = '';
+                suggestionsDropdownEl.style.display = 'none';
+                activeSuggestionIndex = -1;
+                closeAllPopups();
+                closeInlineVideoPlayer(true);
+
+                let highlightId;
+                let targetSectionRow = null;
+
+                const sampleItemInFolder = allContentData.find(i => i.folderTitle === item.title);
+                const categoryKey = sampleItemInFolder ? (Object.keys(appConfig.categoryDetails).find(key => {
+                    const dataKey = appConfig.categoryDetails[key].dataKey;
+                    return sampleItemInFolder[dataKey];
+                }) || 'all') : 'all';
+
+                currentSection = categoryKey;
+                setActiveNavLink(document.querySelector(`.nav-link[data-section="${categoryKey}"]`));
+                
+                if (item.type === 'content') {
+                    navigationPath = [item.folderTitle, item.subFolderTitle || ''];
+                    currentView = 'subfolder';
+                    highlightId = item.id;
+                } else { // For grid_folder, horizontal_folder, or folder
+                    navigationPath = [];
+                    currentView = 'category';
+                    if (item.type === 'horizontal_folder') {
+                        targetSectionRow = item.title;
+                    } else {
+                        highlightId = `folder-${item.title}`;
+                    }
+                }
+                
+                renderContent();
+
+                setTimeout(() => {
+                    let elementToHighlight = null;
+                    if (highlightId) {
+                        elementToHighlight = document.querySelector(`.list-item-card[data-item-id="${highlightId}"]`);
+                    } else if (targetSectionRow) {
+                        document.querySelectorAll('.section-row-title').forEach(titleEl => {
+                            if (titleEl.textContent.trim() === targetSectionRow) {
+                                elementToHighlight = titleEl.closest('.section-row');
+                            }
+                        });
+                    }
+
+                    if (elementToHighlight) {
+                        elementToHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        const highlightClass = elementToHighlight.classList.contains('section-row') ? 'highlighted-row' : 'highlighted-item';
+                        elementToHighlight.classList.add(highlightClass);
+                        setTimeout(() => elementToHighlight.classList.remove(highlightClass), 2500);
+                    }
+                }, ANIMATION_DURATION + 100);
+            });
+
+            suggestionsDropdownEl.appendChild(itemEl);
+        });
+        suggestionsDropdownEl.style.display = 'block';
+    } else {
+        suggestionsDropdownEl.style.display = 'none';
+    }
+}
+
+
+async function fetchDataFromSheet() {
+    if (isFetchingSheet) return;
+    if (!appConfig.googleSheetApiKey || !appConfig.sheetId || !Array.isArray(appConfig.sheetNames) || appConfig.sheetNames.length === 0) {
+        showError("Application configuration for Google Sheets is missing or invalid.");
+        return;
+    }
+    isFetchingSheet = true;
+    showLoader(true);
+    const fetchPromises = appConfig.sheetNames.map(sheetName => {
+        const range = `${sheetName}!A:AG`; 
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${appConfig.sheetId}/values/${range}?key=${appConfig.googleSheetApiKey}&majorDimension=ROWS`;
+        return fetch(url).then(res => {
+            if (!res.ok) { return res.json().then(errorData => { throw new Error(`API Error (${res.status}) for sheet '${sheetName}': ${errorData.error?.message || res.statusText}`); }); }
+            return res.json().then(data => ({ sheetName, data }));
+        });
+    });
+    try {
+        const results = await Promise.allSettled(fetchPromises);
+        let newAllContentData = [];
+        let newWebsiteLinks = [];
+        let newSplashMediaItems = [];
+        let settingsApplied = false;
+        results.forEach(result => {
+            if (result.status === 'fulfilled') {
+                const { sheetName, data } = result.value;
+                if (data.values && data.values.length > 0) {
+                    if (!settingsApplied && sheetName === appConfig.sheetNames[0]) {
+                        const settingsRow = data.values[1] || [];
+                        headerImageUrl = (settingsRow[COL.HEADER_IMG_URL] || "").trim();
+                        initializeAppUI(); 
+                        settingsApplied = true;
+                    }
+                    data.values.slice(2).forEach((row, index) => {
+                        if (!Array.isArray(row)) return;
+                        
+                        const splashUrl = (row[COL.SPLASH_MEDIA_URL] || "").trim();
+                        if (splashUrl) { newSplashMediaItems.push({ mediaUrl: splashUrl }); }
+
+                        const websiteName = String(row[COL.WEBSITE_NAME] || '').trim();
+                        const websiteUrl = String(row[COL.WEBSITE_LINK] || '').trim();
+                        if (websiteName && websiteUrl && !newWebsiteLinks.find(l => l.url === websiteUrl)) {
+                            newWebsiteLinks.push({ name: websiteName, url: websiteUrl });
+                        }
+                        
+                        const title = String(row[COL.TITLE] || '').trim();
+                        const liveTVName = String(row[COL.LIVE_TV_NAME] || '').trim();
+                        
+                        if (title) { 
+                            const rawFolderTitle = String(row[COL.FOLDER_TITLE] || '').trim();
+                            const folderParts = rawFolderTitle.split(',').map(s => s.trim());
+                            const folderTitleClean = folderParts[0];
+                            const folderBannerUrl = folderParts.length > 1 && folderParts[1] ? folderParts[1] : null;
+    
+                            const rawSubFolderTitle = String(row[COL.SUB_FOLDER_TITLE] || '').trim();
+                            const subFolderParts = rawSubFolderTitle.split(',').map(s => s.trim());
+                            const subFolderTitleClean = subFolderParts[0];
+                            const subFolderBannerUrl = subFolderParts.length > 1 && subFolderParts[1] ? subFolderParts[1] : null;
+    
+                            const uniqueId = `item-${sheetName.replace(/\s/g, '_')}-${index + 2}`;
+                            let logoUrl = String(row[COL.LOGO_URL] || '').trim();
+                            
+                            
+                            const qualityOptions = [];
+                            const seenUrls = new Set();
+                            
+                            const parseQuality = (rawString, defaultLabel) => {
+                                if (!rawString || !rawString.trim()) return null;
+                                const parts = rawString.split(',');
+                                const url = (parts[0] || '').trim();
+                                if (!url) return null;
+                                const label = (parts.length > 1 && parts[1].trim()) ? parts[1].trim() : defaultLabel;
+                                return { url, label };
+                            };
+
+                            const qualityLow = parseQuality(String(row[COL.QUALITY_LOW_URL] || ''), 'Low');
+                            const qualityMedium = parseQuality(String(row[COL.QUALITY_MEDIUM_URL] || ''), 'Medium');
+                            const qualityHigh = parseQuality(String(row[COL.QUALITY_HIGH_URL] || ''), 'High');
+                            
+                            if (qualityLow && !seenUrls.has(qualityLow.url)) {
+                                qualityOptions.push(qualityLow);
+                                seenUrls.add(qualityLow.url);
+                            }
+                            if (qualityMedium && !seenUrls.has(qualityMedium.url)) {
+                                qualityOptions.push(qualityMedium);
+                                seenUrls.add(qualityMedium.url);
+                            }
+                            if (qualityHigh && !seenUrls.has(qualityHigh.url)) {
+                                qualityOptions.push(qualityHigh);
+                                seenUrls.add(qualityHigh.url);
+                            }
+
+                            let streamUrlFallback = String(row[COL.STREAM_URL] || '').trim() || null;
+                            if (streamUrlFallback && !seenUrls.has(streamUrlFallback)) {
+                                qualityOptions.unshift({ label: "Auto", url: streamUrlFallback });
+                            }
+
+                            if (!streamUrlFallback && qualityOptions.length > 0) {
+                                streamUrlFallback = qualityOptions[0].url;
+                            }
+                            
+
+                            const downloadOptions = [];
+                            const parseDownloadOption = (rawString, defaultLabel) => {
+                                if (!rawString || !rawString.trim()) return null;
+                                const parts = rawString.split(',');
+                                const url = (parts[0] || '').trim();
+                                if (!url) return null;
+                                const label = (parts.length > 1 && parts[1].trim()) ? parts[1].trim() : defaultLabel;
+                                return { url, label };
+                            };
+
+                            const download480p = parseDownloadOption(String(row[COL.DOWNLOAD_URL_480P] || ''), '480p');
+                            const download720p = parseDownloadOption(String(row[COL.DOWNLOAD_URL_720P] || ''), '720p');
+                            const download1080p = parseDownloadOption(String(row[COL.DOWNLOAD_URL_1080P] || ''), '1080p');
+                            
+                            if (download480p) downloadOptions.push(download480p);
+                            if (download720p) downloadOptions.push(download720p);
+                            if (download1080p) downloadOptions.push(download1080p);
+                            
+                            const hasNoStream = !streamUrlFallback && qualityOptions.length === 0;
+                            const isMaintenanceFromSheet = String(row[COL.IS_MAINTENANCE] || '').toUpperCase() === 'TRUE';
+                            const isMaintenanceFinal = isMaintenanceFromSheet || hasNoStream;
+
+                            if (isMaintenanceFinal && (!logoUrl || logoUrl === DEFAULT_SVG_ICON_DATA_URI) ) { logoUrl = OFFLINE_IMAGE_URL; } else if (!logoUrl) { logoUrl = DEFAULT_SVG_ICON_DATA_URI; }
+                            
+                            const badgeTextRaw = String(row[COL.BADGE_TEXT] || '').trim();
+                            const badgeTexts = badgeTextRaw ? badgeTextRaw.split(',').map(b => b.trim()).filter(Boolean) : [];
+
+                            newAllContentData.push({
+                                id: uniqueId, title, streamUrlFallback, logoUrl, qualityOptions, downloadOptions,
+                                isMovie: String(row[COL.IS_MOVIE] || '').toUpperCase() === 'TRUE',
+                                isSeries: String(row[COL.IS_SERIES] || '').toUpperCase() === 'TRUE',
+                                isAnime: String(row[COL.IS_ANIME] || '').toUpperCase() === 'TRUE',
+                                isAnimation: String(row[COL.IS_ANIMATION] || '').toUpperCase() === 'TRUE',
+                                isLiveTV: false,
+                                isTrending: String(row[COL.IS_TRENDING] || '').toUpperCase() === 'TRUE',
+                                requiresVpn: String(row[COL.REQUIRES_VPN] || '').toUpperCase() === 'TRUE',
+                                isMaintenance: isMaintenanceFinal,
+                                watermarkLogoUrl: String(row[COL.WATERMARK_LOGO_URL] || '').trim() || null,
+                                loaderAnimationUrl: String(row[COL.LOADER_ANIMATION_URL] || '').trim() || null,
+                                folderTitle: folderTitleClean,
+                                folderBannerUrl: folderBannerUrl,
+                                subFolderTitle: subFolderTitleClean,
+                                subFolderBannerUrl: subFolderBannerUrl,
+                                badgeTexts: badgeTexts,
+                                badgeText: badgeTexts.length > 0 ? badgeTexts[0] : '',
+                                ratingText: String(row[COL.RATING] || '').trim(),
+                                liveTVFolderTitle: ''
+                            });
+
+                        } else if (liveTVName) { 
+                             const liveTVUniqueId = `livetv-${sheetName.replace(/\s/g, '_')}-${index + 2}`;
+                             const liveStreamUrl = String(row[COL.LIVE_TV_STREAM_URL] || '').trim();
+                             const isMaintenanceLive = String(row[COL.LIVE_TV_MAINTENANCE] || '').toUpperCase() === 'TRUE' || !liveStreamUrl;
+
+                             newAllContentData.push({
+                                id: liveTVUniqueId,
+                                title: liveTVName,
+                                logoUrl: String(row[COL.LIVE_TV_LOGO_URL] || '').trim() || DEFAULT_SVG_ICON_DATA_URI,
+                                streamUrlFallback: liveStreamUrl,
+                                watermarkLogoUrl: String(row[COL.LIVE_TV_WATERMARK_URL] || '').trim() || null,
+                                loaderAnimationUrl: String(row[COL.LIVE_TV_LOADER_URL] || '').trim() || null,
+                                isMaintenance: isMaintenanceLive,
+                                isLiveTV: true,
+                                liveTVFolderTitle: String(row[COL.LIVE_TV_FOLDER_TITLE] || '').trim() || 'Live TV Channels',
+                                isMovie: false, isSeries: false, isAnime: false, isAnimation: false, qualityOptions: [], downloadOptions: [],
+                                folderTitle: '', subFolderTitle: '', badgeTexts: [], badgeText: '', ratingText: '', requiresVpn: false, isTrending: false
+                            });
+                        }
+                    });
+                }
+            } else if (result.status === 'rejected') { console.warn(`Failed to fetch or process sheet:`, result.reason.message || result.reason); }
+        });
+        allContentData = newAllContentData;
+        websiteLinks = newWebsiteLinks;
+        splashMediaItems = newSplashMediaItems;
+        if (allContentData.length === 0 && websiteLinks.length === 0 && splashMediaItems.length === 0) {
+            showError("No content or website links found in any of the specified sheets.");
+        } else {
+            uniqueFolderTitles = [...new Set(allContentData.map(item => item.folderTitle).filter(Boolean))].sort((a,b) => a.localeCompare(b));
+            saveDataToCache();
+            renderContent();
+        }
+    } catch (error) {
+        showError(`A critical error occurred during data fetch: ${error.message}. Displaying cached data if available.`);
+        if (allContentData.length > 0) renderContent();
+    } finally {
+        showLoader(false);
+        isFetchingSheet = false;
+    }
+}
+function proceedToPlayOrQualitySelect(item) {
+    if (!item) { 
+        document.querySelectorAll('.list-item-card.clicked-to-play').forEach(card => card.classList.remove('clicked-to-play')); 
+        return; 
+    }
+    if (item.isMaintenance) {
+        openPlayerInMaintenanceMode(item);
+        return;
+    }
+
+    if(item.isLiveTV) {
+        openInlineVideoPlayer(item.streamUrlFallback, item.title, item);
+        return;
+    }
+
+    const uniqueQualities = item.qualityOptions ? item.qualityOptions.filter(q => q.url && q.label) : [];
+
+    // UPDATED to handle Continue Watching logic
+    let startTime = 0;
+    if (watchHistory[item.id]) {
+        const historyData = watchHistory[item.id];
+        // Only resume if quality was 'Auto' or not specified (backwards compatibility)
+        if (historyData.quality === 'Auto' || historyData.quality === 'Standard' || !historyData.quality) {
+            startTime = historyData.currentTime;
+        } else {
+            // If a specific quality was used, it will restart from 0, and we clear the progress
+            delete watchHistory[item.id];
+            saveWatchHistory();
+        }
+    }
+
+    if (uniqueQualities.length > 1) { 
+        openQualityPopup(item, uniqueQualities, startTime); // Pass startTime to quality popup
+    } else if (uniqueQualities.length === 1) { 
+        openInlineVideoPlayer(uniqueQualities[0].url, item.title, item, startTime, uniqueQualities[0].label); 
+    } else if (item.streamUrlFallback) { 
+        openInlineVideoPlayer(item.streamUrlFallback, item.title, item, startTime, "Auto");
+    } else { 
+        document.querySelectorAll('.list-item-card.clicked-to-play').forEach(card => card.classList.remove('clicked-to-play')); 
+        showError(`No playable video source found for "${item.title}".`); 
+        if (triggerElement) triggerElement.focus(); 
+    } 
+}
+
+
+function createListItemCard(itemData, options = {}) {
+    const { isFeaturedItem = false, isHistoryItem = false, isFolder = false, folderItemCount = 0, bannerUrl = null, isLiveTV = false } = options;
+    const listItem = document.createElement("div");
+    listItem.className = "list-item-card";
+    listItem.dataset.itemId = itemData.id;
+    if(isFeaturedItem) listItem.classList.add("featured-item");
+    if(isFolder) listItem.classList.add("is-folder");
+    if(isLiveTV) listItem.classList.add("is-live-tv");
+
+    let currentLogoUrl;
+    let imgClass = "thumbnail";
+
+    if (isFolder) {
+        if (bannerUrl) {
+            currentLogoUrl = bannerUrl;
+        } else {
+            currentLogoUrl = DEFAULT_FOLDER_ICON_URL;
+            imgClass += " is-default-folder-icon";
+        }
+    } else {
+        currentLogoUrl = itemData.logoUrl;
+        if (itemData.isMaintenance && (itemData.logoUrl === DEFAULT_SVG_ICON_DATA_URI || !itemData.logoUrl)) {
+            currentLogoUrl = OFFLINE_IMAGE_URL;
+            imgClass += " is-offline-icon";
+        } else if (itemData.logoUrl === DEFAULT_SVG_ICON_DATA_URI) {
+            imgClass += " is-svg-icon";
+        }
+    }
+    
+    const thumbnailOnError = `this.onerror=null; this.src='${DEFAULT_SVG_ICON_DATA_URI}'; this.alt='Image load error'; this.classList.add('is-svg-icon');`;
+    const badgeHTML = itemData.badgeTexts && itemData.badgeTexts.length > 0 && !isFolder 
+        ? `<div class="item-badge">${itemData.badgeTexts[0]}</div>` 
+        : '';
+    const ratingHTML = itemData.ratingText && !isFolder ? `<div class="item-rating-badge">⭐ <span class="rating-text">${itemData.ratingText}</span></div>` : '';
+    const viewsHTML = !isFeaturedItem && !isFolder ? `<div class="item-views-badge" data-item-id="${itemData.id}"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"></path></svg><span class="view-count">0</span></div>` : '';
+    const titleText = itemData.title;
+    const titleHTML = `<div class="title" title="${titleText}">${titleText}</div>`;
+    
+    const maintenanceIconHTML = itemData.isMaintenance ? `
+        <div class="maintenance-icon-overlay">
+            <svg viewBox="0 0 24 24"><path d="M20.7,7.2C20.6,7.1,20.5,7,20.4,7h-2.1c-0.2-1.3-0.7-2.6-1.5-3.6c0,0-0.1,0-0.1-0.1c-0.6-0.8-1.4-1.4-2.3-1.9 c-0.5-0.2-1-0.4-1.5-0.5C12.8,1,12.7,1,12.6,1c-0.4,0-0.8,0.1-1.2,0.2C11,1.3,10.6,1.4,10.2,1.6c-0.9,0.4-1.7,1-2.3,1.8 c0,0,0,0-0.1,0.1C7,4.4,6.4,5.7,6.2,7H4.1C4,7,3.9,7.1,3.8,7.2c-0.1,0.1-0.2,0.3-0.1,0.5l1,3.5c0,0.1,0.1,0.2,0.2,0.3 c0.1,0.1,0.2,0.1,0.4,0.1h1.4c-0.2,1.2-0.1,2.5,0.4,3.7c0,0,0,0,0,0c0.1,0.3,0.2,0.6,0.4,0.9c0.4,0.8,1,1.5,1.8,2 c0.3,0.2,0.6,0.4,1,0.6c0.4,0.2,0.8,0.3,1.2,0.4c0.4,0.1,0.8,0.1,1.2,0c0,0,0-0.1,1.2-0.2c0.7-0.2,1.4-0.6,2-1.1 c1.2-1,2-2.4,2.2-4h1.4c0.1,0,0.3-0.1,0.4-0.1c0.1-0.1,0.2-0.2,0.2-0.3l1-3.5C20.9,7.5,20.8,7.3,20.7,7.2z M12,14 c-1.1,0-2-0.9-2-2c0-1.1,0.9-2,2-2s2,0.9,2,2C14,13.1,13.1,14,12,14z"></path></svg>
+            <span>Maintenance</span>
+        </div>` : '';
+
+    const liveBadgeHTML = itemData.isLiveTV && !itemData.isMaintenance ? `<div class="live-badge-card">LIVE</div>` : '';
+
+    const likeDislikeHTML = !isFeaturedItem && !isFolder ? `
+        <div class="like-dislike-container">
+            <button class="vote-btn like-btn" aria-label="Like" data-item-id="${itemData.id}">
+                <svg class="like-icon-outline" viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
+                <svg class="like-icon-filled" style="display:none;" viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zM23 10c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.58 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-1.91l-.01-.01L23 10z"></path></svg>
+                <span class="count like-count">0</span>
+            </button>
+            <button class="vote-btn dislike-btn" aria-label="Dislike" data-item-id="${itemData.id}">
+                <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41-.17-.79-.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
+                <span class="count dislike-count">0</span>
+            </button>
+        </div>` : '';
+    
+    const infoSectionHTML = !isFeaturedItem ? `
+        <div class="info">
+            <div class="info-top">${titleHTML}</div>
+            ${likeDislikeHTML}
+        </div>` : '';
+
+    const overlayHTML = `<div class="thumbnail-overlay"><div class="overlay-loader"></div></div>`;
+    const historyProgressHTML = isHistoryItem ? `<div class="history-progress-bar"></div>` : '';
+    const removeHistoryBtnHTML = isHistoryItem ? `<button class="remove-history-btn" aria-label="Remove from history">&times;</button>` : '';
+    const playingIndicatorHTML = `<div class="playing-indicator"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>`;
+    
+    listItem.innerHTML = `
+        ${badgeHTML} 
+        ${removeHistoryBtnHTML} 
+        <div class="thumbnail-wrapper"> 
+            ${liveBadgeHTML}
+            ${maintenanceIconHTML}
+            <img src="${currentLogoUrl}" alt="${itemData.title || 'Thumbnail'}" class="${imgClass}" loading="lazy" onerror="${thumbnailOnError}"> 
+            ${overlayHTML} 
+            ${historyProgressHTML} 
+            ${ratingHTML} 
+            ${viewsHTML} 
+            ${playingIndicatorHTML}
+        </div> 
+        ${infoSectionHTML}`;
+    
+    if(isHistoryItem && watchHistory[itemData.id]){ const historyData = watchHistory[itemData.id]; const progressPercent = (historyData.currentTime / historyData.duration) * 100; const progressBarEl = listItem.querySelector('.history-progress-bar'); if(progressBarEl) progressBarEl.style.width = `${progressPercent}%`; }
+    
+    if (!isFeaturedItem) { 
+        listItem.setAttribute("role", "button");
+        listItem.tabIndex = 0;
+        
+        const handleItemClick = (e) => { 
+            if (e && (e.target.closest('.remove-history-btn') || e.target.closest('.like-dislike-container'))) return;
+            
+            if (isFolder) {
+                navigationPath.push(itemData.title);
+                currentView = navigationPath.length === 1 ? 'folder' : 'subfolder';
+                renderContent();
+            } else {
+                document.querySelectorAll('.list-item-card.clicked-to-play').forEach(card => card.classList.remove('clicked-to-play')); 
+                listItem.classList.add('clicked-to-play'); 
+                currentPopupItem = itemData; 
+                triggerElement = listItem; 
+                proceedToPlayOrQualitySelect(itemData);
+            }
+        };
+
+        listItem.addEventListener("click", handleItemClick);
+        listItem.addEventListener("keypress", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleItemClick(e); } });
+
+        const removeBtn = listItem.querySelector('.remove-history-btn');
+        if (removeBtn) { removeBtn.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); if (watchHistory[itemData.id]) { delete watchHistory[itemData.id]; saveWatchHistory(); renderContent(); } }); }
+        
+        if(db && !isFolder) { 
+            const likeBtn = listItem.querySelector('.like-btn');
+            const dislikeBtn = listItem.querySelector('.dislike-btn');
+            if(likeBtn) likeBtn.addEventListener('click', (e) => { e.stopPropagation(); window.handleVote(itemData.id, 'like'); });
+            if(dislikeBtn) dislikeBtn.addEventListener('click', (e) => { e.stopPropagation(); window.handleVote(itemData.id, 'dislike'); });
+            window.loadLikeDislikeCounts(itemData.id); 
+            if (!isFeaturedItem) { window.loadViewCount(itemData.id); }
+        }
+    } else { 
+        listItem.tabIndex = -1; 
+    } 
+    return listItem; 
+}
+
+function renderContinueWatching() {
+    const historyItems = Object.entries(watchHistory)
+        .sort(([, a], [, b]) => b.lastWatched - a.lastWatched)
+        .map(([id, data]) => ({ id, ...data }));
+    const existingSection = document.getElementById('continueWatchingSection');
+    if (existingSection) existingSection.remove();
+    if (historyItems.length > 0) {
+        const sectionContainer = document.createElement('div');
+        sectionContainer.id = 'continueWatchingSection';
+        sectionContainer.className = 'section-row';
+        const titleEl = document.createElement('h3');
+        titleEl.className = 'section-row-title';
+        
+        const titleText = document.createElement('span');
+        titleText.textContent = 'Continue Watching';
+        titleEl.appendChild(titleText);
+
+        const clearBtn = document.createElement('button');
+        clearBtn.id = 'clearHistoryBtn';
+        clearBtn.setAttribute('aria-label', 'Clear all watch history');
+        clearBtn.innerHTML = `<svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"></path></svg>`;
+        clearBtn.onclick = () => {
+            watchHistory = {};
+            saveWatchHistory();
+            renderContent();
+            showCustomToast('history is clear successful', 'success');
+        };
+        titleEl.appendChild(clearBtn);
+
+        const itemsContainer = document.createElement('div');
+        itemsContainer.className = 'section-row-items';
+        historyItems.forEach(historyItem => {
+            const itemData = allContentData.find(d => d.id === historyItem.id);
+            if (itemData && !itemData.isLiveTV) {
+                const card = createListItemCard(itemData, { isHistoryItem: true });
+                itemsContainer.appendChild(card);
+            }
+        });
+        if (itemsContainer.children.length > 0) {
+            sectionContainer.appendChild(titleEl);
+            sectionContainer.appendChild(itemsContainer);
+            allCategoriesViewElementsContainer.prepend(sectionContainer);
+        }
+    }
+}
+// MAIN RENDER DISPATCHER
+function renderContent(options = {}) {
+    if (isTransitioning) return;
+    isTransitioning = true;
+
+    if (!appConfig.categoryDetails) { 
+        console.warn("Category details not loaded."); 
+        isTransitioning = false;
+        return; 
+    }
+    
+    const currentVisibleContainer = allCategoriesViewElementsContainer.classList.contains('content-visible')
+        ? allCategoriesViewElementsContainer
+        : (contentListContainer.classList.contains('content-visible') ? contentListContainer : null);
+
+    const renderNewContent = () => {
+        allCategoriesViewElementsContainer.innerHTML = "";
+        contentListContainer.innerHTML = "";
+        allCategoriesViewElementsContainer.classList.remove('content-visible', 'content-fade-out');
+        contentListContainer.classList.remove('content-visible', 'content-fade-out');
+        hideError();
+        showEmptyState(false);
+        scrollableContentAreaEl.scrollTop = 0; 
+
+        updateSectionHeader();
+
+        if (currentView === 'category') {
+            renderCategoryView(options);
+        } else if (currentView === 'folder') {
+            renderFolderView(options);
+        } else if (currentView === 'subfolder') {
+            renderSubFolderView(options);
+        }
+
+        updatePlayingIndicator(currentPlayingCardId);
+        
+        const newVisibleContainer = (currentSection === 'all' && currentView === 'category')
+            ? allCategoriesViewElementsContainer
+            : contentListContainer;
+        
+        newVisibleContainer.classList.add('content-visible');
+    };
+
+    if (currentVisibleContainer) {
+        currentVisibleContainer.classList.add('content-fade-out');
+        setTimeout(() => {
+            renderNewContent();
+            isTransitioning = false;
+        }, ANIMATION_DURATION);
+    } else {
+        renderNewContent();
+        isTransitioning = false;
+    }
+}
+function renderBannerAd() { 
+    const adContainer = document.createElement('div'); 
+    adContainer.id = 'bannerAdContainer'; 
+    injectBannerAd(adContainer);
+    return adContainer; 
+}
+function renderHomePageContent() {
+    renderContinueWatching();
+    if (splashMediaItems.length > 0) {
+        splashMediaItems.forEach(item => {
+            const splashContainer = document.createElement('div');
+            splashContainer.className = 'splash-media-container';
+            const isVideo = ['.mp4', '.webm', '.mov'].some(ext => item.mediaUrl.toLowerCase().includes(ext));
+            let mediaElement;
+            if (isVideo) {
+                mediaElement = document.createElement('video');
+                mediaElement.autoplay = true;
+                mediaElement.loop = true;
+                mediaElement.muted = true;
+                mediaElement.playsInline = true;
+                mediaElement.setAttribute('playsinline', '');
+            } else {
+                mediaElement = document.createElement('img');
+            }
+            mediaElement.src = item.mediaUrl;
+            mediaElement.className = 'splash-media-element';
+            mediaElement.alt = 'Promotional Content';
+            splashContainer.appendChild(mediaElement);
+            allCategoriesViewElementsContainer.appendChild(splashContainer);
+        });
+    }
+
+    const trendingItems = allContentData.filter(item => item.isTrending && !item.isMaintenance && !item.isLiveTV);
+    if (trendingItems.length > 0) { 
+        const trendingPanel = document.createElement('div'); 
+        trendingPanel.className = 'trending-panel'; 
+        const trendingPanelTitle = document.createElement('h3'); 
+        trendingPanelTitle.className = 'trending-panel-title'; 
+        trendingPanelTitle.textContent = 'Trending Now'; 
+        trendingPanel.appendChild(trendingPanelTitle); 
+        const trendingPanelTrack = document.createElement('div'); 
+        trendingPanelTrack.className = 'trending-panel-items-track'; 
+        
+        let itemsForTrendingTrack = shuffleArray([...trendingItems]); 
+        
+        itemsForTrendingTrack.forEach(itemData => { 
+            trendingPanelTrack.appendChild(createListItemCard(itemData, { isFeaturedItem: true })); 
+        }); 
+        
+        if (itemsForTrendingTrack.length > 0) {
+            itemsForTrendingTrack.forEach(itemData => { 
+                trendingPanelTrack.appendChild(createListItemCard(itemData, { isFeaturedItem: true })); 
+            });
+        }
+
+        trendingPanel.appendChild(trendingPanelTrack); 
+        allCategoriesViewElementsContainer.appendChild(trendingPanel); 
+    }
+    allCategoriesViewElementsContainer.appendChild(renderBannerAd());
+    if (currentUser && currentUser.id) { 
+        renderAndAttachCommentsSection(allCategoriesViewElementsContainer); 
+    }
+    if (websiteLinks.length > 0) { const websitesSection = document.createElement('div'); websitesSection.id = 'ourWebsitesSection'; websitesSection.innerHTML = `<h3>Our Website👨‍💻</h3>`; const linksContainer = document.createElement('div'); linksContainer.className = 'website-links-container'; websiteLinks.forEach(link => { const linkEl = document.createElement('a'); linkEl.href = link.url; linkEl.textContent = link.name; linkEl.className = 'website-link-item'; linkEl.target = '_blank'; linkEl.rel = 'noopener noreferrer'; linksContainer.appendChild(linkEl); }); websitesSection.appendChild(linksContainer); allCategoriesViewElementsContainer.appendChild(websitesSection); }
+    if (allCategoriesViewElementsContainer.children.length === 0 && allContentData.length === 0 && !isFetchingSheet && !isFetchingConfig) { showEmptyState(true, "No content or information available."); }
+}
+function renderCategoryView(options = {}) {
+    allCategoriesViewElementsContainer.style.display = 'flex';
+    contentListContainer.style.display = 'none';
+
+    if (currentSection === 'all') {
+        renderHomePageContent();
+        return;
+    }
+
+    const currentCatDetail = appConfig.categoryDetails[currentSection];
+    if (!currentCatDetail) { showError("Category not found."); return; }
+
+    const filteredData = allContentData.filter(item => item[currentCatDetail.dataKey]);
+    if (filteredData.length === 0) {
+        showEmptyState(true, `No content in "${currentCatDetail.name}".`);
+        return;
+    }
+
+    
+    if (currentSection === 'isLiveTV') {
+        const groupedByFolder = filteredData.reduce((acc, item) => {
+            const key = item.liveTVFolderTitle || 'Live TV Channels';
+            if (!acc[key]) acc[key] = [];
+            acc[key].push(item);
+            return acc;
+        }, {});
+
+        let folderKeys = Object.keys(groupedByFolder).sort((a, b) => a.localeCompare(b));
+        if (options.randomize) {
+            folderKeys = shuffleArray(folderKeys);
+        }
+
+        folderKeys.forEach(folderTitle => {
+            const itemsInFolder = groupedByFolder[folderTitle];
+            if (options.randomize) {
+                shuffleArray(itemsInFolder);
+            }
+            const sectionContainer = document.createElement('div');
+            sectionContainer.className = 'section-row';
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'section-row-title';
+            titleEl.textContent = folderTitle;
+            sectionContainer.appendChild(titleEl);
+
+            const itemsContainer = document.createElement('div');
+            itemsContainer.className = 'section-row-items';
+            itemsInFolder.forEach(itemData => {
+                itemsContainer.appendChild(createListItemCard(itemData, { isLiveTV: true }));
+            });
+            sectionContainer.appendChild(itemsContainer);
+            contentListContainer.appendChild(sectionContainer);
+        });
+        
+        contentListContainer.style.display = 'flex';
+        allCategoriesViewElementsContainer.style.display = 'none';
+        return;
+    }
+    
+
+    const groupedByFolder = filteredData.reduce((acc, item) => {
+        const key = item.folderTitle || 'no_folder_grid';
+        if (!acc[key]) acc[key] = [];
+        acc[key].push(item);
+        return acc;
+    }, {});
+
+    let folderKeys = Object.keys(groupedByFolder).filter(key => key !== 'no_folder_grid').sort((a, b) => a.localeCompare(b));
+    let itemsWithoutFolder = groupedByFolder['no_folder_grid'] || [];
+
+    if (options.randomize) {
+        folderKeys = shuffleArray(folderKeys);
+        itemsWithoutFolder = shuffleArray(itemsWithoutFolder);
+    }
+    
+    folderKeys.forEach(folderTitle => {
+        const itemsInFolder = groupedByFolder[folderTitle];
+        const hasSubFolders = itemsInFolder.some(item => item.subFolderTitle);
+        
+        const folderBanner = itemsInFolder.find(item => item.folderBannerUrl)?.folderBannerUrl || null;
+
+        if (hasSubFolders) {
+            if (!contentListContainer.querySelector('.folder-grid')) {
+                const gridContainer = document.createElement('div');
+                gridContainer.className = 'folder-grid';
+                contentListContainer.appendChild(gridContainer);
+            }
+            const folderCard = createListItemCard({ id: `folder-${folderTitle}`, title: folderTitle }, { isFolder: true, folderItemCount: itemsInFolder.length, bannerUrl: folderBanner });
+            contentListContainer.querySelector('.folder-grid').appendChild(folderCard);
+        } else {
+            const HORIZONTAL_ROW_LIMIT = 5;
+            const sectionContainer = document.createElement('div');
+            sectionContainer.className = 'section-row';
+
+            const titleEl = document.createElement('h3');
+            titleEl.className = 'section-row-title';
+            titleEl.textContent = folderTitle;
+            sectionContainer.appendChild(titleEl);
+
+            const itemsContainer = document.createElement('div');
+            itemsContainer.className = 'section-row-items';
+            
+            let itemsToRender = [...itemsInFolder];
+            if (options.randomize) {
+                itemsToRender = shuffleArray(itemsToRender);
+            }
+
+            const itemsToShow = itemsToRender.length > HORIZONTAL_ROW_LIMIT ? itemsToRender.slice(0, HORIZONTAL_ROW_LIMIT) : itemsToRender;
+            
+            itemsToShow.forEach(itemData => {
+                itemsContainer.appendChild(createListItemCard(itemData));
+            });
+
+            if (itemsToRender.length > HORIZONTAL_ROW_LIMIT) {
+                const seeMoreCard = document.createElement('div');
+                seeMoreCard.className = 'see-more-card';
+                seeMoreCard.innerHTML = `
+                    <div class="see-more-content">
+                        <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg>
+                        <span>See More</span>
+                    </div>`;
+                seeMoreCard.onclick = () => {
+                    navigationPath = [folderTitle, ''];
+                    currentView = 'subfolder';
+                    renderContent();
+                };
+                itemsContainer.appendChild(seeMoreCard);
+            }
+
+            sectionContainer.appendChild(itemsContainer);
+            contentListContainer.appendChild(sectionContainer);
+        }
+    });
+
+    if (itemsWithoutFolder.length > 0) {
+        if (!contentListContainer.querySelector('.folder-grid')) {
+            const gridContainer = document.createElement('div');
+            gridContainer.className = 'folder-grid';
+            contentListContainer.appendChild(gridContainer);
+        }
+        itemsWithoutFolder.forEach(itemData => {
+            contentListContainer.querySelector('.folder-grid').appendChild(createListItemCard(itemData));
+        });
+    }
+    contentListContainer.style.display = 'flex';
+}
+
+function renderFolderView(options = {}) {
+    contentListContainer.style.display = 'flex';
+    const folderName = navigationPath[0];
+    const itemsInFolder = allContentData.filter(item => item.folderTitle === folderName);
+    let subFolders = [...new Set(itemsInFolder.map(item => item.subFolderTitle).filter(Boolean))].sort();
+
+    if (subFolders.length === 0) {
+        renderSubFolderView(options); 
+        return;
+    }
+    
+    if (options.randomize) {
+        subFolders = shuffleArray(subFolders);
+    }
+
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'folder-grid';
+    subFolders.forEach(subFolderTitle => {
+        const itemsInSubFolder = itemsInFolder.filter(i => i.subFolderTitle === subFolderTitle);
+        const itemCount = itemsInSubFolder.length;
+        const subFolderBanner = itemsInSubFolder.find(item => item.subFolderBannerUrl)?.subFolderBannerUrl || null;
+        
+        const subFolderCard = createListItemCard({ id: `subfolder-${subFolderTitle}`, title: subFolderTitle }, { isFolder: true, folderItemCount: itemCount, bannerUrl: subFolderBanner });
+        gridContainer.appendChild(subFolderCard);
+    });
+    contentListContainer.appendChild(gridContainer);
+}
+
+function renderSubFolderView(options = {}) {
+    contentListContainer.style.display = 'flex';
+    const [folderName, subFolderName] = navigationPath;
+    
+    let items = allContentData.filter(item => 
+        item.folderTitle === folderName && 
+        (subFolderName !== '' ? item.subFolderTitle === subFolderName : true)
+    );
+
+    if (items.length === 0) {
+        showEmptyState(true, `No content in "${subFolderName || folderName}".`);
+        return;
+    }
+    
+    if (options.randomize) {
+        items = shuffleArray(items);
+    }
+
+    const gridContainer = document.createElement('div');
+    gridContainer.className = 'folder-grid';
+    items.forEach(itemData => {
+        gridContainer.appendChild(createListItemCard(itemData));
+    });
+    contentListContainer.appendChild(gridContainer);
+}
+
+function updateSectionHeader() {
+    if (!appConfig.categoryDetails) return;
+
+    const searchContainer = document.querySelector('.search-container');
+    if (searchContainer) {
+        const isHomePage = currentSection === 'all' && navigationPath.length === 0;
+        searchContainer.classList.toggle('hidden', !isHomePage);
+    }
+
+    if (currentSection === 'all' && navigationPath.length === 0) {
+        sectionTitleWrapperEl.style.display = 'none';
+        allCategoriesViewElementsContainer.style.display = 'flex';
+        contentListContainer.style.display = 'none';
+        return;
+    }
+    
+    sectionTitleWrapperEl.style.display = 'block';
+    allCategoriesViewElementsContainer.style.display = 'none';
+    contentListContainer.style.display = 'flex';
+    
+    if (currentSection !== 'all' && navigationPath.length === 0 && currentView === 'category') {
+        refreshSectionBtn.style.display = 'flex';
+    } else {
+        refreshSectionBtn.style.display = 'none';
+    }
+
+    if (navigationPath.length > 0) {
+        backBtn.style.display = 'flex';
+        sectionTitleIconEl.style.display = 'none';
+        sectionTitleEl.textContent = [...navigationPath].filter(Boolean).pop() || 'Content';
+    } else {
+        backBtn.style.display = 'none';
+        const catDetails = appConfig.categoryDetails[currentSection];
+        if(catDetails) {
+            sectionTitleEl.textContent = catDetails.name;
+            sectionTitleIconEl.src = catDetails.icon;
+            sectionTitleIconEl.style.display = 'block';
+        }
+    }
+}
+function resetNavigation() {
+    navigationPath = [];
+    currentView = 'category';
+    currentSearchTerm = null;
+}
+function navigateBack() {
+    if (navigationPath.length > 0) {
+        navigationPath.pop();
+        if (navigationPath.length > 0 && navigationPath[navigationPath.length - 1] === '') {
+             navigationPath.pop();
+        }
+        currentView = navigationPath.length > 0 ? 'folder' : 'category';
+        
+        if(currentView === 'category') {
+            const activeLink = document.querySelector('.nav-link.active');
+            if (activeLink && activeLink.dataset.section !== currentSection) {
+                 currentSection = activeLink.dataset.section;
+            }
+        }
+    }
+    renderContent();
+}
+
+function handleSectionRefresh() {
+    if (refreshSectionBtn) {
+        refreshSectionBtn.classList.add('spinning');
+        setTimeout(() => refreshSectionBtn.classList.remove('spinning'), 600); // Match animation duration
+    }
+    renderContent({ randomize: true });
+}
+
+function updatePlayingIndicator(playingItemId) {
+    if (currentPlayingCardId) {
+        document.querySelectorAll(`[data-item-id="${currentPlayingCardId}"]`)
+            .forEach(card => card.classList.remove('is-playing'));
+    }
+    if (playingItemId) {
+        document.querySelectorAll(`[data-item-id="${playingItemId}"]`)
+            .forEach(card => {
+                if (!card.classList.contains('featured-item')) {
+                    card.classList.add('is-playing');
+                }
+            });
+    }
+    currentPlayingCardId = playingItemId;
+}
+
+function populateNowPlayingInfo(itemData, qualityLabel = null) {
+    if (!itemData) {
+        nowPlayingInfoWrapperEl.style.display = 'none';
+        return;
+    };
+    let displayedSectionName = appConfig.categoryDetails[currentSection]?.name || "Details";
+    nowPlayingTitleEl.textContent = itemData.title;
+    nowPlayingSectionEl.textContent = displayedSectionName;
+
+    const folderText = itemData.isLiveTV ? itemData.liveTVFolderTitle : (itemData.subFolderTitle ? `${itemData.folderTitle} / ${itemData.subFolderTitle}` : itemData.folderTitle);
+    if (folderText) {
+        nowPlayingFolderTextEl.textContent = folderText;
+        nowPlayingFolderEl.style.display = 'flex';
+    } else {
+        nowPlayingFolderEl.style.display = 'none';
+    }
+    
+    if (qualityLabel && !itemData.isLiveTV) {
+        nowPlayingQualityTextEl.textContent = qualityLabel;
+        nowPlayingQualityEl.style.display = 'flex';
+    } else {
+        nowPlayingQualityEl.style.display = 'none';
+    }
+    
+    const nowPlayingLiveViewsEl = document.getElementById('nowPlayingLiveViews');
+    if(nowPlayingLiveViewsEl) {
+        nowPlayingLiveViewsEl.style.display = itemData.isLiveTV ? 'flex' : 'none';
+    }
+
+    if (itemData.badgeTexts && itemData.badgeTexts.length > 0 && !itemData.isLiveTV) {
+        nowPlayingBadgeTextEl.textContent = itemData.badgeTexts[0];
+        nowPlayingBadgeEl.style.display = 'inline-block';
+    } else {
+        nowPlayingBadgeEl.style.display = 'none';
+    }
+
+    const existingAdditionalBadges = document.getElementById('nowPlayingAdditionalBadgesContainer');
+    if (existingAdditionalBadges) existingAdditionalBadges.remove();
+
+    if (itemData.badgeTexts && itemData.badgeTexts.length > 1) {
+        const additionalBadgesContainer = document.createElement('div');
+        additionalBadgesContainer.id = 'nowPlayingAdditionalBadgesContainer';
+        additionalBadgesContainer.className = 'now-playing-additional-badges-container';
+        
+        const track = document.createElement('div');
+        track.className = 'now-playing-additional-badges-track';
+
+        itemData.badgeTexts.slice(1).forEach(badge => {
+            const span = document.createElement('span');
+            span.className = 'now-playing-additional-badge';
+            span.textContent = badge;
+            track.appendChild(span);
+        });
+        
+        additionalBadgesContainer.innerHTML = `<strong>#Tags</strong>`;
+        additionalBadgesContainer.appendChild(track);
+
+        const metaContainer = nowPlayingSectionEl.closest('.now-playing-meta');
+        if (metaContainer) {
+            metaContainer.parentElement.insertBefore(additionalBadgesContainer, metaContainer.nextSibling);
+        }
+    }
+
+    if (itemData.ratingText && !itemData.isLiveTV) {
+        nowPlayingRatingEl.style.display = 'flex';
+        nowPlayingRatingTextEl.textContent = itemData.ratingText;
+        const ratingValue = parseFloat(itemData.ratingText);
+        const maxRating = 10.0;
+        const starPercentage = (ratingValue / maxRating) * 100;
+        nowPlayingRatingStarsEl.style.width = `${starPercentage}%`;
+    } else {
+        nowPlayingRatingEl.style.display = 'none';
+    }
+    nowPlayingWarningEl.style.display = itemData.requiresVpn ? 'flex' : 'none';
+    nowPlayingDownloadBtnEl.style.display = itemData.isLiveTV ? 'none' : 'inline-flex';
+    nowPlayingDownloadBtnEl.onclick = () => handleDownloadClick(itemData);
+    nowPlayingLikesEl.dataset.itemId = itemData.id;
+    nowPlayingViewsEl.dataset.itemId = itemData.id;
+    if (db && currentUser.id) {
+        [nowPlayingLikeBtnEl, nowPlayingDislikeBtnEl].forEach(btn => btn.dataset.itemId = itemData.id);
+        nowPlayingLikeBtnEl.onclick = () => window.handleVote(itemData.id, 'like');
+        nowPlayingDislikeBtnEl.onclick = () => window.handleVote(itemData.id, 'dislike');
+        window.loadLikeDislikeCounts(itemData.id);
+        window.loadViewCount(itemData.id);
+    }
+}
+
+function startLiveViewTracking(channelId) {
+    if (!rtdb || !channelId || !currentUser.id) return;
+    stopLiveViewTracking(); // Clean up previous one
+
+    const channelPresenceRef = ref(rtdb, `live-presence/${channelId}`);
+    currentPresenceRef = ref(rtdb, `live-presence/${channelId}/${currentUser.id}`);
+    const liveViewCountEl = document.getElementById('nowPlayingLiveViewCount');
+
+    // Add user to presence list, and set onDisconnect to remove them
+    onDisconnect(currentPresenceRef).remove();
+    set(currentPresenceRef, true);
+
+    // Listen for changes in the number of viewers
+    presenceListenerUnsubscribe = onValue(channelPresenceRef, (snapshot) => {
+        const count = snapshot.exists() ? snapshot.size : 0;
+        if (liveViewCountEl) {
+            liveViewCountEl.textContent = count.toLocaleString('en-US');
+        }
+    });
+}
+
+function stopLiveViewTracking() {
+    // Detach the listener
+    if (presenceListenerUnsubscribe) {
+        presenceListenerUnsubscribe();
+        presenceListenerUnsubscribe = null;
+    }
+
+    // Manually remove user from presence list when they close the player gracefully
+    if (currentPresenceRef) {
+        remove(currentPresenceRef);
+        currentPresenceRef = null;
+    }
+}
+
+function openPlayerInMaintenanceMode(itemData) {
+    triggerElement = document.activeElement;
+    closeInlineVideoPlayer(true); 
+    inlinePlayerTitleText.textContent = itemData.title;
+    updatePlayingIndicator(itemData.id);
+    populateNowPlayingInfo(itemData);
+    nowPlayingInfoWrapperEl.style.display = 'block';
+    playerAdjacentContentEl.style.display = 'block';
+    playerMessageOverlayEl.style.display = 'flex';
+    nativeVideoPlayer.style.display = 'none';
+    customVideoControls.style.display = 'none';
+    playerLoader.classList.remove('visible');
+    inlinePlayerWrapper.classList.add("active");
+    setLiveTVPlayerMode(itemData.isLiveTV);
+    setPlayerWrapperHeight();
+    handleControlsVisibility();
+}
+
+function setLiveTVPlayerMode(isLiveTV) {
+    isCurrentPlayerLiveTV = isLiveTV;
+    liveIndicatorEl.style.display = isLiveTV ? 'flex' : 'none';
+    const autoplaySwitch = autoplayToggleEl.closest('.autoplay-switch');
+    if(autoplaySwitch) {
+        autoplaySwitch.style.display = isLiveTV ? 'none' : 'flex';
+    }
+    if (isLiveTV) {
+        appContainerEl.classList.add('live-tv-mode');
+    } else {
+        appContainerEl.classList.remove('live-tv-mode');
+    }
+}
+
+async function openInlineVideoPlayer(streamUrl, title, itemToPlay, startTime = 0, qualityLabel = null) { 
+    if (!streamUrl) { document.querySelectorAll('.list-item-card.clicked-to-play, .live-tv-card.clicked-to-play').forEach(card => card.classList.remove('clicked-to-play')); return showError("Video stream URL missing."); } 
+    triggerElement = document.activeElement; 
+    if (inlinePlayerWrapper.classList.contains("active") && currentlyPlayingStreamUrl === streamUrl) { return; } 
+    closeInlineVideoPlayer(true); 
+    inlinePlayerTitleText.textContent = title; 
+    currentlyPlayingStreamUrl = streamUrl; 
+    updatePlayingIndicator(itemToPlay.id); 
+    populateNowPlayingInfo(itemToPlay, qualityLabel);
+    nowPlayingInfoWrapperEl.style.display = 'block';
+    playerAdjacentContentEl.style.display = 'block';
+    populateUpNextSection(itemToPlay);
+    
+    if (itemToPlay.isLiveTV) {
+        startLiveViewTracking(itemToPlay.id);
+    }
+    
+    const playerLikeBtn = document.getElementById('playerLikeBtn');
+    const playerDislikeBtn = document.getElementById('playerDislikeBtn');
+    if (db && currentUser.id) {
+        [playerLikeBtn, playerDislikeBtn].forEach(btn => {
+            btn.classList.remove('hidden');
+            btn.dataset.itemId = itemToPlay.id;
+        });
+        playerLikeBtn.onclick = () => window.handleVote(itemToPlay.id, 'like');
+        playerDislikeBtn.onclick = () => window.handleVote(itemToPlay.id, 'dislike');
+        window.loadLikeDislikeCounts(itemToPlay.id);
+    } else {
+        [playerLikeBtn, playerDislikeBtn].forEach(btn => btn.classList.add('hidden'));
+    }
+    playerMessageOverlayEl.style.display = 'none';
+    nativeVideoPlayer.style.display = 'block';
+    customVideoControls.style.display = 'flex';
+    const defaultSpinner = playerLoader.querySelector('.default-spinner'); const customImg = playerLoader.querySelector('.custom-loader-img'); if (itemToPlay.loaderAnimationUrl) { customImg.src = itemToPlay.loaderAnimationUrl; customImg.style.display = 'block'; defaultSpinner.style.display = 'none'; } else { customImg.style.display = 'none'; defaultSpinner.style.display = 'block'; } playerLoader.classList.add('visible'); progressBar.value = 0; progressBar.style.background = `rgba(255, 255, 255, 0.3)`; timeDisplay.textContent = "00:00 / 00:00"; currentScreenFitMode = 'contain'; nativeVideoPlayer.classList.remove('video-mode-cover'); nativeVideoPlayer.classList.add('video-mode-contain'); fillIcon.style.display = 'block'; fitIcon.style.display = 'none'; fitFillBtn.setAttribute('aria-label', 'Switch to Fit Mode'); nativeVideoPlayer.playbackRate = 1; playbackSpeedBtn.textContent = '1x'; inlinePlayerWrapper.classList.add("active"); 
+    setLiveTVPlayerMode(itemToPlay.isLiveTV);
+    setPlayerWrapperHeight(); 
+
+    isNonAutoQualityPlaying = qualityLabel && qualityLabel !== 'Auto' && qualityLabel !== 'Standard';
+    let suggestionShownOnPlay = false;
+    
+    const onPlayingHandler = () => {
+        if (isNonAutoQualityPlaying && !suggestionShownOnPlay) {
+            showPlaybackSuggestion("Use double-tap Gesture for a smooth playback experience");
+            suggestionShownOnPlay = true;
+        }
+        // *** FIX: Increment view count for Live TV as soon as it starts playing ***
+        if (itemToPlay.isLiveTV) {
+            incrementViewCount(itemToPlay.id);
+        }
+    };
+    nativeVideoPlayer.removeEventListener('playing', onPlayingHandler); 
+    nativeVideoPlayer.addEventListener('playing', onPlayingHandler);
+    
+    if (hlsInstance) {
+        hlsInstance.destroy();
+        hlsInstance = null;
+    }
+    if (streamUrl.includes('.m3u8')) {
+        if (Hls.isSupported()) {
+            hlsInstance = new Hls();
+            hlsInstance.loadSource(streamUrl);
+            hlsInstance.attachMedia(nativeVideoPlayer);
+            hlsInstance.on(Hls.Events.MANIFEST_PARSED, function() {
+                if (startTime > 0 && isFinite(startTime) && !itemToPlay.isLiveTV) {
+                    nativeVideoPlayer.currentTime = startTime;
+                }
+            });
+        } else if (nativeVideoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+            nativeVideoPlayer.src = streamUrl;
+             if (startTime > 0 && isFinite(startTime) && !itemToPlay.isLiveTV) {
+                nativeVideoPlayer.currentTime = startTime;
+            }
+        } else {
+            showError('HLS playback is not supported in this browser.');
+            return;
+        }
+    } else {
+        nativeVideoPlayer.src = streamUrl;
+         if (startTime > 0 && isFinite(startTime) && !itemToPlay.isLiveTV) {
+            nativeVideoPlayer.currentTime = startTime;
+        }
+    }
+
+    if (itemToPlay.watermarkLogoUrl) { nativePlayerWatermarkEl.querySelector('img').src = itemToPlay.watermarkLogoUrl; nativePlayerWatermarkEl.classList.remove('hidden'); } else { nativePlayerWatermarkEl.classList.add('hidden'); } try { 
+        await nativeVideoPlayer.play(); 
+        handleControlsVisibility(); 
+        showBottomBannerAd(); 
+    } catch (error) { document.querySelectorAll('.list-item-card.clicked-to-play, .live-tv-card.clicked-to-play').forEach(card => card.classList.remove('clicked-to-play')); updatePlayingIndicator(null); console.warn("Player: Autoplay prevented or play interrupted:", error.name, error.message); } 
+}
+function closeInlineVideoPlayer(calledInternally = false) { 
+    stopLiveViewTracking(); // Stop tracking live views
+    hideBottomBannerAd();
+    isNonAutoQualityPlaying = false;
+    if (suggestionTimeout) clearTimeout(suggestionTimeout);
+    if (playbackSuggestionOverlayEl) playbackSuggestionOverlayEl.classList.remove('visible');
+    
+    if (hlsInstance) {
+        hlsInstance.destroy();
+        hlsInstance = null;
+    }
+    setLiveTVPlayerMode(false);
+    nowPlayingInfoWrapperEl.style.display = 'none';
+    nowPlayingQualityEl.style.display = 'none';
+    playerAdjacentContentEl.style.display = 'none';
+    upNextContainerEl.style.display = 'none';
+    upNextItemsEl.innerHTML = '';
+    const existingAdditionalBadges = document.getElementById('nowPlayingAdditionalBadgesContainer');
+    if (existingAdditionalBadges) existingAdditionalBadges.remove();
+
+    hideNextPlayNotification();
+    if (nativeVideoPlayer) { nativeVideoPlayer.pause(); nativeVideoPlayer.removeAttribute('src'); nativeVideoPlayer.load(); nativeVideoPlayer.poster = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; } 
+    if(nativePlayerWatermarkEl) nativePlayerWatermarkEl.classList.add('hidden'); 
+    playerLoader.classList.remove('visible'); 
+    const customImg = playerLoader.querySelector('.custom-loader-img'); 
+    if (customImg) customImg.src = ''; 
+    clearTimeout(inactivityTimeout); 
+    document.querySelectorAll('.list-item-card.clicked-to-play, .live-tv-card.clicked-to-play').forEach(card => card.classList.remove('clicked-to-play')); 
+    updatePlayingIndicator(null); 
+    inlinePlayerWrapper.classList.remove("active"); 
+    setPlayerWrapperHeight(); 
+    inlinePlayerTitleText.textContent = "Video Title"; 
+    currentlyPlayingStreamUrl = null; 
+    playerMessageOverlayEl.style.display = 'none';
+    nowPlayingWarningEl.style.display = 'none';
+    nativeVideoPlayer.style.display = 'block';
+    customVideoControls.style.display = 'flex';
+    if (!calledInternally && triggerElement) { triggerElement.focus(); triggerElement = null; } else if (!calledInternally && customPlayerCloseBtn) { customPlayerCloseBtn.focus(); } 
+}
+function setPlayerWrapperHeight() { 
+    if (!inlinePlayerWrapper) return; 
+    const titleBarHeight = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--title-bar-height')); 
+    
+    if (!inlinePlayerWrapper.classList.contains('active')) { 
+        inlinePlayerWrapper.style.height = getComputedStyle(document.documentElement).getPropertyValue('--player-wrapper-height-collapsed'); 
+        return; 
+    } 
+
+    let targetPlayerWrapperHeightStyle = getComputedStyle(document.documentElement).getPropertyValue('--player-wrapper-active-height').trim(); 
+    let targetPlayerWrapperHeight; 
+
+    if (targetPlayerWrapperHeightStyle.endsWith('vh')) { 
+        targetPlayerWrapperHeight = parseFloat(targetPlayerWrapperHeightStyle) / 100 * window.innerHeight; 
+    } else if (targetPlayerWrapperHeightStyle.endsWith('px')) { 
+        targetPlayerWrapperHeight = parseFloat(targetPlayerWrapperHeightStyle); 
+    } else { 
+        targetPlayerWrapperHeight = (window.innerHeight * 0.5); 
+    } 
+
+    const minVideoHeight = 150; 
+    const mainContentAreaMaxHeight = window.innerHeight - (appHeaderEl ? appHeaderEl.offsetHeight : parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height'))); 
+    const sectionTitleWrapperActualHeight = sectionTitleWrapperEl && sectionTitleWrapperEl.style.display !== 'none' ? sectionTitleWrapperEl.offsetHeight : 0; 
+    const minScrollableAreaHeight = 100; 
+    
+    if (targetPlayerWrapperHeight > (mainContentAreaMaxHeight - sectionTitleWrapperActualHeight - minScrollableAreaHeight)) { 
+        targetPlayerWrapperHeight = mainContentAreaMaxHeight - sectionTitleWrapperActualHeight - minScrollableAreaHeight; 
+    } 
+    
+    if (targetPlayerWrapperHeight < minVideoHeight ) { 
+        targetPlayerWrapperHeight = minVideoHeight; 
+    } 
+    
+    if (targetPlayerWrapperHeight < 0) targetPlayerWrapperHeight = 0; 
+    
+    inlinePlayerWrapper.style.height = `${targetPlayerWrapperHeight}px`; 
+    
+    const videoContainerEl = inlinePlayerWrapper.querySelector('.video-container'); 
+    if (videoContainerEl) { 
+        videoContainerEl.style.height = `calc(100% - ${titleBarHeight}px)`; 
+    } 
+}
+
+function openInfoPopup(itemData, sectionName) {
+    if (!infoPopupOverlay) return;
+    triggerElement = document.activeElement;
+    currentPopupItem = itemData;
+    infoPopupBannerImg.src = itemData.logoUrl;
+    infoPopupBannerImg.onerror = () => { infoPopupBannerImg.src = DEFAULT_SVG_ICON_DATA_URI; };
+    infoPopupTitleEl.textContent = itemData.title;
+    infoPopupSectionEl.textContent = sectionName;
+    
+    if (itemData.badgeTexts && itemData.badgeTexts.length > 0) {
+        infoPopupBadgeTextEl.textContent = itemData.badgeTexts[0];
+        infoPopupBadgeEl.style.display = 'block';
+    } else { infoPopupBadgeEl.style.display = 'none'; }
+
+    const cardElement = document.querySelector(`.list-item-card[data-item-id="${itemData.id}"]`);
+    if (cardElement && db && currentUser.id) {
+        infoPopupLikesEl.style.display = 'flex';
+        infoPopupViewsEl.style.display = 'flex';
+        infoPopupVoteContainer.style.display = 'flex';
+        infoPopupLikeBtn.dataset.itemId = itemData.id;
+        infoPopupDislikeBtn.dataset.itemId = itemData.id;
+        window.loadLikeDislikeCounts(itemData.id); 
+        window.loadViewCount(itemData.id);
+    } else {
+         infoPopupLikesEl.style.display = 'none';
+         infoPopupViewsEl.style.display = 'none';
+         infoPopupVoteContainer.style.display = 'none';
+    }
+    if (itemData.ratingText) {
+        infoPopupRatingEl.style.display = 'flex';
+        infoPopupRatingTextEl.textContent = itemData.ratingText;
+        const ratingValue = parseFloat(itemData.ratingText);
+        const maxRating = 10.0;
+        const starPercentage = (ratingValue / maxRating) * 100;
+        infoPopupRatingStarsEl.style.width = `${starPercentage}%`;
+    } else { infoPopupRatingEl.style.display = 'none'; }
+    infoPopupStatusMessageEl.classList.remove('maintenance', 'vpn-required');
+    if (itemData.isMaintenance) {
+        infoPopupStatusMessageEl.innerHTML = "<strong>Note:</strong> This content is currently under maintenance and cannot be played.";
+        infoPopupStatusMessageEl.classList.add('maintenance');
+        infoPopupStatusMessageEl.style.display = 'block';
+    } else if (itemData.requiresVpn) {
+        infoPopupStatusMessageEl.innerHTML = "<strong>Note:</strong> This content requires a secure connection. Please use a VPN.";
+        infoPopupStatusMessageEl.classList.add('vpn-required');
+        infoPopupStatusMessageEl.style.display = 'block';
+    } else { infoPopupStatusMessageEl.style.display = 'none'; }
+    infoPopupDownloadBtn.style.display = 'inline-flex';
+    infoPopupDownloadBtn.onclick = () => handleDownloadClick(itemData);
+    infoPopupOverlay.classList.add('visible');
+    if (infoPopupCloseBtn) infoPopupCloseBtn.focus();
+}
+function closeInfoPopup(calledInternally = false) { if (!infoPopupOverlay) return; infoPopupOverlay.classList.remove('visible'); currentPopupItem = null; if (infoPopupLikeBtn) { infoPopupLikeBtn.onclick = null; infoPopupLikeBtn.dataset.itemId = ''; } if (infoPopupDislikeBtn) { infoPopupDislikeBtn.onclick = null; infoPopupDislikeBtn.dataset.itemId = ''; } if (infoPopupDownloadBtn) { infoPopupDownloadBtn.onclick = null; infoPopupDownloadBtn.style.display = 'none'; } if (!calledInternally && triggerElement) { triggerElement.focus(); triggerElement = null; } }
+
+function openQualityPopup(itemData, qualitiesToDisplay, startTime = 0) {
+    if (!qualityPopupOverlay || !qualityOptionsContainer || !itemData || itemData.isMaintenance) return;
+    triggerElement = document.activeElement;
+    currentPopupItem = itemData;
+    
+    
+    if (qualityPopupTitleEl) {
+        qualityPopupTitleEl.innerHTML = `Select Your Stream for watching <br><span class="quality-item-name">${escapeHTML(itemData.title)}</span>`;
+    }
+
+    qualityOptionsContainer.innerHTML = '';
+    
+    if (!qualitiesToDisplay || qualitiesToDisplay.length === 0) {
+        if(itemData.streamUrlFallback) {
+            openInlineVideoPlayer(itemData.streamUrlFallback, itemData.title, itemData, startTime, "Auto");
+        } else {
+            document.querySelectorAll('.list-item-card.clicked-to-play').forEach(card => card.classList.remove('clicked-to-play'));
+            showError("No quality options available.");
+        }
+        closeQualityPopup(true);
+        return;
+    }
+
+    qualitiesToDisplay.forEach((quality, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'quality-option-btn';
+        btn.textContent = quality.label;
+        btn.onclick = () => {
+            closeQualityPopup(true);
+            // If a specific quality is chosen, start from 0 unless it's auto
+            const finalStartTime = (quality.label === 'Auto' || quality.label === 'Standard') ? startTime : 0;
+            openInlineVideoPlayer(quality.url, itemData.title, itemData, finalStartTime, quality.label);
+        };
+        qualityOptionsContainer.appendChild(btn);
+        if (index === 0) {
+            setTimeout(() => btn.focus(), 0);
+        }
+    });
+    qualityPopupOverlay.classList.add('visible');
+    if (qualitiesToDisplay.length === 0 && qualityPopupCloseBtn) {
+        qualityPopupCloseBtn.focus();
+    }
+}
+function closeQualityPopup(calledInternally = false) { if (!qualityPopupOverlay) return; qualityPopupOverlay.classList.remove('visible'); if (!calledInternally && currentPopupItem && triggerElement && !nativeVideoPlayer.src) { triggerElement.classList.remove('clicked-to-play'); } if (!calledInternally && triggerElement) { if (!nativeVideoPlayer.src) { triggerElement.focus(); } else { if(videoContainer) videoContainer.focus(); } } }
+function openDownloadQualityPopup(itemData, qualitiesToDisplay) { if (!downloadQualityPopupOverlay || !downloadQualityOptionsContainer) return; triggerElement = document.activeElement; currentPopupItem = itemData; downloadQualityOptionsContainer.innerHTML = ''; qualitiesToDisplay.forEach((quality, index) => { const btn = document.createElement('button'); btn.className = 'quality-option-btn'; btn.textContent = quality.label; btn.onclick = () => { closeDownloadQualityPopup(true); openGeneratingLinkPopup(quality.url, itemData); }; downloadQualityOptionsContainer.appendChild(btn); if (index === 0) { setTimeout(() => btn.focus(), 0); } }); downloadQualityPopupOverlay.classList.add('visible'); }
+function closeDownloadQualityPopup(calledInternally = false) { if (!downloadQualityPopupOverlay) return; downloadQualityPopupOverlay.classList.remove('visible'); if (!calledInternally && triggerElement) { triggerElement.focus(); triggerElement = null; } }
+
+async function handleDownloadClick(itemData) {
+    if (!itemData || itemData.isLiveTV) {
+        openGeneratingLinkPopup(null, itemData); 
+        return;
+    }
+    const availableDownloads = itemData.downloadOptions.filter(opt => opt.url);
+
+    if (availableDownloads.length === 0) {
+        openGeneratingLinkPopup(null, itemData);
+    } else if (availableDownloads.length === 1) {
+        openGeneratingLinkPopup(availableDownloads[0].url, itemData);
+    } else {
+        openGeneratingLinkPopup('multi', itemData);
+    }
+}
+
+function openGeneratingLinkPopup(downloadAction, itemData) {
+    if (!downloadGeneratingPopupOverlay || !downloadGeneratingTimerEl) return;
+    triggerElement = document.activeElement;
+
+    if (downloadCountdownIntervalId) clearInterval(downloadCountdownIntervalId);
+    
+    downloadGeneratingTimerEl.textContent = 'Loading Ad...';
+    downloadGeneratingPopupOverlay.classList.add('visible');
+    
+    injectBannerAd(generatingAdContainer);
+    
+    let countdown = 10;
+    downloadGeneratingTimerEl.textContent = `${countdown}s`;
+
+    downloadCountdownIntervalId = setInterval(() => {
+        countdown--;
+        downloadGeneratingTimerEl.textContent = `${countdown}s`;
+        if (countdown <= 0) {
+            clearInterval(downloadCountdownIntervalId);
+            closeGeneratingLinkPopup(true);
+            
+            if (downloadAction === 'multi') {
+                openDownloadQualityPopup(itemData, itemData.downloadOptions.filter(opt => opt.url));
+            } else if (downloadAction) {
+                window.open(downloadAction, '_blank');
+                showCustomToast('Download started in a new tab!', 'success', 5000);
+            } else {
+                openUnavailableLinkPopup();
+            }
+        }
+    }, 1000);
+}
+
+function closeGeneratingLinkPopup(calledInternally = false) {
+    if (!downloadGeneratingPopupOverlay) return;
+    if (downloadCountdownIntervalId) {
+        clearInterval(downloadCountdownIntervalId);
+        downloadCountdownIntervalId = null;
+    }
+    downloadGeneratingPopupOverlay.classList.remove('visible');
+    if (!calledInternally && triggerElement) {
+        triggerElement.focus();
+        triggerElement = null;
+    }
+}
+
+function openUnavailableLinkPopup() {
+    if (!downloadUnavailablePopupOverlay) return;
+    triggerElement = document.activeElement;
+    
+    downloadUnavailablePopupOverlay.classList.add('visible');
+    injectBannerAd(unavailableAdContainer);
+    
+    downloadUnavailableCloseBtn.disabled = true;
+    unavailableCloseBtnText.style.display = 'none';
+    unavailableCloseBtnTimer.style.display = 'block';
+
+    let countdown = 10;
+    unavailableCloseBtnTimer.textContent = `${countdown}s`;
+
+    if (unavailableCloseBtnIntervalId) clearInterval(unavailableCloseBtnIntervalId);
+    unavailableCloseBtnIntervalId = setInterval(() => {
+        countdown--;
+        unavailableCloseBtnTimer.textContent = `${countdown}s`;
+        if (countdown <= 0) {
+            clearInterval(unavailableCloseBtnIntervalId);
+            downloadUnavailableCloseBtn.disabled = false;
+            unavailableCloseBtnText.style.display = 'block';
+            unavailableCloseBtnTimer.style.display = 'none';
+            if(document.activeElement === document.body || document.activeElement === null) {
+                downloadUnavailableCloseBtn.focus();
+            }
+        }
+    }, 1000);
+}
+
+function closeUnavailableLinkPopup(calledInternally = false) {
+    if (!downloadUnavailablePopupOverlay) return;
+    if(unavailableCloseBtnIntervalId) {
+        clearInterval(unavailableCloseBtnIntervalId);
+        unavailableCloseBtnIntervalId = null;
+    }
+    downloadUnavailablePopupOverlay.classList.remove('visible');
+    if (!calledInternally && triggerElement) {
+        triggerElement.focus();
+        triggerElement = null;
+    }
+}
+
+function populateUpNextSection(currentItem) {
+    upNextItemsEl.innerHTML = '';
+    let upNextItems = [];
+
+    if (currentItem.isLiveTV) {
+        
+        upNextItems = allContentData.filter(item => 
+            item.isLiveTV && 
+            item.id !== currentItem.id && 
+            item.liveTVFolderTitle === currentItem.liveTVFolderTitle && 
+            !item.isMaintenance
+        );
+    } else {
+        
+        const hasFolder = currentItem.folderTitle;
+        if (!hasFolder) {
+            upNextContainerEl.style.display = 'none';
+            return;
+        }
+
+        upNextItems = allContentData.filter(item => {
+            if (item.id === currentItem.id || item.isMaintenance || item.isLiveTV) return false;
+            if (item.folderTitle !== currentItem.folderTitle) return false;
+            return currentItem.subFolderTitle ? (item.subFolderTitle === currentItem.subFolderTitle) : !item.subFolderTitle;
+        });
+    }
+    
+    if (upNextItems.length === 0) {
+        upNextContainerEl.style.display = 'none';
+        return;
+    }
+    
+    upNextItems = shuffleArray(upNextItems);
+    
+    upNextItems.forEach(item => {
+        upNextItemsEl.appendChild(createListItemCard(item, {isFeaturedItem: false, isLiveTV: item.isLiveTV}));
+    });
+    
+    upNextContainerEl.style.display = 'block';
+}
+function getNextVideoItem() {
+    const nextCard = upNextItemsEl.querySelector('.list-item-card');
+    if (!nextCard) return null;
+    const nextItemId = nextCard.dataset.itemId;
+    return allContentData.find(item => item.id === nextItemId);
+}
+function playNextVideo() {
+    hideNextPlayNotification();
+    const nextItem = getNextVideoItem();
+    if (nextItem) {
+        proceedToPlayOrQualitySelect(nextItem);
+    } else {
+        console.log("Autoplay: No next video found.");
+        closeInlineVideoPlayer(false);
+    }
+}
+function showNextPlayNotification() {
+    const nextItem = getNextVideoItem();
+    if (!nextItem || nextPlayNotificationShown) return;
+    
+    nextPlayNotificationShown = true;
+    nextPlayingTitleEl.textContent = nextItem.title;
+    nextPlayingOverlayEl.classList.add('visible');
+
+    videoContainer.classList.add('controls-hidden');
+
+    nextPlayTimeoutId = setTimeout(() => {
+        if (isAutoplayEnabled) {
+            playNextVideo();
+        } else {
+            hideNextPlayNotification();
+        }
+    }, 5000);
+}
+function hideNextPlayNotification() {
+    clearTimeout(nextPlayTimeoutId);
+    nextPlayTimeoutId = null;
+    nextPlayingOverlayEl.classList.remove('visible');
+}
+window.addEventListener('resize', () => { setPlayerWrapperHeight(); });
+function populateDrawerMenu() { if (!drawerNavListEl || !appConfig.categoryDetails) { console.warn("Drawer or category details not available for populating menu."); return; } drawerNavListEl.innerHTML = ''; navLinks = []; Object.entries(appConfig.categoryDetails).forEach(([key, details]) => { const li = document.createElement('li'); const a = document.createElement('a'); a.href = "#"; a.classList.add('nav-link'); if (key === currentSection) a.classList.add('active'); a.dataset.section = key; a.dataset.iconUrl = details.icon; const img = document.createElement('img'); img.src = details.icon; img.alt = `${details.name} Icon`; const span = document.createElement('span'); span.className = 'nav-text-wrapper'; span.textContent = details.name; a.appendChild(img); a.appendChild(span); li.appendChild(a); drawerNavListEl.appendChild(li); navLinks.push(a); a.addEventListener('click', (e) => { e.preventDefault(); const newSection = a.dataset.section; if (currentSection !== newSection && inlinePlayerWrapper.classList.contains('active')) { closeInlineVideoPlayer(false); } closeAllPopups(); currentSection = newSection; setActiveNavLink(a); resetNavigation(); renderContent(); if (drawerMenuEl.classList.contains('open')) { toggleDrawer(); } }); }); }
+function populateBottomNav() { 
+    if (!bottomNavEl || !appConfig.categoryDetails) return; 
+    bottomNavEl.innerHTML = ''; 
+    bottomNavLinks = []; 
+    const navOrder = ['all', 'isMovie', 'isSeries', 'isLiveTV']; 
+    const categoryMap = { 
+        all: { key: 'all', svg: '<svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>' }, 
+        isMovie: { key: 'isMovie', svg: '<svg viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>' }, 
+        isSeries: { key: 'isSeries', svg: '<svg viewBox="0 0 24 24"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H8v-2h4V6h2v4h4v2z"/></svg>' }, 
+        isLiveTV: { key: 'isLiveTV', svg: '<svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.99-.9 1.99-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>'}
+    }; 
+    for (const cat of navOrder) { 
+        const catDetails = Object.values(appConfig.categoryDetails).find(d => d.dataKey === cat); 
+        if (catDetails) { 
+            const btn = document.createElement('button'); 
+            btn.className = 'bottom-nav-item'; 
+            btn.dataset.section = Object.keys(appConfig.categoryDetails).find(k => appConfig.categoryDetails[k] === catDetails); 
+            btn.innerHTML = `${categoryMap[cat].svg}<span>${catDetails.name}</span>`; 
+            btn.addEventListener('click', () => { 
+                const targetSection = drawerNavListEl.querySelector(`.nav-link[data-section="${btn.dataset.section}"]`); 
+                if (targetSection) { targetSection.click(); } 
+            }); 
+            bottomNavEl.appendChild(btn); 
+            bottomNavLinks.push(btn); 
+        } 
+    } 
+}
+function updateHeaderTitle() { const appTitleTextEl = document.querySelector('.app-title'); if (headerImageUrl) { appTitleTextEl.style.display = 'none'; appTitleLogoEl.style.display = 'none'; appTitleTextImageEl.src = headerImageUrl; appTitleTextImageEl.style.display = 'block'; } else { appTitleTextEl.style.display = 'flex'; appTitleLogoEl.style.display = 'inline-block'; appTitleTextImageEl.style.display = 'none'; appTitleTextImageEl.src = ''; } }
+function initializeAppUI(){ 
+    menuBtn.innerHTML="☰"; 
+    const defaultLogoUrl = 'https://i.ibb.co/B2BZ4B2S/file-00000000c38461f885244c3d7088bd8e.png'; 
+    if (loginScreenLogoEl) { loginScreenLogoEl.src = defaultLogoUrl; } 
+    if (appTitleLogoEl) { appTitleLogoEl.src = defaultLogoUrl; } 
+    updateHeaderTitle();
+    renderUserProfileInDrawer();
+    populateDrawerMenu(); 
+    populateBottomNav(); 
+    loadWatchHistory(); 
+    loadUserVotes(); 
+    loadUserViews();
+    isAutoplayEnabled = localStorage.getItem(AUTOPLAY_KEY) === 'true';
+    autoplayToggleEl.checked = isAutoplayEnabled;
+    autoplayToggleEl.addEventListener('change', () => {
+        isAutoplayEnabled = autoplayToggleEl.checked;
+        localStorage.setItem(AUTOPLAY_KEY, isAutoplayEnabled);
+    });
+    cancelNextPlayBtn.addEventListener('click', hideNextPlayNotification);
+    
+    backBtn.addEventListener('click', handleBackPress);
+    refreshSectionBtn.addEventListener('click', handleSectionRefresh);
+
+    if (pipBtn) { pipBtn.classList.toggle('hidden', !document.pictureInPictureEnabled); } 
+    if(infoPopupLikeBtn) infoPopupLikeBtn.addEventListener('click', () => { if(currentPopupItem && currentUser.id) window.handleVote(currentPopupItem.id, 'like'); });
+    if(infoPopupDislikeBtn) infoPopupDislikeBtn.addEventListener('click', () => { if(currentPopupItem && currentUser.id) window.handleVote(currentPopupItem.id, 'dislike'); });
+
+    const initialLink = drawerNavListEl.querySelector(`.nav-link[data-section="${currentSection}"]`) || drawerNavListEl.querySelector('.nav-link[data-section="all"]'); 
+    if (initialLink) setActiveNavLink(initialLink);
+    setPlayerWrapperHeight(); 
+}
+async function runNormalStartup() {
+    const savedUserName = localStorage.getItem(USER_NAME_KEY);
+    const savedUserId = localStorage.getItem(USER_ID_KEY);
+    if (savedUserName && savedUserId) {
+        currentUser.id = savedUserId;
+        currentUser.name = savedUserName;
+        if (db) {
+            const userRef = doc(db, "users", savedUserId);
+            try {
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    currentUser.name = userData.name || savedUserName;
+                    currentUser.profilePictureUrl = userData.profilePictureUrl || DEFAULT_PROFILE_PIC_URL;
+                }
+            } catch (error) { console.error("Error fetching user profile on load:", error); }
+        }
+        userProfilesCache[savedUserId] = { ...currentUser };
+        proceedToApp();
+        const loadedFromCache = loadDataFromCache(); 
+        initializeAppUI();
+        if (loadedFromCache) { 
+            renderContent();
+            fetchDataFromSheet();
+        } else { 
+            await fetchDataFromSheet(); 
+        }
+    } else {
+        loginButtonEl.disabled = true;
+        loginOverlayEl.style.display = 'flex';
+        appContainerEl.classList.remove('visible');
+        document.body.classList.remove('user-logged-in');
+        loadDataFromCache();
+        initializeAppUI();
+    }
+}
+
+
+function handleBackPress() {
+    
+    if (document.fullscreenElement) { if (document.exitFullscreen) { document.exitFullscreen(); } return; }
+    if (document.querySelector('.profile-popup-overlay.visible')) { closeProfilePopup(); return; }
+    if (document.querySelector('.comments-popup-overlay.visible')) { closeCommentsPopup(); return; }
+    if (downloadGeneratingPopupOverlay.classList.contains('visible')) { closeGeneratingLinkPopup(); return; }
+    if (downloadUnavailablePopupOverlay.classList.contains('visible') && !downloadUnavailableCloseBtn.disabled) { closeUnavailableLinkPopup(); return; }
+    if (qualityPopupOverlay.classList.contains('visible')) { closeQualityPopup(); return; }
+    if (downloadQualityPopupOverlay.classList.contains('visible')) { closeDownloadQualityPopup(); return; }
+    if (infoPopupOverlay.classList.contains('visible')) { closeInfoPopup(); return; }
+
+    
+    if (drawerMenuEl.classList.contains('open')) {
+        toggleDrawer();
+        return;
+    }
+
+    
+    if (inlinePlayerWrapper.classList.contains('active')) {
+        closeInlineVideoPlayer(false);
+        return;
+    }
+
+    
+    if (navigationPath.length > 0) {
+        navigateBack();
+        return;
+    }
+
+    
+    if (currentSection !== 'all') {
+        const allLink = drawerNavListEl.querySelector('.nav-link[data-section="all"]');
+        if (allLink) {
+            allLink.click();
+        }
+        return;
+    }
+    
+    
+    if (backPressExitIntent) {
+        
+        navigator.app?.exitApp(); 
+        return;
+    }
+
+    
+    backPressExitIntent = true;
+    showCustomToast("Press back again to exit Movies Hub", "info", 2000);
+
+ 
+    if (backPressTimeoutId) clearTimeout(backPressTimeoutId);
+
+    
+    backPressTimeoutId = setTimeout(() => {
+        backPressExitIntent = false;
+    }, 2000);
+}
+
+document.addEventListener('DOMContentLoaded', async () => { 
+    loadUserVotes();
+    loadUserViews();
+    await fetchAppConfiguration();
+
+    document.addEventListener('contextmenu', (event) => {
+        if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+            return;
+        }
+        event.preventDefault();
+    });
+
+    
+    history.pushState(null, '');
+
+    window.addEventListener('popstate', (event) => {
+        
+        history.pushState(null, '');
+        
+        handleBackPress();
+    });
+
+    runNormalStartup();
+});
